@@ -1,0 +1,26 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bottom Part -->
+  <ellipse cx="150" cy="230" rx="80" ry="25" fill="#FEF3C7" stroke="#333" stroke-width="2" fill-opacity="0.3"/>
+  <!-- Only bottom half stroke should be solid if we want 'hidden line' effect, but full ellipse is okay for basic -->
+  
+  <!-- Cone Body -->
+  <!-- Tip at (150, 50) -->
+  <path d="M70,230 L150,50 L230,230" fill="none" stroke="#333" stroke-width="2" />
+  <!-- Overwrite bottom ellipse front stroke -->
+  <path d="M70,230 A80,25 0 0,0 230,230" fill="none" stroke="#333" stroke-width="2" />
+  
+  <!-- Height Line (internal) -->
+  <line x1="150" y1="50" x2="150" y2="230" stroke="#666" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <text x="155" y="150" font-family="sans-serif" font-size="16" fill="#666" font-style="italic">h</text>
+  
+  <!-- Radius -->
+  <line x1="150" y1="230" x2="230" y2="230" stroke="#666" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <text x="180" y="220" font-family="sans-serif" font-size="16" fill="#666" font-style="italic">r</text>
+  
+  <!-- Right Angle Symbol -->
+  <polyline points="150,220 160,220 160,230" fill="none" stroke="#666" stroke-width="1"/>
+  
+  <!-- Title -->
+  <text x="150" y="270" font-family="sans-serif" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">원뿔</text>
+  <text x="150" y="285" font-family="sans-serif" font-size="12" fill="#666" text-anchor="middle">V = ⅓πr²h</text>
+</svg>

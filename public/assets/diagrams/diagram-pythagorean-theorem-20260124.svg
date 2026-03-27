@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="500" height="400">
+  <defs>
+    <linearGradient id="triangleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="squareAGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fecaca;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fca5a5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="squareBGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#bbf7d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#86efac;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="squareCGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#bfdbfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+    </linearGradient>
+    <filter id="pythShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="500" height="400" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="250" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">피타고라스 정리</text>
+
+
+  <!-- Main Triangle (3-4-5 scaled) -->
+  <!-- Vertices: A(150, 280), B(270, 280), C(150, 160) -->
+
+  <!-- Square on side a (vertical, left side) -->
+  <rect x="30" y="160" width="120" height="120" fill="url(#squareAGrad)" stroke="#ef4444" stroke-width="2" filter="url(#pythShadow)"/>
+  <text x="90" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#dc2626" font-weight="bold">a²</text>
+  <text x="90" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#ef4444">= 9</text>
+
+  <!-- Square on side b (horizontal, bottom) -->
+  <rect x="150" y="280" width="120" height="120" fill="url(#squareBGrad)" stroke="#22c55e" stroke-width="2" filter="url(#pythShadow)"/>
+  <text x="210" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#16a34a" font-weight="bold">b²</text>
+  <text x="210" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#22c55e">= 16</text>
+
+  <!-- Square on side c (hypotenuse) - rotated -->
+  <g transform="rotate(-36.87, 270, 280)">
+    <rect x="270" y="130" width="150" height="150" fill="url(#squareCGrad)" stroke="#3b82f6" stroke-width="2" filter="url(#pythShadow)"/>
+  </g>
+  <text x="380" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" font-weight="bold">c²</text>
+  <text x="380" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#3b82f6">= 25</text>
+
+  <!-- Main Triangle -->
+  <polygon points="150,280 270,280 150,160" fill="url(#triangleGrad)" stroke="#475569" stroke-width="3" filter="url(#pythShadow)"/>
+
+  <!-- Right angle indicator -->
+  <rect x="150" y="260" width="20" height="20" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <circle cx="160" cy="270" r="2" fill="#475569"/>
+
+  <!-- Side labels -->
+  <!-- Side a (vertical) -->
+  <text x="135" y="220" text-anchor="end" font-family="Arial, sans-serif" font-size="16" fill="#dc2626" font-weight="bold">a=3</text>
+
+  <!-- Side b (horizontal) -->
+  <text x="210" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#16a34a" font-weight="bold">b=4</text>
+
+  <!-- Side c (hypotenuse) -->
+  <text x="225" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#2563eb" font-weight="bold" transform="rotate(-36.87, 225, 210)">c=5</text>
+
+  <!-- Formula Box -->
+  <rect x="20" y="70" width="200" height="70" rx="10" fill="white" stroke="#e2e8f0" stroke-width="2" filter="url(#pythShadow)"/>
+
+  <!-- Formula -->
+  <text x="120" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#1e293b" font-weight="bold">a² + b² = c²</text>
+  <text x="120" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748b">9 + 16 = 25</text>
+
+  <!-- Vertex labels -->
+  <text x="145" y="290" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold">A</text>
+  <text x="280" y="290" font-family="Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold">B</text>
+  <text x="140" y="155" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#64748b" font-weight="bold">C</text>
+
+  <!-- Note -->
+  <text x="250" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#94a3b8">직각삼각형에서 빗변의 제곱은 다른 두 변의 제곱의 합과 같다</text>
+</svg>

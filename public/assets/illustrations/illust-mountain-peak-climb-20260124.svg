@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="mountainGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1"/>
+      <stop offset="100%" style="stop-color:#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="mountainGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6"/>
+      <stop offset="100%" style="stop-color:#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="sunsetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE68A"/>
+      <stop offset="30%" style="stop-color:#FDBA74"/>
+      <stop offset="60%" style="stop-color:#FB923C"/>
+      <stop offset="100%" style="stop-color:#A855F7"/>
+    </linearGradient>
+  </defs>
+  <!-- Background - sunset -->
+  <rect width="200" height="200" fill="url(#sunsetGrad)"/>
+  
+  <!-- Sun -->
+  <circle cx="100" cy="60" r="25" fill="#FDE047" opacity="0.8"/>
+  
+  <!-- Far mountain -->
+  <polygon points="0,200 60,100 120,200" fill="#7C3AED" opacity="0.5"/>
+  <polygon points="80,200 140,90 200,200" fill="#6366F1" opacity="0.5"/>
+  
+  <!-- Main mountain -->
+  <polygon points="20,200 100,40 180,200" fill="url(#mountainGrad1)"/>
+  
+  <!-- Snow cap -->
+  <polygon points="100,40 85,70 90,65 95,75 100,60 105,75 110,65 115,70" fill="white"/>
+  
+  <!-- Mountain shadow -->
+  <polygon points="100,40 140,110 180,200 100,200" fill="#4338CA" opacity="0.3"/>
+  
+  <!-- Small mountain -->
+  <polygon points="-20,200 40,120 100,200" fill="url(#mountainGrad2)"/>
+  
+  <!-- Climbing path (dotted) -->
+  <path d="M50 190 Q60 170 70 160 Q80 145 85 130 Q90 115 95 100 Q98 85 100 70" 
+        fill="none" stroke="white" stroke-width="2" stroke-dasharray="4,4" opacity="0.7"/>
+  
+  <!-- Flag at peak -->
+  <line x1="100" y1="40" x2="100" y2="25" stroke="#1E293B" stroke-width="2"/>
+  <polygon points="100,25 120,30 100,35" fill="#EF4444"/>
+  
+  <!-- Climber figure -->
+  <g transform="translate(85, 95)">
+    <circle cx="5" cy="0" r="5" fill="#FED7AA"/>
+    <rect x="2" y="5" width="6" height="10" rx="1" fill="#3B82F6"/>
+    <line x1="5" y1="10" x2="2" y2="20" stroke="#1E293B" stroke-width="2"/>
+    <line x1="5" y1="10" x2="8" y2="20" stroke="#1E293B" stroke-width="2"/>
+    <line x1="0" y1="8" x2="-3" y2="3" stroke="#FED7AA" stroke-width="2"/>
+    <line x1="10" y1="8" x2="15" y2="5" stroke="#FED7AA" stroke-width="2"/>
+  </g>
+  
+  <!-- Birds -->
+  <g stroke="#1E293B" stroke-width="1.5" fill="none">
+    <path d="M25 50 Q30 45 35 50 M35 50 Q40 45 45 50"/>
+    <path d="M150 70 Q155 65 160 70 M160 70 Q165 65 170 70"/>
+    <path d="M60 35 Q63 32 66 35 M66 35 Q69 32 72 35"/>
+  </g>
+  
+  <!-- Achievement stars -->
+  <polygon points="170,30 172,36 178,36 173,40 175,46 170,42 165,46 167,40 162,36 168,36" fill="#FDE047"/>
+  <polygon points="30,80 31,84 35,84 32,87 33,91 30,88 27,91 28,87 25,84 29,84" fill="#FDE047" opacity="0.6"/>
+</svg>

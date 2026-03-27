@@ -1,0 +1,11 @@
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="shapes" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect x="0" y="0" width="50" height="50" fill="#fce4ec" opacity="0.5"/>
+      <circle cx="75" cy="75" r="20" fill="#e3f2fd" opacity="0.5"/>
+      <polygon points="25,75 50,25 0,25" fill="#f0f4c3" opacity="0.5" transform="translate(0, 50) scale(0.5)"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="white"/>
+  <rect width="100%" height="100%" fill="url(#shapes)"/>
+</svg>

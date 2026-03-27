@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#89F7FE"/>
+      <stop offset="100%" style="stop-color:#66A6FF"/>
+    </linearGradient>
+  </defs>
+  <!-- 배경 원 -->
+  <circle cx="32" cy="32" r="28" fill="url(#arrowGrad)" opacity="0.2"/>
+  <!-- 메인 원 -->
+  <circle cx="32" cy="32" r="24" fill="url(#arrowGrad)"/>
+  <!-- 화살표 -->
+  <path d="M38 20 L22 32 L38 44" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 반짝이 효과 -->
+  <circle cx="18" cy="18" r="3" fill="white" opacity="0.8"/>
+  <circle cx="14" cy="24" r="2" fill="white" opacity="0.5"/>
+  <!-- 귀여운 볼터치 -->
+  <ellipse cx="44" cy="38" rx="4" ry="3" fill="#FF9AA2" opacity="0.5"/>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="searchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1"/>
+      <stop offset="100%" style="stop-color:#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <!-- Magnifying glass circle -->
+  <circle cx="26" cy="26" r="16" fill="none" stroke="url(#searchGrad)" stroke-width="5"/>
+  <!-- Glass shine -->
+  <path d="M18 18 Q22 14 28 16" fill="none" stroke="#C7D2FE" stroke-width="2" stroke-linecap="round"/>
+  <!-- Handle -->
+  <line x1="38" y1="38" x2="54" y2="54" stroke="#F97316" stroke-width="6" stroke-linecap="round"/>
+  <!-- Handle accent -->
+  <line x1="40" y1="40" x2="52" y2="52" stroke="#FB923C" stroke-width="3" stroke-linecap="round"/>
+</svg>

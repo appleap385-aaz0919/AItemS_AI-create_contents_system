@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>물방울 아이콘</title>
+  <path d="M32 6 C40 18 50 28 50 40 C50 52 41 60 32 60 C23 60 14 52 14 40 C14 28 24 18 32 6 Z" fill="#38BDF8" stroke="#0EA5E9" stroke-width="3"/>
+  <path d="M38 24 C34 20 28 22 26 28" stroke="#E0F2FE" stroke-width="4" stroke-linecap="round" fill="none"/>
+</svg>

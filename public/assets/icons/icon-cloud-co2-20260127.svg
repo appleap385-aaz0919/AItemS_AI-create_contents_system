@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>이산화탄소 구름 아이콘</title>
+  <path d="M22 46 H50 C57 46 62 41 62 34 C62 28 58 23 52 22 C50 14 44 10 36 10 C28 10 22 15 20 22 C13 23 8 29 8 36 C8 42 13 46 20 46 Z" fill="#CBD5E1" stroke="#94A3B8" stroke-width="3"/>
+  <text x="36" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#475569">CO2</text>
+</svg>

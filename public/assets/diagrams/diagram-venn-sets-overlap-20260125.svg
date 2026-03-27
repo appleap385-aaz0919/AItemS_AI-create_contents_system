@@ -1,0 +1,17 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circle A -->
+  <circle cx="140" cy="150" r="100" fill="#EF4444" fill-opacity="0.4" stroke="#EF4444" stroke-width="2"/>
+  
+  <!-- Circle B -->
+  <circle cx="260" cy="150" r="100" fill="#3B82F6" fill-opacity="0.4" stroke="#3B82F6" stroke-width="2"/>
+  
+  <!-- Labels -->
+  <text x="80" y="150" font-family="sans-serif" font-size="20" fill="#333" font-weight="bold">집합 A</text>
+  <text x="320" y="150" font-family="sans-serif" font-size="20" fill="#333" font-weight="bold">집합 B</text>
+  
+  <!-- Intersection Label -->
+  <text x="200" y="150" font-family="sans-serif" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">A ∩ B</text>
+  
+  <!-- U Label (Universal Set) if we had a box -->
+  <text x="200" y="270" font-family="sans-serif" font-size="14" fill="#666" text-anchor="middle">교집합</text>
+</svg>

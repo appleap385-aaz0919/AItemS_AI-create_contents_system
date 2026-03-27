@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="spaceBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A"/>
+      <stop offset="100%" style="stop-color:#1E293B"/>
+    </linearGradient>
+    <linearGradient id="earthOcean" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#1D4ED8"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FDE047"/>
+      <stop offset="100%" style="stop-color:#F59E0B"/>
+    </radialGradient>
+    <filter id="earthGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background - space -->
+  <rect width="200" height="200" fill="url(#spaceBg)"/>
+  
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="15" cy="20" r="1"/>
+    <circle cx="40" cy="35" r="0.8"/>
+    <circle cx="70" cy="15" r="1.2"/>
+    <circle cx="130" cy="25" r="1"/>
+    <circle cx="175" cy="40" r="0.8"/>
+    <circle cx="185" cy="70" r="1"/>
+    <circle cx="20" cy="80" r="0.8"/>
+    <circle cx="45" cy="170" r="1"/>
+    <circle cx="160" cy="160" r="1.2"/>
+    <circle cx="180" cy="130" r="0.8"/>
+    <circle cx="25" cy="140" r="1"/>
+    <circle cx="165" cy="180" r="0.8"/>
+  </g>
+  
+  <!-- Sun (partial, corner) -->
+  <circle cx="0" cy="0" r="30" fill="url(#sunGlow)"/>
+  <g stroke="#FEF9C3" stroke-width="1" opacity="0.5">
+    <line x1="25" y1="10" x2="40" y2="20"/>
+    <line x1="10" y1="25" x2="20" y2="40"/>
+    <line x1="25" y1="25" x2="35" y2="35"/>
+  </g>
+  
+  <!-- Earth -->
+  <g transform="translate(100, 100)" filter="url(#earthGlow)">
+    <!-- Atmosphere glow -->
+    <circle cx="0" cy="0" r="62" fill="#60A5FA" opacity="0.2"/>
+    
+    <!-- Ocean base -->
+    <circle cx="0" cy="0" r="55" fill="url(#earthOcean)"/>
+    
+    <!-- Continents -->
+    <!-- North America -->
+    <path d="M-35,-20 Q-40,-30 -30,-40 Q-15,-45 -5,-35 Q5,-30 0,-20 Q-10,-15 -20,-20 Q-30,-18 -35,-20" fill="#22C55E"/>
+    <!-- South America -->
+    <path d="M-15,5 Q-5,0 0,10 Q5,25 0,40 Q-10,45 -15,35 Q-18,20 -15,5" fill="#22C55E"/>
+    <!-- Europe/Africa -->
+    <path d="M15,-25 Q25,-30 35,-20 Q40,-5 35,15 Q30,35 20,40 Q10,35 15,20 Q18,0 15,-25" fill="#22C55E"/>
+    <!-- Asia hint -->
+    <path d="M25,-35 Q40,-40 45,-30 Q48,-20 40,-15" fill="#22C55E"/>
+    
+    <!-- Ice caps -->
+    <ellipse cx="0" cy="-50" rx="20" ry="8" fill="white" opacity="0.8"/>
+    <ellipse cx="0" cy="50" rx="15" ry="6" fill="white" opacity="0.8"/>
+    
+    <!-- Clouds -->
+    <g fill="white" opacity="0.4">
+      <ellipse cx="-25" cy="-10" rx="12" ry="5"/>
+      <ellipse cx="30" cy="5" rx="10" ry="4"/>
+      <ellipse cx="-10" cy="25" rx="15" ry="5"/>
+      <ellipse cx="20" cy="-30" rx="8" ry="3"/>
+    </g>
+    
+    <!-- Shine/highlight -->
+    <ellipse cx="-25" cy="-30" rx="15" ry="10" fill="white" opacity="0.15"/>
+  </g>
+  
+  <!-- Moon -->
+  <g transform="translate(170, 150)">
+    <circle cx="0" cy="0" r="15" fill="#E2E8F0"/>
+    <circle cx="-5" cy="-3" r="3" fill="#CBD5E1"/>
+    <circle cx="3" cy="5" r="4" fill="#CBD5E1"/>
+    <circle cx="5" cy="-5" r="2" fill="#CBD5E1"/>
+  </g>
+  
+  <!-- Orbit line (subtle) -->
+  <ellipse cx="100" cy="100" rx="75" ry="60" fill="none" stroke="white" stroke-width="0.5" opacity="0.2" stroke-dasharray="5,5"/>
+  
+  <!-- Satellite -->
+  <g transform="translate(165, 65) rotate(20)">
+    <rect x="-3" y="-2" width="12" height="4" fill="#64748B"/>
+    <rect x="-15" y="-6" width="12" height="12" fill="#3B82F6"/>
+    <rect x="9" y="-6" width="12" height="12" fill="#3B82F6"/>
+  </g>
+  
+  <!-- Labels/icons around earth -->
+  <g opacity="0.6">
+    <!-- Tree icon -->
+    <circle cx="55" cy="55" r="8" fill="#22C55E"/>
+    <polygon points="55,48 50,56 60,56" fill="#16A34A"/>
+    <!-- Water drop -->
+    <path d="M145,55 Q145,48 150,48 Q155,48 155,55 Q155,62 150,65 Q145,62 145,55" fill="#60A5FA"/>
+    <!-- Sun icon -->
+    <circle cx="50" cy="145" r="6" fill="#FDE047"/>
+  </g>
+</svg>

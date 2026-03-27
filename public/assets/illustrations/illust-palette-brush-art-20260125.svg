@@ -1,0 +1,16 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Palette -->
+  <path d="M50,60 Q30,60 30,100 Q30,150 80,150 L100,150 Q130,150 140,120 Q145,110 140,100 Q130,90 140,80 Q160,60 100,50 Q70,45 50,60" fill="#FFCC80" stroke="#F57C00" stroke-width="2" />
+  <circle cx="50" cy="120" r="5" fill="#FFFFFF" />
+  
+  <!-- Paint Blobs -->
+  <circle cx="60" cy="80" r="8" fill="#F44336" />
+  <circle cx="85" cy="70" r="8" fill="#4CAF50" />
+  <circle cx="110" cy="80" r="8" fill="#2196F3" />
+  <circle cx="90" cy="100" r="8" fill="#FFEB3B" />
+  
+  <!-- Brush -->
+  <rect x="110" y="110" width="60" height="8" rx="2" fill="#8D6E63" transform="rotate(-45 140 114)" />
+  <path d="M106,144 L114,152 L100,166 L92,158 Z" fill="#757575" />  <!-- Ferrule -->
+  <path d="M92,158 C85,165 85,170 95,170 C98,165 98,160 100,166 L92,158" fill="#D84315" /> <!-- Bristles -->
+</svg>

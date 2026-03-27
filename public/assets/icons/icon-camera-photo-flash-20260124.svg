@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="cameraGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#374151"/>
+      <stop offset="100%" style="stop-color:#1F2937"/>
+    </linearGradient>
+    <radialGradient id="lensGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="60%" style="stop-color:#1E3A8A"/>
+      <stop offset="100%" style="stop-color:#0F172A"/>
+    </radialGradient>
+  </defs>
+  <!-- Camera body -->
+  <rect x="6" y="20" width="52" height="36" rx="6" fill="url(#cameraGrad)" stroke="#4B5563" stroke-width="2"/>
+  <!-- Viewfinder bump -->
+  <rect x="20" y="14" width="16" height="8" rx="2" fill="#4B5563"/>
+  <!-- Lens outer -->
+  <circle cx="32" cy="38" r="14" fill="#111827" stroke="#4B5563" stroke-width="2"/>
+  <!-- Lens inner -->
+  <circle cx="32" cy="38" r="10" fill="url(#lensGrad)"/>
+  <!-- Lens reflection -->
+  <ellipse cx="28" cy="34" rx="3" ry="2" fill="white" opacity="0.4"/>
+  <!-- Flash -->
+  <rect x="44" y="24" width="8" height="6" rx="1" fill="#FDE047" stroke="#F59E0B" stroke-width="1"/>
+  <!-- Flash burst lines -->
+  <g stroke="#FDE047" stroke-width="1.5" stroke-linecap="round">
+    <line x1="48" y1="16" x2="48" y2="20"/>
+    <line x1="54" y1="22" x2="56" y2="20"/>
+    <line x1="54" y1="30" x2="57" y2="32"/>
+  </g>
+  <!-- Shutter button -->
+  <circle cx="48" cy="18" r="4" fill="#6B7280" stroke="#9CA3AF" stroke-width="1"/>
+</svg>

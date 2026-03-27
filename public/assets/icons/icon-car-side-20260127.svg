@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>자동차 측면 아이콘</title>
+  <rect x="8" y="28" width="48" height="16" rx="6" fill="#2563EB"/>
+  <path d="M18 28 L26 18 H40 L48 28 Z" fill="#60A5FA"/>
+  <rect x="28" y="20" width="10" height="8" rx="2" fill="#E0F2FE"/>
+  <circle cx="20" cy="48" r="6" fill="#0F172A"/>
+  <circle cx="20" cy="48" r="3" fill="#94A3B8"/>
+  <circle cx="44" cy="48" r="6" fill="#0F172A"/>
+  <circle cx="44" cy="48" r="3" fill="#94A3B8"/>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="micGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F472B6"/>
+      <stop offset="100%" style="stop-color:#EC4899"/>
+    </linearGradient>
+    <filter id="micGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Sound waves -->
+  <g stroke="#F9A8D4" stroke-width="2" fill="none" opacity="0.8" filter="url(#micGlow)">
+    <path d="M48 24 Q54 32 48 40"/>
+    <path d="M52 20 Q60 32 52 44"/>
+    <path d="M16 24 Q10 32 16 40"/>
+    <path d="M12 20 Q4 32 12 44"/>
+  </g>
+  <!-- Mic body -->
+  <rect x="24" y="8" width="16" height="28" rx="8" fill="url(#micGrad)" stroke="#DB2777" stroke-width="2"/>
+  <!-- Mic grille lines -->
+  <g stroke="#FBCFE8" stroke-width="1">
+    <line x1="26" y1="14" x2="38" y2="14"/>
+    <line x1="26" y1="18" x2="38" y2="18"/>
+    <line x1="26" y1="22" x2="38" y2="22"/>
+    <line x1="26" y1="26" x2="38" y2="26"/>
+  </g>
+  <!-- Mic stand arc -->
+  <path d="M20 36 Q20 48 32 48 Q44 48 44 36" fill="none" stroke="#BE185D" stroke-width="3"/>
+  <!-- Mic stand -->
+  <rect x="30" y="48" width="4" height="8" fill="#BE185D"/>
+  <rect x="24" y="54" width="16" height="4" rx="2" fill="#EC4899"/>
+</svg>

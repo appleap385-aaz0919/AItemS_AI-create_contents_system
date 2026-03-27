@@ -1,0 +1,13 @@
+<svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cylinder -->
+  <ellipse cx="20" cy="15" rx="10" ry="4" stroke="#7C3AED" stroke-width="1.5"/>
+  <path d="M10 15V45" stroke="#7C3AED" stroke-width="1.5"/>
+  <path d="M30 15V45" stroke="#7C3AED" stroke-width="1.5"/>
+  <path d="M10 45C10 47.2 14.5 49 20 49C25.5 49 30 47.2 30 45" stroke="#7C3AED" stroke-width="1.5"/>
+  <path d="M10 45C10 42.8 14.5 41 20 41C25.5 41 30 42.8 30 45" stroke="#7C3AED" stroke-width="1.5" stroke-dasharray="2 2"/>
+  
+  <!-- Cone -->
+  <path d="M60 10L45 45" stroke="#2563EB" stroke-width="1.5"/>
+  <path d="M60 10L75 45" stroke="#2563EB" stroke-width="1.5"/>
+  <ellipse cx="60" cy="45" rx="15" ry="5" stroke="#2563EB" stroke-width="1.5"/>
+</svg>

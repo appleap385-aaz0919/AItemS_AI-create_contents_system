@@ -1,0 +1,21 @@
+<svg width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blocks -->
+  <!-- 2 Blue Blocks -->
+  <g stroke="#333" stroke-width="2">
+    <rect x="25" y="50" width="50" height="50" fill="#3B82F6" />
+    <rect x="75" y="50" width="50" height="50" fill="#3B82F6" />
+    
+    <!-- Separator (optional visual gap or just contiguous) -->
+    
+    <!-- 3 Red Blocks -->
+    <rect x="125" y="50" width="50" height="50" fill="#EF4444" />
+    <rect x="175" y="50" width="50" height="50" fill="#EF4444" />
+    <rect x="225" y="50" width="50" height="50" fill="#EF4444" />
+  </g>
+  
+  <!-- Labels -->
+  <text x="75" y="40" font-family="sans-serif" font-size="16" fill="#3B82F6" text-anchor="middle" font-weight="bold">2</text>
+  <text x="200" y="40" font-family="sans-serif" font-size="16" fill="#EF4444" text-anchor="middle" font-weight="bold">3</text>
+  
+  <text x="150" y="130" font-family="sans-serif" font-size="18" fill="#333" text-anchor="middle" font-weight="bold">비율 2 : 3</text>
+</svg>

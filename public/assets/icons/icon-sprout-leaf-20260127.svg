@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>새싹 아이콘</title>
+  <rect x="10" y="46" width="44" height="8" rx="4" fill="#92400E"/>
+  <path d="M32 46 C30 36 30 30 32 22 C34 30 34 36 32 46 Z" fill="#16A34A"/>
+  <path d="M32 26 C22 18 14 18 10 22 C16 28 24 30 32 30 Z" fill="#22C55E"/>
+  <path d="M32 26 C42 18 50 18 54 22 C48 28 40 30 32 30 Z" fill="#22C55E"/>
+</svg>

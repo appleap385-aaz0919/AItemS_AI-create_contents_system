@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="chatBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EFF6FF"/>
+      <stop offset="100%" style="stop-color:#DBEAFE"/>
+    </linearGradient>
+    <linearGradient id="bubble1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#2563EB"/>
+    </linearGradient>
+    <linearGradient id="bubble2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="bubble3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F472B6"/>
+      <stop offset="100%" style="stop-color:#EC4899"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#chatBg)"/>
+  
+  <!-- Chat bubble 1 (left, blue) -->
+  <g transform="translate(15, 30)">
+    <path d="M0,0 L80,0 Q90,0 90,10 L90,35 Q90,45 80,45 L15,45 L5,55 L8,45 L10,45 Q0,45 0,35 L0,10 Q0,0 10,0 Z" 
+          fill="url(#bubble1)" stroke="#1D4ED8" stroke-width="1"/>
+    <text x="12" y="18" font-size="10" fill="white" font-family="sans-serif">안녕하세요!</text>
+    <text x="12" y="32" font-size="9" fill="#BFDBFE" font-family="sans-serif">잘 지내시나요?</text>
+  </g>
+  
+  <!-- Chat bubble 2 (right, green) -->
+  <g transform="translate(95, 55)">
+    <path d="M10,0 L90,0 Q100,0 100,10 L100,40 Q100,50 90,50 L92,50 L95,60 L85,50 L10,50 Q0,50 0,40 L0,10 Q0,0 10,0 Z" 
+          fill="url(#bubble2)" stroke="#047857" stroke-width="1"/>
+    <text x="12" y="18" font-size="10" fill="white" font-family="sans-serif">좋아요!</text>
+    <text x="12" y="32" font-size="9" fill="#A7F3D0" font-family="sans-serif">프로젝트 진행 중</text>
+  </g>
+  
+  <!-- Chat bubble 3 (left, pink) -->
+  <g transform="translate(10, 95)">
+    <path d="M0,0 L70,0 Q80,0 80,10 L80,30 Q80,40 70,40 L15,40 L5,50 L8,40 L10,40 Q0,40 0,30 L0,10 Q0,0 10,0 Z" 
+          fill="url(#bubble3)" stroke="#BE185D" stroke-width="1"/>
+    <text x="12" y="18" font-size="10" fill="white" font-family="sans-serif">완벽해요!</text>
+    <text x="12" y="32" font-size="8" fill="#FBCFE8" font-family="sans-serif">대화해요</text>
+  </g>
+  
+  <!-- Chat bubble 4 (right, blue outline) -->
+  <g transform="translate(100, 120)">
+    <path d="M10,0 L85,0 Q95,0 95,10 L95,35 Q95,45 85,45 L87,45 L90,55 L80,45 L10,45 Q0,45 0,35 L0,10 Q0,0 10,0 Z" 
+          fill="white" stroke="#3B82F6" stroke-width="2"/>
+    <text x="12" y="18" font-size="10" fill="#1E40AF" font-family="sans-serif">팀 미팅</text>
+    <text x="12" y="32" font-size="9" fill="#60A5FA" font-family="sans-serif">오늘 오후 3시</text>
+  </g>
+  
+  <!-- Typing indicator bubble -->
+  <g transform="translate(15, 160)">
+    <path d="M0,0 L50,0 Q60,0 60,10 L60,25 Q60,35 50,35 L15,35 L5,42 L8,35 L10,35 Q0,35 0,25 L0,10 Q0,0 10,0 Z" 
+          fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/>
+    <circle cx="18" cy="17" r="4" fill="#94A3B8"/>
+    <circle cx="30" cy="17" r="4" fill="#94A3B8"/>
+    <circle cx="42" cy="17" r="4" fill="#94A3B8"/>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="180" cy="25" r="8" fill="#60A5FA" opacity="0.3"/>
+  <circle cx="170" cy="180" r="12" fill="#10B981" opacity="0.2"/>
+  <circle cx="30" cy="185" r="6" fill="#EC4899" opacity="0.3"/>
+  
+  <!-- Connection lines (subtle) -->
+  <g stroke="#CBD5E1" stroke-width="1" stroke-dasharray="3,3" opacity="0.5">
+    <line x1="90" y1="50" x2="100" y2="60"/>
+    <line x1="85" y1="130" x2="95" y2="125"/>
+  </g>
+</svg>

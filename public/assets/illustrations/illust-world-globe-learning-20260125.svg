@@ -1,0 +1,19 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stand Base -->
+  <ellipse cx="100" cy="170" rx="30" ry="10" fill="#5D4037" />
+  <rect x="95" y="150" width="10" height="20" fill="#795548" />
+  
+  <!-- Axis Holder -->
+  <path d="M100,160 C150,160 150,40 100,40" fill="none" stroke="#FFA000" stroke-width="4" />
+  
+  <!-- Globe Sphere -->
+  <circle cx="100" cy="100" r="40" fill="#4FC3F7" stroke="#0288D1" stroke-width="2" />
+  
+  <!-- Continents (Simplified) -->
+  <path d="M80,90 Q90,80 100,90 Q110,80 120,95 Q110,110 90,110 Q80,100 80,90" fill="#66BB6A" opacity="0.9" />
+  <path d="M110,70 Q120,60 130,70 Q135,80 125,85 Q115,80 110,70" fill="#66BB6A" opacity="0.9" />
+  
+  <!-- Latitude/Longitude Lines -->
+  <ellipse cx="100" cy="100" rx="40" ry="10" fill="none" stroke="#0277BD" stroke-width="1" opacity="0.3" />
+  <path d="M100,60 L100,140" stroke="#0277BD" stroke-width="1" opacity="0.3" />
+</svg>

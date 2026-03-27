@@ -1,0 +1,12 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Right Angle -->
+  <path d="M5 15V25H15" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
+  <rect x="5" y="21" width="4" height="4" stroke="#2563EB" stroke-width="1"/>
+  
+  <!-- Acute Angle -->
+  <path d="M25 15L23 25H33" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>
+  <path d="M25 25A2 2 0 0 1 25.5 24" stroke="#10B981" stroke-width="1"/>
+  
+  <!-- Obtuse Angle -->
+  <path d="M15 5L20 10H30" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" transform="translate(0, -2)"/>
+</svg>

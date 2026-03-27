@@ -1,0 +1,27 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circle -->
+  <circle cx="150" cy="150" r="100" fill="#F3F4F6" stroke="#333" stroke-width="3" />
+  
+  <!-- Center -->
+  <circle cx="150" cy="150" r="3" fill="#333" />
+  <text x="145" y="145" font-family="sans-serif" font-size="12" fill="#333">중심</text>
+  
+  <!-- Radius -->
+  <line x1="150" y1="150" x2="250" y2="150" stroke="#EF4444" stroke-width="2" />
+  <text x="180" y="145" font-family="sans-serif" font-size="14" fill="#EF4444" font-weight="bold">반지름 (r)</text>
+  
+  <!-- Diameter -->
+  <!-- Diagonal -->
+  <line x1="79.29" y1="79.29" x2="220.71" y2="220.71" stroke="#3B82F6" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="90" y="200" font-family="sans-serif" font-size="14" fill="#3B82F6" font-weight="bold">지름 (d)</text>
+  
+  <!-- Circumference Arrow -->
+  <path d="M40,150 A110,110 0 0,1 150,40" fill="none" stroke="#10B981" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="40" y="60" font-family="sans-serif" font-size="14" fill="#10B981" font-weight="bold">원주 (C)</text>
+  
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#10B981" />
+    </marker>
+  </defs>
+</svg>

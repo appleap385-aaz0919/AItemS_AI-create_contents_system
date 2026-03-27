@@ -1,0 +1,31 @@
+<svg width="450" height="180" viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Acute Angle (< 90) -->
+  <g transform="translate(20, 20)">
+    <line x1="0" y1="100" x2="100" y2="100" stroke="#333" stroke-width="2" />
+    <line x1="0" y1="100" x2="80" y2="20" stroke="#333" stroke-width="2" />
+    <!-- Arc -->
+    <path d="M30,100 A30,30 0 0,0 24,76" fill="none" stroke="#EF4444" stroke-width="2" />
+    <text x="50" y="130" font-family="sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">예각</text>
+    <text x="50" y="150" font-family="sans-serif" font-size="12" fill="#666" text-anchor="middle">&lt; 90°</text>
+  </g>
+  
+  <!-- Right Angle (= 90) -->
+  <g transform="translate(170, 20)">
+    <line x1="0" y1="100" x2="100" y2="100" stroke="#333" stroke-width="2" />
+    <line x1="0" y1="100" x2="0" y2="0" stroke="#333" stroke-width="2" />
+    <!-- Square Symbol -->
+    <rect x="0" y="85" width="15" height="15" fill="none" stroke="#10B981" stroke-width="2" />
+    <text x="50" y="130" font-family="sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">직각</text>
+    <text x="50" y="150" font-family="sans-serif" font-size="12" fill="#666" text-anchor="middle">= 90°</text>
+  </g>
+  
+  <!-- Obtuse Angle (> 90) -->
+  <g transform="translate(320, 20)">
+    <line x1="0" y1="100" x2="100" y2="100" stroke="#333" stroke-width="2" />
+    <line x1="0" y1="100" x2="-50" y2="20" stroke="#333" stroke-width="2" />
+    <!-- Arc -->
+    <path d="M30,100 A30,30 0 0,0 -16,74" fill="none" stroke="#3B82F6" stroke-width="2" />
+    <text x="50" y="130" font-family="sans-serif" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">둔각</text>
+    <text x="50" y="150" font-family="sans-serif" font-size="12" fill="#666" text-anchor="middle">&gt; 90°</text>
+  </g>
+</svg>

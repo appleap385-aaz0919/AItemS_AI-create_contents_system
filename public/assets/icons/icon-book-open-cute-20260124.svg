@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bookLeftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A8E6CF"/>
+      <stop offset="100%" style="stop-color:#88D8B0"/>
+    </linearGradient>
+    <linearGradient id="bookRightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#88D8B0"/>
+      <stop offset="100%" style="stop-color:#56C596"/>
+    </linearGradient>
+    <linearGradient id="pageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFEF9"/>
+      <stop offset="100%" style="stop-color:#F5F5DC"/>
+    </linearGradient>
+  </defs>
+  <!-- 배경 -->
+  <ellipse cx="32" cy="36" rx="30" ry="24" fill="#E8F5E9" opacity="0.4"/>
+  <!-- 책 왼쪽 표지 -->
+  <path d="M6 14 Q6 10 10 10 L30 10 L30 50 L10 50 Q6 50 6 46 Z" fill="url(#bookLeftGrad)" stroke="#56C596" stroke-width="1"/>
+  <!-- 책 오른쪽 표지 -->
+  <path d="M58 14 Q58 10 54 10 L34 10 L34 50 L54 50 Q58 50 58 46 Z" fill="url(#bookRightGrad)" stroke="#56C596" stroke-width="1"/>
+  <!-- 책 중앙 바인딩 -->
+  <rect x="30" y="10" width="4" height="40" fill="#F0E68C"/>
+  <!-- 왼쪽 페이지 -->
+  <path d="M10 14 L28 14 L28 46 L10 46 Q8 46 8 44 L8 16 Q8 14 10 14" fill="url(#pageGrad)"/>
+  <!-- 오른쪽 페이지 -->
+  <path d="M54 14 L36 14 L36 46 L54 46 Q56 46 56 44 L56 16 Q56 14 54 14" fill="url(#pageGrad)"/>
+  <!-- 책 얼굴 - 눈 -->
+  <ellipse cx="18" cy="28" rx="3.5" ry="4" fill="#5D4E37"/>
+  <ellipse cx="46" cy="28" rx="3.5" ry="4" fill="#5D4E37"/>
+  <circle cx="19" cy="27" r="1.5" fill="white"/>
+  <circle cx="47" cy="27" r="1.5" fill="white"/>
+  <!-- 미소 -->
+  <path d="M26 36 Q32 44 38 36" fill="none" stroke="#5D4E37" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- 볼터치 -->
+  <ellipse cx="12" cy="34" rx="4" ry="2.5" fill="#FF9AA2" opacity="0.5"/>
+  <ellipse cx="52" cy="34" rx="4" ry="2.5" fill="#FF9AA2" opacity="0.5"/>
+  <!-- 글자 라인 -->
+  <line x1="12" y1="20" x2="24" y2="20" stroke="#C5E1A5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="12" y1="24" x2="20" y2="24" stroke="#C5E1A5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="40" y1="20" x2="52" y2="20" stroke="#C5E1A5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="44" y1="24" x2="52" y2="24" stroke="#C5E1A5" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- 반짝이 -->
+  <circle cx="4" cy="8" r="2" fill="#A8E6CF"/>
+  <circle cx="60" cy="6" r="1.5" fill="#A8E6CF"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>충돌 폭발 아이콘</title>
+  <path d="M32 4 L38 18 L54 12 L46 26 L60 32 L46 38 L54 52 L38 46 L32 60 L26 46 L10 52 L18 38 L4 32 L18 26 L10 12 L26 18 Z" fill="#F97316" stroke="#EA580C" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="32" cy="32" r="8" fill="#FACC15" stroke="#F59E0B" stroke-width="2"/>
+</svg>

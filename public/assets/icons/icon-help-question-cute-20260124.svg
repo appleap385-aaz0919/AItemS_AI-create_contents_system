@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="helpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DDA0DD"/>
+      <stop offset="100%" style="stop-color:#DA70D6"/>
+    </linearGradient>
+    <linearGradient id="helpBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8D5E8"/>
+      <stop offset="100%" style="stop-color:#F5E6F5"/>
+    </linearGradient>
+  </defs>
+  <!-- 배경 원 -->
+  <circle cx="32" cy="32" r="30" fill="url(#helpBgGrad)" opacity="0.5"/>
+  <!-- 메인 원 -->
+  <circle cx="32" cy="32" r="26" fill="url(#helpGrad)"/>
+  <!-- 물음표 얼굴 -->
+  <!-- 물음표 상단 곡선 -->
+  <path d="M24 22 Q24 14 32 14 Q42 14 42 24 Q42 30 36 32 L36 36"
+        fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <!-- 물음표 점 -->
+  <circle cx="36" cy="44" r="3.5" fill="white"/>
+  <!-- 캐릭터 눈 (물음표 옆) -->
+  <ellipse cx="20" cy="32" rx="3" ry="3.5" fill="#5D4E37"/>
+  <circle cx="21" cy="31" r="1.2" fill="white"/>
+  <!-- 볼터치 -->
+  <ellipse cx="16" cy="38" rx="4" ry="2.5" fill="#FF9AA2" opacity="0.5"/>
+  <ellipse cx="48" cy="38" rx="4" ry="2.5" fill="#FF9AA2" opacity="0.5"/>
+  <!-- 호기심 표현 -->
+  <path d="M46 28 L50 24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M48 32 L54 32" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M46 36 L50 40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <!-- 반짝이 -->
+  <circle cx="12" cy="14" r="2.5" fill="white" opacity="0.8"/>
+  <circle cx="52" cy="12" r="2" fill="white" opacity="0.6"/>
+  <circle cx="8" cy="24" r="1.5" fill="white" opacity="0.5"/>
+  <!-- 별 장식 -->
+  <path d="M56 48 L57 50 L59 50 L58 52 L59 54 L56 53 L53 54 L54 52 L53 50 L55 50 Z" fill="#DDA0DD"/>
+</svg>

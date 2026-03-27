@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="rocketGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8FAFC"/>
+      <stop offset="100%" style="stop-color:#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A"/>
+      <stop offset="50%" style="stop-color:#1E3A5F"/>
+      <stop offset="100%" style="stop-color:#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE047"/>
+      <stop offset="50%" style="stop-color:#F97316"/>
+      <stop offset="100%" style="stop-color:#EF4444"/>
+    </linearGradient>
+  </defs>
+  <!-- Background - space -->
+  <rect width="200" height="200" fill="url(#skyGrad)"/>
+  
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="20" cy="30" r="1.5"/>
+    <circle cx="50" cy="15" r="1"/>
+    <circle cx="80" cy="40" r="1.5"/>
+    <circle cx="150" cy="25" r="2"/>
+    <circle cx="180" cy="50" r="1"/>
+    <circle cx="170" cy="80" r="1.5"/>
+    <circle cx="30" cy="70" r="1"/>
+    <circle cx="160" cy="120" r="1"/>
+    <circle cx="40" cy="150" r="1.5"/>
+    <circle cx="175" cy="160" r="1"/>
+  </g>
+  
+  <!-- Rocket body -->
+  <path d="M100 20 Q85 40 85 80 L85 130 Q85 140 100 145 Q115 140 115 130 L115 80 Q115 40 100 20 Z" 
+        fill="url(#rocketGrad)" stroke="#94A3B8" stroke-width="2"/>
+  
+  <!-- Rocket nose -->
+  <path d="M100 20 Q90 35 88 50 L100 45 L112 50 Q110 35 100 20 Z" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+  
+  <!-- Rocket window -->
+  <circle cx="100" cy="75" r="15" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <circle cx="100" cy="75" r="10" fill="#38BDF8"/>
+  <ellipse cx="95" cy="70" rx="4" ry="3" fill="white" opacity="0.5"/>
+  
+  <!-- Rocket fins -->
+  <path d="M85 110 L65 145 L75 145 L85 125 Z" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+  <path d="M115 110 L135 145 L125 145 L115 125 Z" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+  
+  <!-- Rocket fire -->
+  <path d="M90 145 Q95 160 100 180 Q105 160 110 145 Z" fill="url(#flameGrad)"/>
+  <path d="M93 145 Q97 155 100 170 Q103 155 107 145 Z" fill="#FDE047"/>
+  
+  <!-- Smoke clouds -->
+  <g opacity="0.6">
+    <ellipse cx="80" cy="175" rx="20" ry="10" fill="#CBD5E1"/>
+    <ellipse cx="120" cy="180" rx="25" ry="12" fill="#CBD5E1"/>
+    <ellipse cx="100" cy="185" rx="30" ry="15" fill="#E2E8F0"/>
+  </g>
+  
+  <!-- Motion lines -->
+  <g stroke="#60A5FA" stroke-width="2" opacity="0.5">
+    <line x1="60" y1="60" x2="60" y2="90"/>
+    <line x1="50" y1="80" x2="50" y2="100"/>
+    <line x1="140" y1="70" x2="140" y2="100"/>
+    <line x1="150" y1="90" x2="150" y2="110"/>
+  </g>
+  
+  <!-- SUCCESS text sparkle -->
+  <polygon points="30,100 32,106 38,106 33,110 35,116 30,112 25,116 27,110 22,106 28,106" fill="#FDE047"/>
+  <polygon points="165,90 167,94 171,94 168,97 169,101 165,99 161,101 162,97 159,94 163,94" fill="#FDE047"/>
+</svg>
