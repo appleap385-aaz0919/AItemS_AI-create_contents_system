@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>검수팀 에이전트 상세 설계</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0b0f;--bg2:#111218;--bg3:#181a24;--bg4:#1f2230;--text:#e8e6e1;--text2:#9d9b95;--text3:#6b6965;--text4:#4a4844;--coral:#f07b5a;--coral-bg:rgba(240,123,90,.06);--coral-bg2:rgba(240,123,90,.12);--purple:#8b7cf6;--purple-bg:rgba(139,124,246,.06);--purple-bg2:rgba(139,124,246,.12);--teal:#3dd9a0;--teal-bg:rgba(61,217,160,.06);--teal-bg2:rgba(61,217,160,.12);--blue:#5ba4f5;--blue-bg:rgba(91,164,245,.06);--blue-bg2:rgba(91,164,245,.12);--amber:#f0b95a;--amber-bg:rgba(240,185,90,.06);--amber-bg2:rgba(240,185,90,.12);--green:#7bc95e;--green-bg:rgba(123,201,94,.06);--green-bg2:rgba(123,201,94,.12);--red:#e85a5a;--red-bg:rgba(232,90,90,.06);--red-bg2:rgba(232,90,90,.12);--line:rgba(255,255,255,.04);--line2:rgba(255,255,255,.08);--radius:10px;--radius-lg:14px}
+html{font-size:14.5px;scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.65}
+code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--bg4);padding:1px 6px;border-radius:3px;color:var(--amber)}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px 100px}
+.header{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.breadcrumb{font-size:.7rem;color:var(--text3);margin-bottom:12px}.breadcrumb .active{color:var(--coral)}
+h1{font-size:1.9rem;font-weight:900;letter-spacing:-.03em}h1 span{color:var(--coral)}
+.header-desc{color:var(--text2);font-size:.88rem;margin-top:8px;font-weight:300;max-width:700px;line-height:1.7}
+.header-stats{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.stat{padding:8px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-size:.72rem}
+.stat strong{color:var(--coral);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.nav-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--line);overflow-x:auto}
+.nav-tab{padding:10px 18px;font-size:.76rem;font-weight:500;color:var(--text3);background:transparent;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit}
+.nav-tab:hover{color:var(--text2)}.nav-tab.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.section{display:none;animation:fadeUp .4s ease}.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:1.15rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.badge{font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+.section-desc{color:var(--text2);font-size:.82rem;font-weight:300;margin-bottom:28px;max-width:680px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.card-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.card-head .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.card-head h3{font-size:.88rem;font-weight:600;flex:1}
+.card-head .tag{font-size:.6rem;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.card-body{padding:20px}
+table{width:100%;border-collapse:collapse;font-size:.76rem}
+thead th{text-align:left;padding:10px 12px;background:var(--bg3);color:var(--text2);font-weight:500;font-size:.68rem;letter-spacing:.04em;white-space:nowrap;border-bottom:1px solid var(--line2)}
+thead th:first-child{border-radius:8px 0 0 0}thead th:last-child{border-radius:0 8px 0 0}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:rgba(255,255,255,.015)}
+.table-wrap{overflow-x:auto}
+.json-block{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;overflow-x:auto;color:var(--text2);position:relative;white-space:pre-wrap;word-break:break-all}
+.json-block .k{color:var(--purple)}.json-block .s{color:var(--teal)}.json-block .n{color:var(--amber)}.json-block .c{color:var(--text4);font-style:italic}.json-block .b{color:var(--coral)}
+.json-label{position:absolute;top:8px;right:12px;font-size:.58rem;color:var(--text4);letter-spacing:.05em;font-family:'JetBrains Mono',monospace}
+.info{padding:12px 16px;border-radius:8px;font-size:.74rem;line-height:1.6;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+.info.coral{background:var(--coral-bg);border:1px solid rgba(240,123,90,.1);color:var(--coral)}
+.info.teal{background:var(--teal-bg);border:1px solid rgba(61,217,160,.1);color:var(--teal)}
+.info.purple{background:var(--purple-bg);border:1px solid rgba(139,124,246,.1);color:var(--purple)}
+.info.blue{background:var(--blue-bg);border:1px solid rgba(91,164,245,.1);color:var(--blue)}
+.info.amber{background:var(--amber-bg);border:1px solid rgba(240,185,90,.1);color:var(--amber)}
+.info.green{background:var(--green-bg);border:1px solid rgba(123,201,94,.1);color:var(--green)}
+.info.red{background:var(--red-bg);border:1px solid rgba(232,90,90,.1);color:var(--red)}
+.info .ic{flex-shrink:0;margin-top:1px}
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:16px;align-items:flex-start}
+.flow-line{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
+.flow-dot{width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--bg);position:relative;z-index:1;flex-shrink:0}
+.flow-connector{width:1px;flex:1;min-height:16px;background:repeating-linear-gradient(180deg,var(--text4) 0,var(--text4) 3px,transparent 3px,transparent 8px)}
+.flow-content{flex:1;padding-bottom:20px}
+.flow-content h4{font-size:.82rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.method{font-size:.56rem;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.flow-content p{font-size:.76rem;color:var(--text2);font-weight:300;line-height:1.6}
+.pc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin-top:8px}
+.pc h5{font-size:.76rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.pc p,.pc li{font-size:.72rem;color:var(--text2);line-height:1.7;font-weight:300}
+.pc ul{margin-top:6px;padding-left:16px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mg-item{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.mg-item .lb{font-size:.63rem;color:var(--text3);letter-spacing:.04em;font-weight:500;margin-bottom:4px}
+.mg-item .vl{font-size:.76rem;font-weight:500}
+/* Domain cards */
+.domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.domain-card{border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden}
+.domain-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 2px 2px 0}
+.domain-card h4{font-size:.8rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.domain-card ul{padding-left:14px}
+.domain-card li{font-size:.7rem;color:var(--text2);line-height:1.7}
+.domain-card .sev{font-size:.58rem;font-weight:600;padding:2px 7px;border-radius:10px;margin-left:auto}
+/* Severity */
+.sev-critical{background:var(--red-bg2);color:var(--red)}
+.sev-major{background:var(--amber-bg2);color:var(--amber)}
+.sev-minor{background:var(--blue-bg2);color:var(--blue)}
+/* Score meter */
+.score-bar{height:6px;background:var(--bg4);border-radius:3px;margin-top:10px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width .5s}
+.score-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.62rem;color:var(--text3)}
+/* Rejection flow */
+.reject-flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.reject-step{padding:8px 14px;border-radius:8px;font-size:.7rem;font-weight:500;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.reject-arrow{color:var(--text4);font-size:.8rem}
+.ex-tabs{display:flex;gap:2px;margin-bottom:0}
+.ex-tab{padding:8px 16px;font-size:.7rem;font-weight:500;color:var(--text3);background:var(--bg3);border:none;border-radius:8px 8px 0 0;cursor:pointer;transition:all .2s;font-family:inherit}
+.ex-tab.active{background:var(--bg);color:var(--text)}
+.ex-panel{display:none;background:var(--bg);border:1px solid var(--line);border-radius:0 8px 8px 8px;padding:20px}
+.ex-panel.active{display:block}
+@media(max-width:640px){.wrap{padding:24px 16px 60px}h1{font-size:1.5rem}.mg,.domain-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="breadcrumb">파이프라인 › <span class="active">TEAM 03 검수팀</span> › 상세 설계</div>
+    <h1><span>검수팀</span> 에이전트 상세 설계</h1>
+    <p class="header-desc">제작팀 산출물(HTML 문항 폴더)을 4개 영역에서 전자동 LLM 검수하는 에이전트. 이슈 발견 시 위치+수정 가이드를 제작팀에 전달하여 부분 수정을 유도합니다.</p>
+    <div class="header-stats">
+      <div class="stat">검증방식 <strong>LLM 전자동</strong></div>
+      <div class="stat">검증영역 <strong>4</strong> 개</div>
+      <div class="stat">검증항목 <strong>38</strong> 개</div>
+      <div class="stat">반려방식 <strong>부분 수정</strong></div>
+      <div class="stat">최대반려 <strong>3</strong> 회</div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSec('overview')">① 검수 아키텍처</button>
+    <button class="nav-tab" onclick="showSec('domains')">② 4대 검증 영역</button>
+    <button class="nav-tab" onclick="showSec('pipeline')">③ 검수 파이프라인</button>
+    <button class="nav-tab" onclick="showSec('output')">④ 검수 리포트</button>
+    <button class="nav-tab" onclick="showSec('reject')">⑤ 반려 프로세스</button>
+    <button class="nav-tab" onclick="showSec('example')">⑥ 실행 예시</button>
+  </div>
+
+  <!-- ===== SEC 1: OVERVIEW ===== -->
+  <div class="section active" id="sec-overview">
+    <div class="section-title">검수 아키텍처 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">FULL AUTO</span></div>
+    <p class="section-desc">검수팀은 제작팀 산출물(폴더)과 기획팀 메타정보(JSON)를 동시에 입력받아, 4개 영역 28개 항목을 자동 검증합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--coral-bg);color:var(--coral)">🏗️</div><h3>입력 → 검수 → 출력 구조</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">ARCHITECTURE</span>
+<span class="c">┌─────────────────────────────────────────────────────┐</span>
+<span class="c">│                    검수팀 입력                        │</span>
+<span class="c">├─────────────────────┬───────────────────────────────┤</span>
+<span class="c">│</span> <span class="s">제작팀 산출물</span>           <span class="c">│</span> <span class="s">기획팀 메타정보</span>              <span class="c">│</span>
+<span class="c">│</span> Q-{id}/              <span class="c">│</span> item_meta_{id}.json        <span class="c">│</span>
+<span class="c">│</span>  ├ index.html        <span class="c">│</span>  - item_type, difficulty   <span class="c">│</span>
+<span class="c">│</span>  ├ css/style.css     <span class="c">│</span>  - achievement_desc        <span class="c">│</span>
+<span class="c">│</span>  ├ js/item.js        <span class="c">│</span>  - content_element         <span class="c">│</span>
+<span class="c">│</span>  └ meta.json         <span class="c">│</span>  - authoring_guide         <span class="c">│</span>
+<span class="c">└─────────────────────┴───────────────────────────────┘</span>
+              │
+              ▼
+<span class="c">┌─────────────────────────────────────────────────────┐</span>
+<span class="c">│</span> <span class="k">검수 엔진 (4개 영역 병렬 실행)</span>                       <span class="c">│</span>
+<span class="c">│</span>                                                     <span class="c">│</span>
+<span class="c">│</span>  <span class="n">[D1]</span> 코드 무결성    → 규칙 기반 자동 검증           <span class="c">│</span>
+<span class="c">│</span>  <span class="n">[D2]</span> 교육적 정확성  → LLM 기반 콘텐츠 검수           <span class="c">│</span>
+<span class="c">│</span>  <span class="n">[D3]</span> 접근성·반응형  → 규칙 기반 자동 검증           <span class="c">│</span>
+<span class="c">│</span>  <span class="n">[D4]</span> 채점 로직      → 시뮬레이션 기반 테스트         <span class="c">│</span>
+<span class="c">└─────────────────────────────────────────────────────┘</span>
+              │
+              ▼
+<span class="c">┌─────────────────────────────────────────────────────┐</span>
+<span class="c">│</span> <span class="s">검수 리포트</span> review_report_{id}.json                  <span class="c">│</span>
+<span class="c">│</span>  - status: <span class="s">"approved"</span> | <span class="s">"rejected"</span>                 <span class="c">│</span>
+<span class="c">│</span>  - total_score: 0~100                               <span class="c">│</span>
+<span class="c">│</span>  - issues[]: 이슈 목록 + 수정 가이드                  <span class="c">│</span>
+<span class="c">└─────────────────────────────────────────────────────┘</span></div>
+        <div class="info coral">
+          <span class="ic">🔑</span>
+          <span><strong>병렬 실행:</strong> D1(코드)과 D3(접근성)은 규칙 기반으로 ms 단위 완료, D2(교육)는 LLM 호출 필요, D4(채점)는 JS 시뮬레이션. 4개 영역을 병렬 실행하여 전체 검수 시간을 최소화합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">⚖️</div><h3>판정 기준</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>판정</th><th>조건</th><th>후속 조치</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--green);font-weight:600">✅ 승인 (APPROVED)</td><td>4개 영역 모두 통과, Critical 이슈 0건, 총점 80점 이상</td><td>데이터팀(TEAM 04)으로 전달</td></tr>
+              <tr><td style="color:var(--amber);font-weight:600">⚠️ 조건부 승인 (CONDITIONAL)</td><td>Critical 0건이지만 Minor 이슈 존재, 총점 60~79점</td><td>이슈 리스트와 함께 데이터팀 전달 (다음 버전에서 수정)</td></tr>
+              <tr><td style="color:var(--red);font-weight:600">❌ 반려 (REJECTED)</td><td>Critical 이슈 1건 이상 또는 총점 60점 미만</td><td>이슈+수정가이드와 함께 제작팀으로 반려</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info amber">
+          <span class="ic">📌</span>
+          <span><strong>최대 반려 3회:</strong> 동일 문항이 3회 반려되면 해당 문항을 <code>"status": "escalated"</code>로 표시하고 수동 검토 큐로 이동합니다. 무한 반려 루프를 방지합니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 2: DOMAINS ===== -->
+  <div class="section" id="sec-domains">
+    <div class="section-title">4대 검증 영역 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">38 CHECKS</span></div>
+    <p class="section-desc">각 영역별 검증 항목, 검증 방법, 심각도(Critical/Major/Minor)를 정의합니다.</p>
+
+    <!-- D1: Code Integrity -->
+    <div class="card">
+      <div class="card-head">
+        <div class="icon" style="background:var(--blue-bg);color:var(--blue)">🔧</div>
+        <h3>D1. 코드 무결성</h3>
+        <span class="tag" style="background:var(--blue-bg);color:var(--blue)">규칙 기반 · 11항목</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>검증 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>D1-01</code></td><td>HTML 파싱 가능</td><td>DOM 파서로 파싱, 에러 노드 0건 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D1-02</code></td><td>필수 파일 존재</td><td>index.html, css/reset.css, css/style.css, js/item.js, meta.json 존재 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D1-03</code></td><td>JS 문법 오류 없음</td><td>JS 파서(acorn/esprima)로 구문 분석</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D1-04</code></td><td>CSS 파싱 가능</td><td>CSS 파서로 구문 분석, 선언 오류 검출</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D1-05</code></td><td>외부 리소스 제한</td><td>허용 CDN(Google Fonts, Spoqa Han Sans Neo) 외 외부 URL 사용 금지. KaTeX CDN 금지(MathType으로 대체)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D1-06</code></td><td>표준 인터페이스 구현</td><td>item.js에 ITEM 객체, getResult, submitAnswer, resetItem 함수 존재 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D1-07</code></td><td>필수 DOM 요소</td><td>feedback, 제출 버튼, 타이머 요소 존재 확인. 수식 문항 시 <code>#editorContainer</code> div 존재 확인</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D1-08</code></td><td>meta.json 정합</td><td>폴더 내 meta.json이 기획팀 원본과 동일한지 해시 비교. 메타편집 재생성 시 수정된 메타와 일치하는지 검증</td><td><span class="sev sev-minor">Minor</span></td></tr>
+              <tr><td><code>D1-09</code></td><td>reset.css 로딩 순서</td><td>index.html에서 reset.css가 style.css보다 먼저 link 태그로 로딩되는지 확인</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D1-10</code></td><td>MathType 구조 (수식 문항)</td><td>수식 입력 필요 시 <code>div[onclick*="showMathType"]</code> 또는 <code>div[onclick*="showHandType"]</code> 존재, input 태그 미사용, toolbar 인자가 교급에 맞는지(elementary/high/디폴트)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D1-11</code></td><td>reset.css 변수 활용</td><td>style.css에서 reset.css의 CSS 변수(--primary-color 등)를 참조하는지, 또는 충돌 없이 공존하는지 확인</td><td><span class="sev sev-minor">Minor</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- D2: Educational Accuracy -->
+    <div class="card">
+      <div class="card-head">
+        <div class="icon" style="background:var(--teal-bg);color:var(--teal)">📚</div>
+        <h3>D2. 교육적 정확성</h3>
+        <span class="tag" style="background:var(--teal-bg);color:var(--teal)">LLM 기반 · 10항목</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>검증 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>D2-01</code></td><td>정답 정확성</td><td>LLM이 문항을 직접 풀어보고 내장 정답과 비교</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D2-02</code></td><td>오답 타당성</td><td>LLM이 각 오답 보기가 전형적 오개념에 기반하는지 평가</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D2-03</code></td><td>성취기준 부합</td><td>LLM이 문항 내용이 meta.json의 성취기준을 측정하는지 판단</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D2-04</code></td><td>난이도 적절성</td><td>LLM이 문항 난이도를 독립 평가 → 메타 난이도와 ±1단계 이내인지</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D2-05</code></td><td>Bloom's 수준 부합</td><td>LLM이 발문의 인지 수준을 독립 판단 → 메타 blooms_level과 일치 여부</td><td><span class="sev sev-minor">Minor</span></td></tr>
+              <tr><td><code>D2-06</code></td><td>학년 수준 적합</td><td>LLM이 어휘·문장 복잡도가 해당 학년에 적합한지 판단</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D2-07</code></td><td>해설 정확성</td><td>LLM이 해설(피드백) 내용의 논리적 정확성 평가</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D2-08</code></td><td>문항 독립성</td><td>문항이 외부 맥락 없이 단독 풀이 가능한지 확인</td><td><span class="sev sev-minor">Minor</span></td></tr>
+              <tr><td><code>D2-09</code></td><td>메타편집 재생성 정합성</td><td>사용자가 메타정보를 수정하여 재생성한 경우, 수정된 메타(난이도, 문항유형, Bloom's 등)와 실제 문항 콘텐츠가 일치하는지 LLM 교차검증. 예: 난이도 "상"인데 문항이 단순 계산인 경우 부적합</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D2-10</code></td><td>수식 정확성 (수식 문항)</td><td>MathType 수식 입력이 필요한 문항에서 제시된 수식과 정답의 수학적 정확성을 LLM이 독립 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info teal">
+          <span class="ic">🤖</span>
+          <span><strong>LLM 교차 검증:</strong> D2 검증에는 제작팀과 다른 모델 또는 다른 온도(temperature)를 사용합니다. 동일 모델·동일 설정이면 같은 오류를 반복할 위험이 있으므로, 검수 LLM은 <code>temperature: 0.1</code>로 고정하여 일관된 판단을 합니다.</span>
+        </div>
+        <div class="info coral">
+          <span class="ic">📌</span>
+          <span><strong>D2-09 메타편집 재생성 검증:</strong> 사용자가 드롭다운으로 메타정보를 수정(예: 문항유형 "객관식"→"서술형", 난이도 "하"→"상")한 뒤 재생성된 문항은, 수정된 메타 JSON과 실제 문항 콘텐츠 사이의 정합성을 LLM이 5개 축(유형 일치, 난이도 적절, Bloom's 부합, 배점 적합, 영역 부합)으로 검증합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- D3: Accessibility -->
+    <div class="card">
+      <div class="card-head">
+        <div class="icon" style="background:var(--purple-bg);color:var(--purple)">♿</div>
+        <h3>D3. 접근성·반응형</h3>
+        <span class="tag" style="background:var(--purple-bg);color:var(--purple)">규칙+UDL v0.1 · 12항목</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>검증 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>D3-01</code></td><td>V1 대체 텍스트</td><td>모든 <code>&lt;img&gt;</code>에 적절한 alt 속성 존재. 장식 이미지는 <code>alt=""</code>. SVG에 <code>role="img" aria-label</code>. 빈 alt에 의미 있는 이미지 없는지 확인 (UDL 5.1.1)</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D3-02</code></td><td>V1 IR기법 대체텍스트</td><td>배경 이미지 버튼, 아이콘에 <code>&lt;span class="blind"&gt;</code> 등 숨김 대체 텍스트 존재 확인 (UDL 5.1.1)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-03</code></td><td>V2 명도 대비 4.5:1</td><td>텍스트/배경 명도 대비가 4.5:1 이상. CSS 변수 기반으로 계산 가능 여부 확인 (UDL 5.4.3)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-04</code></td><td>V4 키보드 초점 시각화</td><td>키보드 Tab 이동 시 초점 표시 존재 (<code>outline:none</code> 미사용), 논리적 순서 이동 (UDL 6.1.2)</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D3-05</code></td><td>V4 키보드 조작 가능</td><td>모든 인터랙션(버튼, 선택, 드래그)이 Tab/Enter/Space로 조작 가능. 드래그 유형에 키보드 대안(화살표키) 제공 (UDL 6.1.1)</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D3-06</code></td><td>레이블 매칭</td><td>모든 input/select에 <code>&lt;label for=""&gt;</code> 또는 <code>title</code> 또는 <code>aria-label</code> 매칭. placeholder만으로 대체 금지 (UDL 7.3.2)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-07</code></td><td>색 무관 정보 인식</td><td>색만으로 정보 전달하지 않음. 정답/오답 표시에 색+아이콘/텍스트 병행. 차트에 패턴/텍스트 보완 (UDL 5.4.1, 5.3.3)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-08</code></td><td>반응형 레이아웃</td><td>CSS에 480px 이하 미디어쿼리 존재, viewport 메타 설정 (UDL 6.1.3)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-09</code></td><td>터치 지원</td><td>드래그 유형에 touchstart/touchmove/touchend 핸들러 존재. 컨트롤 대각선 6mm 이상 (24px×24px) (UDL 6.1.3)</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D3-10</code></td><td>페이지 제목</td><td><code>&lt;title&gt;</code>에 문항명 포함, 콘텐츠 블록에 <code>&lt;h1&gt;~&lt;h3&gt;</code> 시맨틱 제목 사용 (UDL 6.4.2)</td><td><span class="sev sev-minor">Minor</span></td></tr>
+              <tr><td><code>D3-11</code></td><td>기본 언어 표시</td><td><code>&lt;html lang="ko"&gt;</code> 선언 존재 (UDL 7.1.1)</td><td><span class="sev sev-minor">Minor</span></td></tr>
+              <tr><td><code>D3-12</code></td><td>마크업 무결성</td><td>요소 열고닫음 일치, 중첩 금지, id 중복 금지, 속성 중복 금지 (UDL 8.1.1)</td><td><span class="sev sev-major">Major</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- D4: Scoring Logic -->
+    <div class="card">
+      <div class="card-head">
+        <div class="icon" style="background:var(--amber-bg);color:var(--amber)">🧪</div>
+        <h3>D4. 채점 로직 검증</h3>
+        <span class="tag" style="background:var(--amber-bg);color:var(--amber)">시뮬레이션 · 5항목</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>검증 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>D4-01</code></td><td>정답 시나리오</td><td>정답을 입력하고 getResult()가 correct:true, 만점 반환 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D4-02</code></td><td>오답 시나리오</td><td>명백한 오답을 입력하고 correct:false, 0점 반환 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D4-03</code></td><td>미응답 시나리오</td><td>아무 입력 없이 제출 → 에러 없이 처리, 0점 또는 제출 차단</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>D4-04</code></td><td>getResult 구조</td><td>반환 객체에 correct, score, maxScore, response, duration, timestamp 필드 존재</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>D4-05</code></td><td>타이머 동작</td><td>타이머 시작/정지/표시가 정상 동작, 제한시간 초과 시 시각적 경고</td><td><span class="sev sev-minor">Minor</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info amber">
+          <span class="ic">🧪</span>
+          <span><strong>시뮬레이션 방법:</strong> Headless 브라우저(Puppeteer/Playwright)로 문항을 로딩하고, JS를 실행하여 실제 사용자 인터랙션을 시뮬레이션합니다. DOM 조작으로 답을 입력하고, <code>submitAnswer()</code>를 호출한 뒤 <code>getResult()</code> 반환값을 검증합니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 3: PIPELINE ===== -->
+  <div class="section" id="sec-pipeline">
+    <div class="section-title">검수 파이프라인 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">5 STEPS</span></div>
+    <p class="section-desc">4개 영역을 병렬 실행하고, 결과를 합산하여 판정합니다.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--blue)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 1. 입력 수신 및 전처리 <span class="method" style="background:var(--blue-bg2);color:var(--blue)">전처리</span></h4>
+              <p>제작팀 폴더와 기획팀 meta.json을 수신합니다. 파일 존재 여부를 먼저 확인하고(D1-02), 실패 시 즉시 Critical 반려합니다.</p>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--coral)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 2. 4개 영역 병렬 검증 <span class="method" style="background:var(--coral-bg2);color:var(--coral)">병렬</span></h4>
+              <p>D1~D4를 동시에 실행합니다. 각 영역은 독립적으로 검증하고 결과를 반환합니다.</p>
+              <div class="domain-grid">
+                <div class="domain-card" style="background:var(--blue-bg)">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);border-radius:0 2px 2px 0"></div>
+                  <h4 style="color:var(--blue)">D1 코드 무결성 <span class="sev" style="background:var(--bg3);color:var(--text3)">~50ms</span></h4>
+                  <ul><li>HTML/CSS/JS 파싱</li><li>필수 파일·함수 확인</li><li>외부 리소스 스캔</li></ul>
+                </div>
+                <div class="domain-card" style="background:var(--teal-bg)">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal);border-radius:0 2px 2px 0"></div>
+                  <h4 style="color:var(--teal)">D2 교육적 정확성 <span class="sev" style="background:var(--bg3);color:var(--text3)">~3s</span></h4>
+                  <ul><li>LLM 직접 풀이 + 정답 비교</li><li>성취기준·난이도 부합 판단</li><li>어휘 수준 평가</li></ul>
+                </div>
+                <div class="domain-card" style="background:var(--purple-bg)">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--purple);border-radius:0 2px 2px 0"></div>
+                  <h4 style="color:var(--purple)">D3 접근성·반응형 <span class="sev" style="background:var(--bg3);color:var(--text3)">~100ms</span></h4>
+                  <ul><li>ARIA 속성 스캔</li><li>키보드 핸들러 확인</li><li>미디어쿼리·폰트 검증</li></ul>
+                </div>
+                <div class="domain-card" style="background:var(--amber-bg)">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber);border-radius:0 2px 2px 0"></div>
+                  <h4 style="color:var(--amber)">D4 채점 로직 <span class="sev" style="background:var(--bg3);color:var(--text3)">~2s</span></h4>
+                  <ul><li>정답/오답/미응답 시뮬레이션</li><li>getResult() 구조 검증</li><li>타이머 동작 확인</li></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--amber)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 3. 점수 산출 <span class="method" style="background:var(--amber-bg2);color:var(--amber)">산출</span></h4>
+              <p>각 영역의 검증 결과를 가중합산하여 총점(0~100)을 산출합니다.</p>
+              <div class="mg">
+                <div class="mg-item"><div class="lb">D1 코드 무결성</div><div class="vl" style="color:var(--blue)">25점 (Critical 항목 실패 시 0점 고정)</div></div>
+                <div class="mg-item"><div class="lb">D2 교육적 정확성</div><div class="vl" style="color:var(--teal)">30점 (메타편집 정합성 포함)</div></div>
+                <div class="mg-item"><div class="lb">D3 접근성·반응형</div><div class="vl" style="color:var(--purple)">20점 (UDL v0.1 반영으로 비중 상향)</div></div>
+                <div class="mg-item"><div class="lb">D4 채점 로직</div><div class="vl" style="color:var(--amber)">25점 (Critical 항목 실패 시 0점 고정)</div></div>
+              </div>
+              <div class="score-bar" style="margin-top:16px"><div class="score-fill" style="width:85%;background:linear-gradient(90deg,var(--teal),var(--green))"></div></div>
+              <div class="score-label"><span>0 (반려)</span><span style="color:var(--amber)">60 (조건부)</span><span style="color:var(--green)">80 (승인)</span><span>100</span></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--green);background:var(--green)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 4. 판정 <span class="method" style="background:var(--green-bg2);color:var(--green)">판정</span></h4>
+              <p>총점 + Critical 이슈 유무로 최종 판정합니다. Critical 이슈가 1건이라도 있으면 총점 무관하게 반려.</p>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--coral);background:var(--coral)"></div></div>
+            <div class="flow-content">
+              <h4>STEP 5. 리포트 출력 <span class="method" style="background:var(--coral-bg2);color:var(--coral)">출력</span></h4>
+              <p>검수 리포트 JSON을 생성하여 출력합니다. 반려 시 이슈별 위치+수정 가이드를 포함합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 4: OUTPUT ===== -->
+  <div class="section" id="sec-output">
+    <div class="section-title">검수 리포트 <span class="badge" style="background:var(--green-bg2);color:var(--green)">JSON</span></div>
+    <p class="section-desc">검수 결과를 구조화된 JSON으로 출력합니다. 승인/반려 판정 + 영역별 점수 + 이슈 목록 + 수정 가이드를 포함합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--green-bg);color:var(--green)">📄</div><h3>review_report_{id}.json</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">OUTPUT SCHEMA</span>
+{
+  <span class="k">"report_version"</span>: <span class="s">"1.0.0"</span>,
+  <span class="k">"reviewed_at"</span>: <span class="s">"2026-03-24T09:05:00Z"</span>,
+  <span class="k">"question_id"</span>: <span class="s">"Q-342"</span>,
+  <span class="k">"map_id"</span>: <span class="s">"2022-2025-MAT-MAT-03-1-MN1-01-01-01-00"</span>,
+
+  <span class="c">// ── 판정 결과 ──</span>
+  <span class="k">"status"</span>: <span class="s">"rejected"</span>,   <span class="c">// approved | conditional | rejected | escalated</span>
+  <span class="k">"total_score"</span>: <span class="n">52</span>,
+  <span class="k">"rejection_count"</span>: <span class="n">1</span>,    <span class="c">// 현재까지 반려 횟수 (max 3)</span>
+
+  <span class="c">// ── 영역별 점수 ──</span>
+  <span class="k">"domain_scores"</span>: {
+    <span class="k">"D1_code"</span>: {<span class="k">"score"</span>:<span class="n">25</span>, <span class="k">"max"</span>:<span class="n">25</span>, <span class="k">"passed"</span>:<span class="n">8</span>, <span class="k">"failed"</span>:<span class="n">0</span>},
+    <span class="k">"D2_education"</span>: {<span class="k">"score"</span>:<span class="n">15</span>, <span class="k">"max"</span>:<span class="n">35</span>, <span class="k">"passed"</span>:<span class="n">5</span>, <span class="k">"failed"</span>:<span class="n">3</span>},
+    <span class="k">"D3_accessibility"</span>: {<span class="k">"score"</span>:<span class="n">12</span>, <span class="k">"max"</span>:<span class="n">15</span>, <span class="k">"passed"</span>:<span class="n">6</span>, <span class="k">"failed"</span>:<span class="n">1</span>},
+    <span class="k">"D4_scoring"</span>: {<span class="k">"score"</span>:<span class="n">0</span>, <span class="k">"max"</span>:<span class="n">25</span>, <span class="k">"passed"</span>:<span class="n">3</span>, <span class="k">"failed"</span>:<span class="n">2</span>}
+  },
+
+  <span class="c">// ── 이슈 목록 (반려 시 핵심) ──</span>
+  <span class="k">"issues"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"D2-01"</span>,
+      <span class="k">"domain"</span>: <span class="s">"교육적 정확성"</span>,
+      <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+      <span class="k">"title"</span>: <span class="s">"정답 오류"</span>,
+      <span class="k">"description"</span>: <span class="s">"234+152의 정답이 386이어야 하나, item.js의 ANS 값이 '3'(396)으로 설정됨"</span>,
+      <span class="k">"location"</span>: {
+        <span class="k">"file"</span>: <span class="s">"js/item.js"</span>,
+        <span class="k">"line"</span>: <span class="n">1</span>,
+        <span class="k">"code"</span>: <span class="s">"var ANS = \"3\";"</span>
+      },
+      <span class="k">"fix_guide"</span>: <span class="s">"ANS 값을 \"2\"로 변경하세요. 2번 보기(386)가 정답입니다."</span>
+    },
+    {
+      <span class="k">"id"</span>: <span class="s">"D4-01"</span>,
+      <span class="k">"domain"</span>: <span class="s">"채점 로직"</span>,
+      <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+      <span class="k">"title"</span>: <span class="s">"정답 시나리오 실패"</span>,
+      <span class="k">"description"</span>: <span class="s">"정답(2번)을 선택하고 submitAnswer() 호출 시 getResult().correct가 false 반환"</span>,
+      <span class="k">"location"</span>: {
+        <span class="k">"file"</span>: <span class="s">"js/item.js"</span>,
+        <span class="k">"line"</span>: <span class="n">1</span>,
+        <span class="k">"code"</span>: <span class="s">"var ANS = \"3\";"</span>
+      },
+      <span class="k">"fix_guide"</span>: <span class="s">"D2-01 이슈와 동일 원인. ANS 값 수정으로 동시 해결."</span>
+    },
+    {
+      <span class="k">"id"</span>: <span class="s">"D3-01"</span>,
+      <span class="k">"domain"</span>: <span class="s">"접근성"</span>,
+      <span class="k">"severity"</span>: <span class="s">"major"</span>,
+      <span class="k">"title"</span>: <span class="s">"ARIA 라벨 누락"</span>,
+      <span class="k">"description"</span>: <span class="s">"mc-option 요소에 role=\"radio\"와 aria-label이 없음"</span>,
+      <span class="k">"location"</span>: {
+        <span class="k">"file"</span>: <span class="s">"index.html"</span>,
+        <span class="k">"selector"</span>: <span class="s">".mc-option"</span>
+      },
+      <span class="k">"fix_guide"</span>: <span class="s">"각 .mc-option에 role=\"radio\" aria-label=\"보기 {N}번: {text}\" 추가"</span>
+    }
+  ]
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 5: REJECT ===== -->
+  <div class="section" id="sec-reject">
+    <div class="section-title">반려 프로세스 <span class="badge" style="background:var(--red-bg2);color:var(--red)">PARTIAL FIX</span></div>
+    <p class="section-desc">반려 시 제작팀은 전체를 재생성하지 않고, 이슈 위치에 대한 부분 수정만 수행합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--red-bg);color:var(--red)">🔄</div><h3>반려 → 수정 → 재검수 흐름</h3></div>
+      <div class="card-body">
+        <div class="reject-flow">
+          <div class="reject-step" style="background:var(--coral-bg);border-color:rgba(240,123,90,.2);color:var(--coral)">❌ 검수팀 반려</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--amber-bg);border-color:rgba(240,185,90,.2);color:var(--amber)">📋 이슈 리포트 전달</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--teal-bg);border-color:rgba(61,217,160,.2);color:var(--teal)">🔧 제작팀 부분 수정</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--coral-bg);border-color:rgba(240,123,90,.2);color:var(--coral)">🔍 검수팀 재검수</div>
+        </div>
+
+        <div class="pc" style="margin-top:16px">
+          <h5>📋 제작팀에 전달되는 수정 요청 구조</h5>
+          <div class="json-block" style="margin-top:8px"><span class="json-label">FIX REQUEST</span>
+{
+  <span class="k">"request_type"</span>: <span class="s">"partial_fix"</span>,
+  <span class="k">"question_id"</span>: <span class="s">"Q-342"</span>,
+  <span class="k">"rejection_count"</span>: <span class="n">1</span>,
+  <span class="k">"fix_targets"</span>: [
+    {
+      <span class="k">"file"</span>: <span class="s">"js/item.js"</span>,
+      <span class="k">"issue_ids"</span>: [<span class="s">"D2-01"</span>, <span class="s">"D4-01"</span>],
+      <span class="k">"action"</span>: <span class="s">"ANS 값을 \"3\"에서 \"2\"로 변경"</span>,
+      <span class="k">"priority"</span>: <span class="s">"critical"</span>
+    },
+    {
+      <span class="k">"file"</span>: <span class="s">"index.html"</span>,
+      <span class="k">"issue_ids"</span>: [<span class="s">"D3-01"</span>],
+      <span class="k">"action"</span>: <span class="s">".mc-option 요소에 role=\"radio\" aria-label 추가"</span>,
+      <span class="k">"priority"</span>: <span class="s">"major"</span>
+    }
+  ],
+  <span class="k">"preserve"</span>: [<span class="s">"콘텐츠(지문, 발문, 보기 텍스트)는 변경하지 마세요"</span>],
+  <span class="k">"recheck_scope"</span>: <span class="s">"modified_files_only"</span>  <span class="c">// 수정된 파일만 재검수</span>
+}</div>
+        </div>
+
+        <div class="info red" style="margin-top:16px">
+          <span class="ic">⚠️</span>
+          <span><strong>재검수 범위:</strong> 부분 수정 후 재검수 시, 수정된 파일과 관련된 검증 항목만 재실행합니다 (<code>recheck_scope: "modified_files_only"</code>). 단, Critical 이슈가 있었던 경우 D2(교육적 정확성)와 D4(채점 로직)는 전체 재검수합니다.</span>
+        </div>
+
+        <div class="pc" style="margin-top:16px">
+          <h5>🔢 반려 횟수별 동작</h5>
+          <ul>
+            <li><strong>1회차 반려:</strong> 이슈 위치 + 수정 가이드 전달. 제작팀 LLM이 부분 수정 수행.</li>
+            <li><strong>2회차 반려:</strong> 이전 수정이 불완전한 경우. 더 상세한 수정 코드 스니펫 포함.</li>
+            <li><strong>3회차 반려:</strong> 해당 문항을 <code>"escalated"</code> 처리. 제작팀에 전체 재생성 요청 또는 수동 검토 큐 이동.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 6: EXAMPLE ===== -->
+  <div class="section" id="sec-example">
+    <div class="section-title">실행 예시 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">DEMO</span></div>
+    <p class="section-desc">실제 검수 시나리오 3가지를 보여줍니다.</p>
+
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="showEx('ex1')">✅ 승인 사례</button>
+      <button class="ex-tab" onclick="showEx('ex2')">❌ 반려 사례 (정답 오류)</button>
+      <button class="ex-tab" onclick="showEx('ex3')">⚠️ 조건부 승인</button>
+    </div>
+
+    <div class="ex-panel active" id="ex1">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--green)">✅ 승인 — 객관식 문항 (받아올림 없는 덧셈)</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">D1 코드 무결성</div><div class="vl" style="color:var(--green)">25/25 — 전항목 통과 (reset.css, MathType 포함)</div></div>
+        <div class="mg-item"><div class="lb">D2 교육적 정확성</div><div class="vl" style="color:var(--green)">28/30 — D2-05 Minor (Bloom's 1단계 차이)</div></div>
+        <div class="mg-item"><div class="lb">D3 접근성·반응형</div><div class="vl" style="color:var(--green)">20/20 — UDL v0.1 전항목 통과</div></div>
+        <div class="mg-item"><div class="lb">D4 채점 로직</div><div class="vl" style="color:var(--green)">25/25 — 정답·오답·미응답 모두 통과</div></div>
+      </div>
+      <div class="score-bar" style="margin-top:16px"><div class="score-fill" style="width:98%;background:var(--green)"></div></div>
+      <div class="score-label"><span></span><span style="color:var(--green);font-weight:600">총점: 98/100 → APPROVED</span><span></span></div>
+      <div class="info green" style="margin-top:12px">
+        <span class="ic">✅</span>
+        <span>Critical/Major 이슈 0건. Minor 1건(Bloom's 레벨 판단 차이)은 허용 범위. UDL v0.1 접근성 전항목 통과, reset.css 포함 확인. 데이터팀으로 전달됩니다.</span>
+      </div>
+    </div>
+
+    <div class="ex-panel" id="ex2">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--red)">❌ 반려 — 정답 데이터 오류</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">D1 코드 무결성</div><div class="vl" style="color:var(--green)">25/25 — 코드 자체는 정상</div></div>
+        <div class="mg-item"><div class="lb">D2 교육적 정확성</div><div class="vl" style="color:var(--red)">12/30 — D2-01 Critical (정답 오류)</div></div>
+        <div class="mg-item"><div class="lb">D3 접근성·반응형</div><div class="vl" style="color:var(--amber)">15/20 — D3-01 Critical (대체 텍스트 누락)</div></div>
+        <div class="mg-item"><div class="lb">D4 채점 로직</div><div class="vl" style="color:var(--red)">0/25 — D4-01 Critical (정답 시나리오 실패)</div></div>
+      </div>
+      <div class="score-bar" style="margin-top:16px"><div class="score-fill" style="width:52%;background:var(--red)"></div></div>
+      <div class="score-label"><span></span><span style="color:var(--red);font-weight:600">총점: 52/100 + Critical 3건 → REJECTED</span><span></span></div>
+      <div class="pc" style="margin-top:16px">
+        <h5 style="color:var(--red)">📋 제작팀 전달 수정 요청</h5>
+        <ul>
+          <li><strong>[Critical] js/item.js:</strong> ANS 값을 "3"→"2"로 변경. 234+152=386이므로 2번 보기가 정답.</li>
+          <li><strong>[Major] index.html:</strong> 각 .mc-option에 <code>role="radio" aria-label="보기 N번"</code> 추가.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ex-panel" id="ex3">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--amber)">⚠️ 조건부 승인 — 접근성 미비</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">D1 코드 무결성</div><div class="vl" style="color:var(--green)">25/25</div></div>
+        <div class="mg-item"><div class="lb">D2 교육적 정확성</div><div class="vl" style="color:var(--green)">30/30</div></div>
+        <div class="mg-item"><div class="lb">D3 접근성·반응형</div><div class="vl" style="color:var(--amber)">8/20 — Major 4건 (대체텍스트, 키보드, 터치, 레이블)</div></div>
+        <div class="mg-item"><div class="lb">D4 채점 로직</div><div class="vl" style="color:var(--green)">25/25</div></div>
+      </div>
+      <div class="score-bar" style="margin-top:16px"><div class="score-fill" style="width:88%;background:var(--amber)"></div></div>
+      <div class="score-label"><span></span><span style="color:var(--amber);font-weight:600">총점: 88/100, Critical 0건 → CONDITIONAL</span><span></span></div>
+      <div class="info amber" style="margin-top:12px">
+        <span class="ic">⚠️</span>
+        <span>교육적 내용과 채점은 완벽하지만 UDL v0.1 접근성 항목이 미비합니다. 데이터팀으로 전달은 되지만, 접근성 이슈 4건(대체 텍스트 IR기법 누락, 키보드 초점 미표시, 터치 영역 부족, label 미매칭)이 함께 기록되어 차기 업데이트에서 수정해야 합니다.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSec(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function showEx(id){
+  document.querySelectorAll('.ex-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.ex-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
