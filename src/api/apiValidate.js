@@ -2,7 +2,45 @@ import { callClaude } from './callClaude.js';
 import { localValidate } from '../validators/localValidate.js';
 import { addLog } from './apiLog.js';
 
+// stem-visual 정합성 사전 검증 (AI 검수 전에 코드로 먼저 체크)
+function preValidateStemVisual(question) {
+  const issues = [];
+  if (!question.visual || !question.visual.params) return issues;
+  const p = question.visual.params;
+  const stem = question.stem || "";
+
+  if (question.visual.type === "vertical_calc") {
+    // 세로셈 계산 결과 검증
+    const expected = p.op === "+" ? p.a + p.b : p.a - p.b;
+    if (p.result != null && Number(p.result) !== expected) {
+      issues.push(`세로셈 result 불일치: ${p.a} ${p.op} ${p.b} = ${expected} (visual.result: ${p.result})`);
+    }
+    // stem 연산자 vs visual 연산자 비교 (수치가 같아도 연산자가 다르면 불일치)
+    const opMatch = stem.match(/\d+\s*([+\-＋−×÷])\s*\d+/);
+    if (opMatch) {
+      const stemOp = (opMatch[1] === '+' || opMatch[1] === '＋') ? '+' : (opMatch[1] === '-' || opMatch[1] === '−') ? '-' : opMatch[1];
+      if (stemOp !== p.op) {
+        issues.push(`stem 연산자(${stemOp})와 visual 연산자(${p.op}) 불일치 — 반드시 수정 필요`);
+      }
+    }
+    // stem 수치 vs visual 수치 비교
+    const stemNums = stem.match(/\d{2,}/g) || [];
+    if (stemNums.length >= 2) {
+      const sA = Number(stemNums[0]), sB = Number(stemNums[1]);
+      if (sA !== p.a || sB !== p.b) {
+        issues.push(`stem 수치(${sA},${sB})와 visual 수치(${p.a},${p.b}) 불일치`);
+      }
+    }
+  }
+  return issues;
+}
+
 export async function apiValidate(meta, question) {
+  // 사전 검증: stem-visual 정합성
+  const preIssues = preValidateStemVisual(question);
+  if (preIssues.length > 0) {
+    addLog("[검수팀] stem-visual 사전 검증 실패: " + preIssues.join("; "));
+  }
   const sys=`너는 초등 수학 문항 검수 전문가이다. 문항을 직접 풀어서 정답을 반드시 검증하고, 4개 영역에서 점수를 매겨라. 순수 JSON만 출력하라.`;
   const visualDesc = question.visual ? `시각자료: type=${question.visual.type}, params=${JSON.stringify(question.visual.params)}` : "시각자료: 없음";
   const u=`다음 문항을 검수하라.
@@ -53,6 +91,18 @@ JSON 형식:
     if(typeof parsed.score !== "number") {
       const d1=parsed.D1_code?.score||0, d2=parsed.D2_education?.score||0, d3=parsed.D3_accessibility?.score||0, d4=parsed.D4_scoring?.score||0;
       parsed.score = d1+d2+d3+d4;
+    }
+
+    // 사전 검증 이슈를 D3에 반영
+    if (preIssues.length > 0) {
+      if (!parsed.D3_accessibility) parsed.D3_accessibility = { score: 20, issues: [] };
+      parsed.D3_accessibility.issues = [...(parsed.D3_accessibility.issues || []), ...preIssues];
+      parsed.D3_accessibility.score = Math.max(0, (parsed.D3_accessibility.score || 20) - preIssues.length * 8);
+      // 총점 재계산
+      const d1 = parsed.D1_code?.score || 0, d2 = parsed.D2_education?.score || 0;
+      const d3 = parsed.D3_accessibility.score, d4 = parsed.D4_scoring?.score || 0;
+      parsed.score = d1 + d2 + d3 + d4;
+      addLog("[검수팀] stem-visual 불일치 감점 → D3=" + d3 + ", 총점=" + parsed.score);
     }
 
     if(parsed.answer_verified === false) {

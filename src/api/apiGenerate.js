@@ -28,11 +28,94 @@ function buildExampleJson(typeCode) {
   }
 }
 
+// 학년 코드에서 초/중/고 판별
+function resolveGradeLevel(meta) {
+  const gd = (meta.gd || "").toLowerCase();
+  const ar = (meta.ar || "").toLowerCase();
+  if (/고등|고1|고2|고3|high/.test(gd + ar)) return "high";
+  if (/중등|중1|중2|중3|middle/.test(gd + ar)) return "middle";
+  return "elementary"; // 기본 초등
+}
+
+// 학년별 시각자료 가이드 생성
+function buildVisualGuide(level, dp) {
+  const hint = ((dp?.d1?.name || "") + " " + (dp?.d2?.name || "") + " " + (dp?.d3?.name || "")).toLowerCase();
+
+  if (level === "elementary") {
+    return `[시각자료 visual 필드] 아래 해당하면 반드시 visual을 포함하라. 해당 없으면 "visual":null.
+
+1. 덧셈/뺄셈 세로셈: {"type":"vertical_calc","params":{"a":첫째수,"b":둘째수,"op":"+또는-","result":계산결과,"blanks":[]}}
+2. 기본 도형: {"type":"shape","params":{"shape":"직사각형|정사각형|직각삼각형|마름모|평행사변형|정삼각형","showRightAngles":true}}
+3. 나눗셈 묶음: {"type":"grouping","params":{"total":전체수,"groupSize":묶음크기}}
+4. 수직선: {"type":"number_line","params":{"min":시작,"max":끝,"step":눈금간격,"marks":[값1,값2],"highlights":[]}}
+5. 분수 막대: {"type":"fraction_bar","params":{"numerator":분자,"denominator":분모,"color":"#3498DB"}}
+   - 분수 단원, 분수 비교, 분수 덧셈/뺄셈 문항에 사용
+6. 시계: {"type":"clock_face","params":{"hour":시,"minute":분}}
+   - 시각 읽기, 시간 계산 문항에 사용
+7. 상황 일러스트: {"type":"context_illust","params":{"illustPath":null,"contextText":"상황 텍스트","count":개수}}
+
+[보조 시각자료 visual2]
+- 십진 블록: {"type":"base10_blocks","params":{"a":첫째수,"b":둘째수,"op":"+또는-","result":계산결과}}
+  (받아올림/내림 덧뺄셈에서 vertical_calc와 함께 사용)
+
+⚠️ 초등 문항 시각자료 필수 규칙:
+- 덧셈/뺄셈 → 반드시 vertical_calc 포함 + 가능하면 base10_blocks도 포함
+- 분수 문항 → fraction_bar 포함
+- 시각 문항 → clock_face 포함
+- 도형 문항 → shape 포함
+- 어림/수직선 → number_line 포함`;
+  }
+
+  if (level === "middle") {
+    return `[시각자료 visual 필드] 단원/내용에 맞는 시각자료를 반드시 포함하라. 해당 없으면 "visual":null.
+
+1. 라벨 삼각형: {"type":"labeled_triangle","params":{"vertices":["A","B","C"],"sides":[{"label":"a","value":"5 cm"},{"label":"b","value":"7 cm"},{"label":"c","value":""}],"angles":[{"vertex":"B","mark":60}],"type":"general|right|isosceles|equilateral"}}
+   - 삼각형의 합동·닮음·피타고라스·삼각비 문항에 사용
+2. 좌표평면: {"type":"coordinate_plane","params":{"xMin":-6,"xMax":6,"yMin":-6,"yMax":6,"points":[{"x":2,"y":3,"label":"A","color":"#E74C3C"}],"lines":[{"x1":0,"y1":0,"x2":3,"y2":3,"color":"#2980B9"}],"showGrid":true}}
+   - 좌표, 일차함수, 연립방정식 문항에 사용
+3. 데이터 표: {"type":"data_table","params":{"headers":["x","1","2","3","4"],"rows":[["y","3","5","7","9"]],"title":"x와 y의 관계"}}
+   - 비례·규칙성·함수값 표 문항에 사용
+4. 막대그래프: {"type":"bar_chart","params":{"labels":["1반","2반","3반"],"values":[25,30,20],"title":"반별 학생 수","yLabel":"명","color":"#3498DB"}}
+   - 통계·자료정리 문항에 사용
+5. 원그래프: {"type":"pie_chart","params":{"data":[{"label":"독서","value":40},{"label":"운동","value":30},{"label":"게임","value":30}],"title":"취미 분포"}}
+   - 비율·백분율·원그래프 문항에 사용
+6. 수직선 (정수/유리수): {"type":"number_line","params":{"min":-5,"max":5,"step":1,"marks":[-2,3],"highlights":[]}}
+7. 원 다이어그램: {"type":"circle_diagram","params":{"showRadius":true,"showDiameter":true,"labelR":"r","labelD":"2r","centerLabel":"O"}}
+
+⚠️ 중등 문항 시각자료 필수 규칙:
+- 도형(삼각형) 문항 → labeled_triangle 반드시 포함
+- 좌표/함수 문항 → coordinate_plane 반드시 포함
+- 통계 문항 → bar_chart 또는 pie_chart 포함
+- 비례식/규칙 문항 → data_table 포함
+- 원 관련 문항 → circle_diagram 포함`;
+  }
+
+  // high school
+  return `[시각자료 visual 필드] 단원/내용에 맞는 시각자료를 반드시 포함하라. 해당 없으면 "visual":null.
+
+1. 좌표평면 (함수 그래프): {"type":"coordinate_plane","params":{"xMin":-6,"xMax":6,"yMin":-8,"yMax":8,"points":[{"x":2,"y":4,"label":"P(2,4)","color":"#E74C3C"}],"lines":[{"x1":-3,"y1":-3,"x2":3,"y2":3,"color":"#2980B9"}],"showGrid":true}}
+   - 이차함수, 지수/로그, 삼각함수, 직선의 방정식 문항에 사용
+2. 벤 다이어그램 (집합): {"type":"venn_diagram","params":{"setA":{"label":"A","elements":["1","2","3"]},"setB":{"label":"B","elements":["3","4","5"]},"intersection":["3"],"title":"A∩B"}}
+   - 집합·명제 단원에 사용
+3. 데이터 표: {"type":"data_table","params":{"headers":["x","-2","-1","0","1","2"],"rows":[["f(x)","4","1","0","1","4"]],"title":"함수값 표"}}
+4. 막대/히스토그램: {"type":"bar_chart","params":{"labels":["60","70","80","90"],"values":[5,8,12,3],"title":"성적 분포","yLabel":"명수","color":"#8E44AD"}}
+5. 라벨 삼각형 (삼각비·코사인법칙): {"type":"labeled_triangle","params":{"vertices":["A","B","C"],"sides":[{"label":"a","value":""},{"label":"b","value":"8"},{"label":"c","value":"6"}],"angles":[{"vertex":"A","mark":60}],"type":"general"}}
+6. 원 다이어그램: {"type":"circle_diagram","params":{"showRadius":true,"showDiameter":false,"labelR":"r","centerLabel":"O","title":"원의 방정식"}}
+
+⚠️ 고등 문항 시각자료 필수 규칙:
+- 함수·방정식 문항 → coordinate_plane 반드시 포함 (점·직선 표시)
+- 집합·명제 문항 → venn_diagram 포함
+- 통계 문항 → bar_chart 또는 data_table 포함
+- 삼각함수·코사인법칙 → labeled_triangle 포함`;
+}
+
 export async function apiGenerate(meta) {
   const typeCode = resolveTypeCode(meta.tp);
   const exampleJson = buildExampleJson(typeCode);
+  const gradeLevel = resolveGradeLevel(meta);
 
-  const sys = `너는 초등학교 수학 문항 출제 전문가이다. 반드시 순수 JSON만 출력하라. 마크다운 백틱이나 설명 텍스트 없이 JSON 오브젝트 하나만 출력하라.`;
+  const gradeLabel = gradeLevel === "high" ? "고등학교" : gradeLevel === "middle" ? "중학교" : "초등학교";
+  const sys = `너는 ${gradeLabel} 수학 문항 출제 전문가이다. 반드시 순수 JSON만 출력하라. 마크다운 백틱이나 설명 텍스트 없이 JSON 오브젝트 하나만 출력하라.`;
 
   const dp = meta.depth;
   const depthContext = dp ? `
@@ -46,11 +129,13 @@ export async function apiGenerate(meta) {
 
 ⚠️ 문항 생성 시 반드시 3depth의 구체적 학습 활동을 중심으로 하되, 2depth의 수학적 개념 범위 안에서 출제하고, 1depth의 단원 맥락을 벗어나지 않도록 하라.` : '';
 
+  const visualGuide = buildVisualGuide(gradeLevel, dp);
+
   const u = `메타정보 기반 문항 생성:
 - 유형:${meta.tp}, 영역:${meta.ar}>${meta.l1}, 성취:${meta.ac} ${meta.ad}
 - 내용요소:${meta.el}, Bloom's:${meta.bl}, 난이도:${meta.df}, 배점:${meta.sc}점
 - 출제가이드:${meta.gd}
-- 학년: 초등3학년 1학기
+- 학교급/학년: ${gradeLabel} ${meta.gd || ""}
 ${depthContext}
 
 ⚠️⚠️⚠️ [문항유형 절대 준수] ⚠️⚠️⚠️
@@ -67,19 +152,13 @@ ${exampleJson}
 ⚠️ 수식 표현 필수 규칙 (절대 준수):
 - LaTeX 문법($$, \\begin, \\frac, \\times 등) 절대 사용 금지
 - 수식은 반드시 순수 텍스트 또는 HTML로 표현하라
-- 세로셈: "367 + 285" 처럼 가로로 표현하거나, 줄바꿈으로 표현
 - 분수: "3/4" 또는 "4분의 3"으로 표현
-- 곱셈: "×" 유니코드 문자 사용 (\\times 금지)
+- 곱셈: "×" 유니코드 문자 사용
 - 나눗셈: "÷" 유니코드 문자 사용
 - 빈칸: "( )" 또는 "□"로 표현
-${typeCode === "mc" ? `오답은 학생의 전형적 오개념(${dp?.d3?.context?.includes('오류') ? dp.d3.context : '자릿값 혼동, 받아올림 누락, 연산 순서 착각'})에 기반하여 생성하라.` : ''}
+${typeCode === "mc" ? `오답은 학생의 전형적 오개념에 기반하여 생성하라.` : ''}
 
-[시각자료 visual 필드] 아래 해당하면 visual을 포함하라. 해당 없으면 "visual":null.
-1. 덧셈/뺄셈: {"type":"vertical_calc","params":{"a":첫째수,"b":둘째수,"op":"+또는-","result":계산결과,"blanks":[]}}
-   - blanks: 빈칸채우기이면 가릴 자릿수 배열 (0=일의자리). 예: [0]은 일의 자리 숨김
-2. 도형: {"type":"shape","params":{"shape":"도형이름","showRightAngles":true/false}}
-3. 나눗셈: {"type":"grouping","params":{"total":전체수,"groupSize":묶음크기}}
-4. 어림셈: {"type":"number_line","params":{"min":시작,"max":끝,"step":100,"marks":[원래수1,원래수2],"highlights":[어림값1,어림값2]}}`;
+${visualGuide}`;
 
   const raw = await callClaude(sys, u);
   if (!raw) {
@@ -100,9 +179,15 @@ ${typeCode === "mc" ? `오답은 학생의 전형적 오개념(${dp?.d3?.context
 
     // visual 유효성 검증
     if (parsed.visual) {
-      const validTypes = ["vertical_calc","shape","grouping","number_line"];
+      const validTypes = [
+        // 기존 초등
+        "vertical_calc", "shape", "grouping", "number_line", "base10_blocks", "context_illust",
+        // 신규 초·중·고
+        "labeled_triangle", "coordinate_plane", "fraction_bar", "data_table",
+        "bar_chart", "pie_chart", "clock_face", "venn_diagram", "circle_diagram",
+      ];
       if (!validTypes.includes(parsed.visual.type) || typeof parsed.visual.params !== "object") {
-        addLog("[제작팀] visual 형식 오류 → null 처리");
+        addLog("[제작팀] visual 형식 오류 → null 처리: " + parsed.visual.type);
         parsed.visual = null;
       }
     }

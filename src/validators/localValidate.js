@@ -49,6 +49,13 @@ export function localValidate(meta, question) {
   if(!question.explanation || question.explanation.length < 10) { d2Issues.push("해설이 너무 짧거나 없음"); d2-=5; }
 
   // === D3: 접근성 + 시각자료 검증 (20점) ===
+  // mc 객관식: visual이 정답을 노출하는지 확인
+  if(question.type==="mc" && question.visual && question.visual.type==="vertical_calc" && !question.visual.params?.hideResult) {
+    d3Issues.push("객관식 세로셈 시각자료 정답 노출 위험 (hideResult 미적용)"); d3-=10;
+  }
+  if(question.type==="mc" && question.visual2 && question.visual2.type==="base10_blocks") {
+    d3Issues.push("객관식 십진블록 visual2가 정답 노출"); d3-=10;
+  }
   if(question.stem && question.stem.length > 500) { d3Issues.push("발문이 너무 김: "+question.stem.length+"자"); d3-=5; }
   if(question.stem && /\\\\begin|\\\\frac|\\\\times|\$\$/.test(question.stem)) { d3Issues.push("LaTeX 잔여 코드 발견"); d3-=10; }
   if(question.stem && /[<>]/.test(question.stem.replace(/<br>/g,""))) { d3Issues.push("HTML 태그 잔여"); d3-=5; }
@@ -76,6 +83,14 @@ export function localValidate(meta, question) {
       } else {
         d3Issues.push("시각자료 세로셈 파라미터 누락 (a/b/op)"); d3-=3;
       }
+      // 빈칸 위치 일관성: blanks/blanksA/blanksB 중 하나는 비어있지 않아야 함
+      if(question.type === "fill") {
+        const hasBlanks = (p.blanks && p.blanks.length > 0) || (p.blanksA && p.blanksA.length > 0) || (p.blanksB && p.blanksB.length > 0);
+        if(!hasBlanks) {
+          d3Issues.push("빈칸채우기인데 세로셈 빈칸 위치(blanks/blanksA/blanksB) 미설정");
+          d3-=5;
+        }
+      }
     } else if(v.type === "shape") {
       // 도형: shape명이 stem에 언급되는지 확인
       if(p.shape && question.stem && !question.stem.includes(p.shape)) {
@@ -97,6 +112,21 @@ export function localValidate(meta, question) {
       // 수직선: marks, highlights 범위 확인
       if(p.marks && p.marks.some(m => m < p.min || m > p.max)) {
         d3Issues.push("시각자료 수직선 마커가 범위 밖"); d3-=3;
+      }
+    } else if(v.type === "base10_blocks") {
+      // 십진 블록: a, b, result 유효성
+      if(!p.a || !p.b) { d3Issues.push("십진블록 파라미터(a/b) 누락"); d3-=3; }
+      else {
+        const expected = (p.op === "+") ? p.a + p.b : p.a - p.b;
+        if(p.result != null && Number(p.result) !== expected) {
+          d3Issues.push("십진블록 결과 불일치: "+p.a+" "+p.op+" "+p.b+" = "+expected+" (result: "+p.result+")");
+          d3-=5;
+        }
+      }
+    } else if(v.type === "context_illust") {
+      // 상황 일러스트: contextText 유효성
+      if(!p.contextText || p.contextText.length < 3) {
+        d3Issues.push("상황 일러스트 텍스트 누락 또는 너무 짧음"); d3-=3;
       }
     }
   } else {

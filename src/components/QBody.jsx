@@ -27,6 +27,9 @@ export function QBody({question, submitted, result, onSubmit, onViewed}) {
       {question.visual&&renderVisualSvg(question.visual)&&(
         <div className="qv" dangerouslySetInnerHTML={{__html:renderVisualSvg(question.visual)}}/>
       )}
+      {question.visual2&&renderVisualSvg(question.visual2)&&(
+        <div className="qv qv-sub" dangerouslySetInnerHTML={{__html:renderVisualSvg(question.visual2)}}/>
+      )}
       {question.type==="mc"&&question.options&&(
         <div className="mco">{question.options.map((o,i)=>(
           <div key={i} className={`mci ${sel2===String(i+1)?"s":""} ${submitted&&o.isCorrect?"c":""} ${submitted&&sel2===String(i+1)&&!o.isCorrect?"w":""}`}
