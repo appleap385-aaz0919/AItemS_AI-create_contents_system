@@ -1,0 +1,24 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base -->
+  <path d="M60,160 L140,160 Q150,160 150,150 L60,150 Q50,150 60,160" fill="#424242" />
+  
+  <!-- Arm -->
+  <path d="M70,150 C50,110 50,90 80,60" fill="none" stroke="#616161" stroke-width="15" stroke-linecap="round" />
+  
+  <!-- Body Tube -->
+  <rect x="75" y="40" width="20" height="50" transform="rotate(-15 85 65)" fill="#BDBDBD" />
+  
+  <!-- Eyepiece -->
+  <rect x="73" y="25" width="24" height="15" transform="rotate(-15 85 32)" fill="#424242" />
+  
+  <!-- Stage -->
+  <rect x="70" y="110" width="60" height="5" fill="#212121" />
+  <rect x="85" y="115" width="10" height="35" fill="#616161" /> <!-- Pillar to base -->
+  
+  <!-- Objectives -->
+  <path d="M85,90 L80,105 L90,105 Z" fill="#9E9E9E" />
+  <path d="M92,92 L96,102 L88,102 Z" fill="#9E9E9E" />
+  
+  <!-- Light Source -->
+  <circle cx="100" cy="140" r="5" fill="#FFEB3B" opacity="0.8" />
+</svg>

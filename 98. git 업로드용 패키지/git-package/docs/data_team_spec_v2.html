@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터팀 에이전트 상세 설계 v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0b0f;--bg2:#111218;--bg3:#181a24;--bg4:#1f2230;--text:#e8e6e1;--text2:#9d9b95;--text3:#6b6965;--text4:#4a4844;--blue:#5ba4f5;--blue-bg:rgba(91,164,245,.06);--blue-bg2:rgba(91,164,245,.12);--purple:#8b7cf6;--purple-bg:rgba(139,124,246,.06);--purple-bg2:rgba(139,124,246,.12);--teal:#3dd9a0;--teal-bg:rgba(61,217,160,.06);--teal-bg2:rgba(61,217,160,.12);--coral:#f07b5a;--coral-bg:rgba(240,123,90,.06);--coral-bg2:rgba(240,123,90,.12);--amber:#f0b95a;--amber-bg:rgba(240,185,90,.06);--amber-bg2:rgba(240,185,90,.12);--green:#7bc95e;--green-bg:rgba(123,201,94,.06);--green-bg2:rgba(123,201,94,.12);--red:#e85a5a;--red-bg:rgba(232,90,90,.06);--line:rgba(255,255,255,.04);--line2:rgba(255,255,255,.08);--radius:10px;--radius-lg:14px}
+html{font-size:14.5px;scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.65}
+code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--bg4);padding:1px 6px;border-radius:3px;color:var(--amber)}
+.wrap{max-width:1020px;margin:0 auto;padding:40px 24px 100px}
+.header{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.breadcrumb{font-size:.7rem;color:var(--text3);margin-bottom:12px}.breadcrumb .active{color:var(--blue)}
+h1{font-size:1.9rem;font-weight:900;letter-spacing:-.03em}h1 span{color:var(--blue)}
+h1 small{font-size:.5em;color:var(--text3);font-weight:400;margin-left:8px}
+.header-desc{color:var(--text2);font-size:.88rem;margin-top:8px;font-weight:300;max-width:720px;line-height:1.7}
+.header-stats{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.stat{padding:8px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-size:.72rem}
+.stat strong{color:var(--blue);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.nav-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--line);overflow-x:auto}
+.nav-tab{padding:10px 16px;font-size:.74rem;font-weight:500;color:var(--text3);background:transparent;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit}
+.nav-tab:hover{color:var(--text2)}.nav-tab.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.section{display:none;animation:fadeUp .4s ease}.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:1.1rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.badge{font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+.section-desc{color:var(--text2);font-size:.82rem;font-weight:300;margin-bottom:28px;max-width:680px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.card-head .icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.card-head h3{font-size:.86rem;font-weight:600;flex:1}
+.card-head .tag{font-size:.58rem;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.card-body{padding:20px}
+table{width:100%;border-collapse:collapse;font-size:.74rem}
+thead th{text-align:left;padding:9px 10px;background:var(--bg3);color:var(--text2);font-weight:500;font-size:.66rem;letter-spacing:.04em;white-space:nowrap;border-bottom:1px solid var(--line2)}
+thead th:first-child{border-radius:8px 0 0 0}thead th:last-child{border-radius:0 8px 0 0}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:rgba(255,255,255,.015)}
+.table-wrap{overflow-x:auto}
+.json-block{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:.66rem;line-height:1.75;overflow-x:auto;color:var(--text2);position:relative;white-space:pre-wrap;word-break:break-all}
+.json-block .k{color:var(--purple)}.json-block .s{color:var(--teal)}.json-block .n{color:var(--amber)}.json-block .c{color:var(--text4);font-style:italic}
+.json-label{position:absolute;top:8px;right:12px;font-size:.56rem;color:var(--text4);letter-spacing:.05em;font-family:'JetBrains Mono',monospace}
+.info{padding:12px 16px;border-radius:8px;font-size:.72rem;line-height:1.6;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+.info.blue{background:var(--blue-bg);border:1px solid rgba(91,164,245,.1);color:var(--blue)}
+.info.teal{background:var(--teal-bg);border:1px solid rgba(61,217,160,.1);color:var(--teal)}
+.info.purple{background:var(--purple-bg);border:1px solid rgba(139,124,246,.1);color:var(--purple)}
+.info.amber{background:var(--amber-bg);border:1px solid rgba(240,185,90,.1);color:var(--amber)}
+.info.coral{background:var(--coral-bg);border:1px solid rgba(240,123,90,.1);color:var(--coral)}
+.info.green{background:var(--green-bg);border:1px solid rgba(123,201,94,.1);color:var(--green)}
+.info .ic{flex-shrink:0;margin-top:1px}
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:16px;align-items:flex-start}
+.flow-line{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
+.flow-dot{width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--bg);position:relative;z-index:1;flex-shrink:0}
+.flow-connector{width:1px;flex:1;min-height:16px;background:repeating-linear-gradient(180deg,var(--text4) 0,var(--text4) 3px,transparent 3px,transparent 8px)}
+.flow-content{flex:1;padding-bottom:20px}
+.flow-content h4{font-size:.8rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.method{font-size:.54rem;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.flow-content p{font-size:.74rem;color:var(--text2);font-weight:300;line-height:1.6}
+.pc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin-top:8px}
+.pc h5{font-size:.74rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.pc p,.pc li{font-size:.7rem;color:var(--text2);line-height:1.7;font-weight:300}
+.pc ul{margin-top:6px;padding-left:16px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mg-item{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.mg-item .lb{font-size:.62rem;color:var(--text3);letter-spacing:.04em;font-weight:500;margin-bottom:3px}
+.mg-item .vl{font-size:.74rem;font-weight:500}
+.verb-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:8px}
+.verb-card h4{font-size:.78rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.verb-card .vid{font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:2px 8px;border-radius:4px}
+.verb-card p{font-size:.68rem;color:var(--text2);line-height:1.5;margin-bottom:6px}
+.verb-card .trg{font-size:.63rem;color:var(--text3)}
+.folder-tree{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:2;color:var(--text2);padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.folder-tree .dir{color:var(--amber)}.folder-tree .file{color:var(--teal)}.folder-tree .new{color:var(--blue);font-weight:600}.folder-tree .cmt{color:var(--text4);font-style:italic;margin-left:8px}
+.seq-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0}
+.seq-item{padding:6px 12px;border-radius:6px;font-size:.66rem;font-weight:600;border:1px solid var(--line)}
+.seq-arrow{color:var(--text4);font-size:.75rem}
+.diff-tag{font-size:.55rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
+.diff-changed{background:var(--amber-bg2);color:var(--amber)}
+.diff-new{background:var(--green-bg2);color:var(--green)}
+.ex-tabs{display:flex;gap:2px;margin-bottom:0}
+.ex-tab{padding:8px 14px;font-size:.68rem;font-weight:500;color:var(--text3);background:var(--bg3);border:none;border-radius:8px 8px 0 0;cursor:pointer;transition:all .2s;font-family:inherit}
+.ex-tab.active{background:var(--bg);color:var(--text)}
+.ex-panel{display:none;background:var(--bg);border:1px solid var(--line);border-radius:0 8px 8px 8px;padding:20px}
+.ex-panel.active{display:block}
+.layer-box{display:flex;flex-direction:column;gap:0;margin:12px 0}
+.layer{padding:12px 16px;border:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.layer:first-child{border-radius:8px 8px 0 0}
+.layer:last-child{border-radius:0 0 8px 8px}
+.layer .lname{font-size:.74rem;font-weight:600;min-width:80px}
+.layer .ldesc{font-size:.68rem;color:var(--text2)}
+.layer-arrow{text-align:center;color:var(--text4);font-size:.7rem;padding:2px 0}
+@media(max-width:640px){.wrap{padding:24px 16px 60px}h1{font-size:1.5rem}.mg{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="breadcrumb">파이프라인 › <span class="active">TEAM 04 데이터팀</span> › 상세 설계 v2</div>
+    <h1><span>데이터팀</span> 에이전트 상세 설계 <small>v2 — OctoPlayer 규격 반영</small></h1>
+    <p class="header-desc">OctoPlayer 뷰어-콘텐츠 연동 가이드와 동아출판 콘텐츠 전송 데이터 정의를 기반으로, 검수 통과 HTML 문항에 커스텀 xAPI 로그 + postMessage 통신을 적용하는 에이전트.</p>
+    <div class="header-stats">
+      <div class="stat">연동 <strong>OctoPlayer</strong></div>
+      <div class="stat">통신 <strong>postMessage</strong></div>
+      <div class="stat">문항 Verb <strong>7</strong> 종</div>
+      <div class="stat">데이터 <strong>restore + xAPI</strong></div>
+      <div class="stat">메시지 <strong>sendLogToContainer</strong></div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSec('arch')">① 3레이어 아키텍처</button>
+    <button class="nav-tab" onclick="showSec('msg')">② 메시지 프로토콜</button>
+    <button class="nav-tab" onclick="showSec('xapi')">③ xAPI 데이터 구조</button>
+    <button class="nav-tab" onclick="showSec('verbs')">④ Verb 카탈로그</button>
+    <button class="nav-tab" onclick="showSec('pipeline')">⑤ 적용 파이프라인</button>
+    <button class="nav-tab" onclick="showSec('output')">⑥ 산출물 구조</button>
+    <button class="nav-tab" onclick="showSec('example')">⑦ 실행 예시</button>
+  </div>
+
+  <!-- ===== SEC 1: ARCHITECTURE ===== -->
+  <div class="section active" id="sec-arch">
+    <div class="section-title">3레이어 아키텍처 <span class="badge" style="background:var(--blue-bg2);color:var(--blue)">OctoPlayer</span></div>
+    <p class="section-desc">OctoPlayer는 컨테이너(LMS) ↔ 뷰어(OctoPlayer) ↔ 콘텐츠(문항 iframe) 3레이어로 동작합니다. 우리 문항은 '콘텐츠' 레이어에 위치합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">🏗️</div><h3>통신 흐름도</h3></div>
+      <div class="card-body">
+        <div class="layer-box">
+          <div class="layer" style="background:var(--purple-bg)">
+            <div class="lname" style="color:var(--purple)">컨테이너</div>
+            <div class="ldesc">LMS/학습 플랫폼. 뷰어를 호스팅하고, xAPI 로그를 LRS로 전달하며, 수업 종료 등을 제어합니다.</div>
+          </div>
+          <div class="layer-arrow">↕ loadPlayer() / playerLoaded() / receiveLogFromViewer()</div>
+          <div class="layer" style="background:var(--amber-bg)">
+            <div class="lname" style="color:var(--amber)">뷰어</div>
+            <div class="ldesc">OctoPlayer. 콘텐츠를 iframe으로 로딩하고, 콘텐츠↔컨테이너 간 메시지를 중계합니다. sendRestoreData, sendUserId, terminated 등을 콘텐츠에 전달합니다.</div>
+          </div>
+          <div class="layer-arrow">↕ postMessage (sendLogToContainer / sendRestoreData / nextPage / terminated)</div>
+          <div class="layer" style="background:var(--teal-bg)">
+            <div class="lname" style="color:var(--teal)">콘텐츠 ★</div>
+            <div class="ldesc"><strong>우리 문항이 위치하는 레이어.</strong> iframe 내에서 동작하며, 뷰어에 postMessage로 xAPI 로그 + restore 데이터를 전송합니다.</div>
+          </div>
+        </div>
+        <div class="info blue">
+          <span class="ic">🔑</span>
+          <span><strong>핵심 변경:</strong> v1에서는 콘텐츠가 LRS에 직접 Statement를 전송하는 구조였지만, 실제 규격에서는 콘텐츠 → 뷰어(OctoPlayer) → 컨테이너(LMS) → LRS 순서로 중계됩니다. 콘텐츠는 <code>window.parent.postMessage()</code>만 사용합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">🔄</div><h3>초기화 → 학습 → 종료 라이프사이클</h3></div>
+      <div class="card-body">
+        <div class="seq-flow">
+          <div class="seq-item" style="background:var(--purple-bg);color:var(--purple)">뷰어 loadPlayer()</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--amber-bg);color:var(--amber)">playerLoaded()</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--teal-bg);color:var(--teal)">loadContents()</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--teal-bg);color:var(--teal)">콘텐츠 requestUserId</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--amber-bg);color:var(--amber)">sendUserId</div>
+        </div>
+        <div class="seq-flow">
+          <div class="seq-item" style="background:var(--teal-bg);color:var(--teal)">requestRestoreData</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--amber-bg);color:var(--amber)">sendRestoreData (contentId, contentTag)</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--green-bg);color:var(--green)">문항 학습 시작 (started)</div>
+        </div>
+        <div class="seq-flow">
+          <div class="seq-item" style="background:var(--blue-bg);color:var(--blue)">학습 중 (sendLogToContainer)</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--coral-bg);color:var(--coral)">terminated(뷰어→콘텐츠)</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--coral-bg);color:var(--coral)">iframeDeinit(콘텐츠→뷰어)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 2: MESSAGE PROTOCOL ===== -->
+  <div class="section" id="sec-msg">
+    <div class="section-title">메시지 프로토콜 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">postMessage</span></div>
+    <p class="section-desc">콘텐츠(문항)에서 뷰어로, 뷰어에서 콘텐츠로 전달하는 모든 postMessage 타입과 페이로드를 정의합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">📤</div><h3>콘텐츠 → 뷰어 메시지</h3><span class="tag" style="background:var(--teal-bg);color:var(--teal)">OUTBOUND</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>type</th><th>설명</th><th>data 구조</th><th>발생 시점</th></tr></thead>
+            <tbody>
+              <tr><td><code>sendLogToContainer</code></td><td>xAPI 로그 + restore 데이터 전송 (핵심)</td><td><code>{ restore, xAPI, contentId, contentTag }</code></td><td>모든 학습 이벤트 발생 시</td></tr>
+              <tr><td><code>requestRestoreData</code></td><td>복원 데이터 요청</td><td>없음</td><td>콘텐츠 초기 로딩 시</td></tr>
+              <tr><td><code>requestUserId</code></td><td>사용자 UUID 요청</td><td>없음</td><td>콘텐츠 초기 로딩 시</td></tr>
+              <tr><td><code>iframeCurrentPage</code></td><td>현재 페이지 정보 전달</td><td><code>{ data: 페이지번호, height: body높이 }</code></td><td>페이지 로딩/변경 시</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📥</div><h3>뷰어 → 콘텐츠 메시지</h3><span class="tag" style="background:var(--amber-bg);color:var(--amber)">INBOUND</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>type</th><th>설명</th><th>data 구조</th><th>처리 방법</th></tr></thead>
+            <tbody>
+              <tr><td><code>sendRestoreData</code></td><td>복원 데이터 + contentId + contentTag 전달</td><td><code>{ data: {복원JSON}, contentId: "ID", contentTag: {} }</code></td><td>콘텐츠 상태 복원 + contentId/contentTag 저장</td></tr>
+              <tr><td><code>sendUserId</code></td><td>사용자 UUID 전달</td><td><code>{ data: "uuid-string" }</code></td><td>xAPI Actor 식별에 활용</td></tr>
+              <tr><td><code>nextPage</code></td><td>다음 페이지 이동 명령</td><td>없음</td><td>문항 내 페이지 이동 처리</td></tr>
+              <tr><td><code>prevPage</code></td><td>이전 페이지 이동 명령</td><td>없음</td><td>문항 내 페이지 이동 처리</td></tr>
+              <tr><td><code>terminated</code></td><td>종료 명령</td><td>없음</td><td>최종 restore/xAPI 전송 후 deinit 응답</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info amber">
+          <span class="ic">📌</span>
+          <span><strong>sendRestoreData가 초기화의 핵심:</strong> 뷰어가 <code>contentId</code>와 <code>contentTag</code>를 이 메시지로 전달합니다. 콘텐츠는 이후 모든 <code>sendLogToContainer</code> 메시지에 이 값을 그대로 포함해야 합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">📡</div><h3>sendLogToContainer 표준 페이로드</h3><span class="tag" style="background:var(--blue-bg);color:var(--blue)">핵심</span></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">sendLogToContainer PAYLOAD</span>
+<span class="c">// 모든 이벤트에서 이 구조로 전송</span>
+const message = {
+  <span class="k">type</span>: <span class="s">'sendLogToContainer'</span>,
+  <span class="k">data</span>: {
+    <span class="k">"contentId"</span>: <span class="s">"IFRAME-001"</span>,         <span class="c">// sendRestoreData에서 받은 값 그대로</span>
+    <span class="k">"contentTag"</span>: { <span class="c">/* 뷰어에서 받은 객체 그대로 */</span> },
+    <span class="k">"timestamp"</span>: <span class="s">"2026-03-24T09:05:30.033Z"</span>,  <span class="c">// 공통: 로그 발생 시간</span>
+    <span class="k">"restore"</span>: {
+      <span class="c">// 사용자 입력 상태 복원용 데이터 (JSON)</span>
+    },
+    <span class="k">"xAPI"</span>: {
+      <span class="k">"verb"</span>: <span class="s">"completed"</span>,
+      <span class="k">"object"</span>: {
+        <span class="k">"id"</span>: <span class="s">"contentId"</span>,            <span class="c">// lcms/conts-id + stage-num</span>
+        <span class="k">"type"</span>: <span class="s">"..."</span>                 <span class="c">// 해당 시에만 (video, audio, external-link 등)</span>
+      },
+      <span class="k">"result"</span>: {
+        <span class="k">"response"</span>: { <span class="c">/* 모듈별 응답 데이터 */</span> },
+        <span class="k">"duration"</span>: <span class="s">"PT45S"</span>,          <span class="c">// ISO 8601</span>
+        <span class="k">"success"</span>: <span class="n">true</span>,
+        <span class="k">"extensions"</span>: {
+          <span class="c">// 이벤트별 상세 데이터</span>
+        }
+      },
+      <span class="k">"context"</span>: {
+        <span class="k">"extensions"</span>: {
+          <span class="k">"lcms/conts-id"</span>: <span class="s">"AAA-0001"</span>   <span class="c">// 컨테이너에서 전달받은 콘텐츠ID</span>
+        }
+      }
+    }
+  }
+};
+window.parent.postMessage(message, <span class="s">'*'</span>);</div>
+        <div class="info teal">
+          <span class="ic">🔑</span>
+          <span><strong>v1 대비 핵심 변경:</strong> 표준 xAPI 1.0.3 Actor-Verb-Object 구조가 아니라, <strong>커스텀 경량 xAPI 포맷</strong>입니다. Actor 없음(userId는 뷰어가 관리), Verb는 문자열, Object는 간소화. <code>restore</code>와 <code>xAPI</code>가 하나의 메시지에 동시 포함됩니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 3: xAPI DATA ===== -->
+  <div class="section" id="sec-xapi">
+    <div class="section-title">xAPI 데이터 구조 <span class="badge" style="background:var(--purple-bg2);color:var(--purple)">커스텀 경량</span></div>
+    <p class="section-desc">동아출판 콘텐츠 전송 데이터 정의에 따른 커스텀 xAPI 구조입니다. 표준 xAPI 1.0.3과 다른 경량 포맷을 사용합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--coral-bg);color:var(--coral)">⚡</div><h3>표준 xAPI vs 실제 규격 차이</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>표준 xAPI 1.0.3 (v1 설계)</th><th>실제 규격 (v2 반영) <span class="diff-tag diff-changed">변경</span></th></tr></thead>
+            <tbody>
+              <tr><td>Actor</td><td>Statement에 Agent 객체 포함</td><td><strong>없음.</strong> userId는 뷰어가 별도 관리</td></tr>
+              <tr><td>Verb</td><td>IRI (<code>http://adlnet.gov/...</code>)</td><td><strong>문자열만</strong> (<code>"completed"</code>)</td></tr>
+              <tr><td>Object</td><td>Activity (type, definition, interactionType)</td><td><strong>간소화</strong> (id, type만)</td></tr>
+              <tr><td>Result</td><td>score, success, completion, duration, response</td><td><strong>커스텀 extensions</strong> (crt-rt, com-act-cnt 등)</td></tr>
+              <tr><td>Context</td><td>contextActivities, extensions</td><td><strong>lcms/conts-id만</strong></td></tr>
+              <tr><td>전송 방식</td><td>직접 LRS HTTP POST</td><td><strong>postMessage로 뷰어에 위임</strong></td></tr>
+              <tr><td>복원 데이터</td><td>없음</td><td><strong>restore 객체 동시 전송</strong> <span class="diff-tag diff-new">추가</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">📊</div><h3>채점 이벤트(completed) 상세 extensions</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>키</th><th>타입</th><th>설명</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td><code>skip</code></td><td>boolean</td><td>미응답 건너뛰기 여부 (com-act-cnt==0이면 true)</td><td><code>false</code></td></tr>
+              <tr><td><code>req-act-cnt</code></td><td>int</td><td>페이지 내 요구되는 전체 액티비티 수</td><td><code>4</code></td></tr>
+              <tr><td><code>com-act-cnt</code></td><td>int</td><td>학생이 활동한 액티비티 수</td><td><code>4</code></td></tr>
+              <tr><td><code>com-act-rt</code></td><td>float:.2f</td><td>활동 완료율 (com-act-cnt / req-act-cnt)</td><td><code>1.00</code></td></tr>
+              <tr><td><code>crt-cnt</code></td><td>int</td><td>정답 수</td><td><code>3</code></td></tr>
+              <tr><td><code>incrt-cnt</code></td><td>int</td><td>오답 수</td><td><code>1</code></td></tr>
+              <tr><td><code>crt-rt</code></td><td>float:.2f</td><td>정답률 (crt-cnt / req-act-cnt). crt-rt==1.0이면 success:true</td><td><code>0.75</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info purple">
+          <span class="ic">📌</span>
+          <span><strong>액티비티 카운트 기준:</strong> 빈칸 유형은 빈칸의 수, 드래그 유형은 드래그 항목 수, 선긋기+입력 유형은 각 입력 단위. 제작팀의 <code>getResult()</code>에서 이 값들을 추출하여 매핑합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📋</div><h3>response 구조 (채점/완료 시 전송)</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">response 구조</span>
+<span class="c">// xAPI.result.response — 채점/완료 시에만 포함</span>
+<span class="c">// 각 모듈(문항 유형)별로 사용자 응답을 CSS_ID 기준으로 구조화</span>
+{
+  <span class="k">"모듈1"</span>: {
+    <span class="k">"gap1"</span>: <span class="n">1</span>,         <span class="c">// 객관식: 선택 번호</span>
+    <span class="k">"gap2"</span>: <span class="n">234</span>       <span class="c">// 빈칸: 입력 값</span>
+  },
+  <span class="k">"모듈2"</span>: {
+    <span class="c">// 드래그: 배치 좌표</span>
+    <span class="c">// 순서배열: 정렬 순서</span>
+    <span class="c">// 매칭: 연결 쌍</span>
+  }
+}</div>
+        <div class="info amber">
+          <span class="ic">💡</span>
+          <span><strong>response vs restore:</strong> <code>response</code>는 채점·완료 시에만 보내는 간략화된 데이터, <code>restore</code>는 매 이벤트마다 보내는 전체 복원용 데이터입니다. response는 restore의 간단한 버전입니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 4: VERBS ===== -->
+  <div class="section" id="sec-verbs">
+    <div class="section-title">Verb 카탈로그 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">7 VERBS</span></div>
+    <p class="section-desc">웹문서 콘텐츠(문항) 유형에서 발생하는 7개 Verb입니다. v1의 표준 xAPI Verb와 다릅니다.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="seq-flow">
+          <div class="seq-item" style="background:var(--blue-bg);color:var(--blue)">started</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--purple-bg);color:var(--purple)">presented</div>
+          <span class="seq-arrow">or</span>
+          <div class="seq-item" style="background:var(--teal-bg);color:var(--teal)">completed</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--amber-bg);color:var(--amber)">viewed</div>
+          <span class="seq-arrow">/</span>
+          <div class="seq-item" style="background:var(--coral-bg);color:var(--coral)">reset</div>
+          <span class="seq-arrow">→</span>
+          <div class="seq-item" style="background:var(--text3);color:var(--bg)">left</div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--blue-bg2);color:var(--blue)">started</span> 페이지 인 <span class="diff-tag diff-changed">v1 attempted → started</span></h4>
+          <p>콘텐츠가 로드된 시점. xAPI 하위에 verb만 발생 (result 없음).</p>
+          <div class="trg">발화: window.onload 완료 후 | 포함: <code>{ xAPI: { verb: "started" } }</code></div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--purple-bg2);color:var(--purple)">presented</span> 완료하기 버튼 클릭 <span class="diff-tag diff-new">신규</span></h4>
+          <p>채점 없이 활동만 하는 콘텐츠의 완료. response + extensions(req-act-cnt, com-act-cnt, com-act-rt) 포함.</p>
+          <div class="trg">발화: 완료/제출 버튼 클릭 (정오 판별 없는 활동형 문항) | 포함: restore + xAPI.result</div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--teal-bg2);color:var(--teal)">completed</span> 채점하기 버튼 클릭 <span class="diff-tag diff-changed">v1 answered+completed+passed/failed → completed 통합</span></h4>
+          <p>정오가 있는 문항의 채점 완료. response + duration + success + extensions(skip, crt-rt, crt-cnt, incrt-cnt, req-act-cnt, com-act-cnt, com-act-rt) 포함.</p>
+          <div class="trg">발화: 채점/제출 버튼 클릭 (정오 판별 가능 문항) | 포함: restore + xAPI.result (가장 많은 데이터)</div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--amber-bg2);color:var(--amber)">viewed</span> 해설 보기</h4>
+          <p>해설 보기 버튼을 클릭한 시점. verb만 발생 (result 없음).</p>
+          <div class="trg">발화: 해설 버튼 클릭 | 포함: <code>{ xAPI: { verb: "viewed" } }</code></div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--coral-bg2);color:var(--coral)">reset</span> 다시하기 버튼 클릭</h4>
+          <p>다시하기 버튼 클릭 시점. verb만 발생 + restore 데이터 포함.</p>
+          <div class="trg">발화: 다시하기/초기화 버튼 클릭 | 포함: restore + <code>{ xAPI: { verb: "reset" } }</code></div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:var(--blue-bg2);color:var(--blue)">clicked</span> 외부 링크 클릭 <span class="diff-tag diff-new">신규</span></h4>
+          <p>콘텐츠 내 외부 링크 클릭 시. object.type:"external-link" + extensions.link-type 포함.</p>
+          <div class="trg">발화: 외부 링크 버튼 클릭 | 포함: xAPI.object + extrLink</div>
+        </div>
+
+        <div class="verb-card">
+          <h4><span class="vid" style="background:rgba(255,255,255,.08);color:var(--text2)">left</span> 페이지 아웃 <span class="diff-tag diff-changed">v1 없음 → 추가</span></h4>
+          <p>콘텐츠에서 정상 이탈(종료 버튼, 뷰어 terminated 수신 시). duration(체류시간) + restore 포함.</p>
+          <div class="trg">발화: terminated 메시지 수신 또는 GNB 이탈 | 포함: restore + xAPI.result.duration</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📊</div><h3>Verb별 데이터 포함 범위</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Verb</th><th>restore</th><th>response</th><th>duration</th><th>success</th><th>extensions</th><th>context</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--blue)">started</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅</td></tr>
+              <tr><td style="color:var(--purple)">presented</td><td>✅</td><td>✅</td><td>—</td><td>—</td><td>✅ (act 계열)</td><td>✅</td></tr>
+              <tr><td style="color:var(--teal)">completed</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅ (전체)</td><td>✅</td></tr>
+              <tr><td style="color:var(--amber)">viewed</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅</td></tr>
+              <tr><td style="color:var(--coral)">reset</td><td>✅</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅</td></tr>
+              <tr><td style="color:var(--blue)">clicked</td><td>—</td><td>—</td><td>—</td><td>—</td><td>✅ (link-type)</td><td>✅</td></tr>
+              <tr><td>left</td><td>✅</td><td>—</td><td>✅</td><td>—</td><td>—</td><td>✅</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 5: PIPELINE ===== -->
+  <div class="section" id="sec-pipeline">
+    <div class="section-title">적용 파이프라인 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">5 STEPS</span></div>
+    <p class="section-desc">검수 통과 폴더에 OctoPlayer 연동 코드를 비침습적으로 삽입합니다.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--blue)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 1. 메타정보 분석 + getResult() 매핑 <span class="method" style="background:var(--blue-bg2);color:var(--blue)">분석</span></h4>
+              <p>meta.json에서 item_type을 분석하여 액티비티 카운트 기준을 결정합니다. item.js의 <code>getResult()</code> 반환값을 동아출판 extensions 필드로 매핑합니다.</p>
+              <div class="pc">
+                <h5>📋 getResult() → 동아출판 extensions 매핑</h5>
+                <ul>
+                  <li><code>getResult().correct</code> → <code>success</code> (crt-rt==1.0이면 true)</li>
+                  <li><code>getResult().score / maxScore</code> → <code>crt-rt</code> (소수 둘째자리 버림)</li>
+                  <li><code>getResult().response</code> → <code>response</code> (CSS_ID 구조로 변환)</li>
+                  <li><code>getResult().duration</code> → <code>duration</code> (ISO 8601: "PT{n}S")</li>
+                  <li>문항 유형별 → <code>req-act-cnt</code> (빈칸수, 드래그항목수 등)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--teal)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 2. octo-bridge.js 생성 <span class="method" style="background:var(--teal-bg2);color:var(--teal)">생성</span></h4>
+              <p>OctoPlayer 연동 전체를 담당하는 단일 브릿지 모듈을 생성합니다. 초기화, 이벤트 감지, xAPI 조립, postMessage 발송, 종료 처리를 모두 포함합니다.</p>
+              <div class="json-block" style="margin-top:8px"><span class="json-label">octo-bridge.js 핵심 구조</span>
+var OCTO = {
+  contentId: <span class="n">null</span>,
+  contentTag: <span class="n">null</span>,
+  userId: <span class="n">null</span>,
+  startTime: <span class="n">null</span>,
+
+  <span class="c">// 초기화</span>
+  <span class="k">init</span>: function() {
+    this.requestUserId();
+    this.requestRestoreData();
+    this.listenMessages();
+    this.startTime = <span class="k">new</span> Date();
+  },
+
+  <span class="c">// 뷰어 메시지 수신</span>
+  <span class="k">listenMessages</span>: function() {
+    window.addEventListener(<span class="s">'message'</span>, function(e) {
+      <span class="k">if</span>(e.data.type === <span class="s">'sendRestoreData'</span>) { <span class="c">/* contentId, contentTag 저장, 복원 */</span> }
+      <span class="k">if</span>(e.data.type === <span class="s">'sendUserId'</span>) { <span class="c">/* userId 저장 */</span> }
+      <span class="k">if</span>(e.data.type === <span class="s">'terminated'</span>) { OCTO.sendLeft(); OCTO.deinit(); }
+      <span class="k">if</span>(e.data.type === <span class="s">'nextPage'</span>) { <span class="c">/* 페이지 이동 */</span> }
+      <span class="k">if</span>(e.data.type === <span class="s">'prevPage'</span>) { <span class="c">/* 페이지 이동 */</span> }
+    });
+  },
+
+  <span class="c">// 7개 Verb 발송 함수</span>
+  <span class="k">sendStarted</span>: function() { <span class="c">/* verb만 */</span> },
+  <span class="k">sendPresented</span>: function() { <span class="c">/* 활동형 완료 */</span> },
+  <span class="k">sendCompleted</span>: function() { <span class="c">/* 채점형 완료 — getResult() 호출 */</span> },
+  <span class="k">sendViewed</span>: function() { <span class="c">/* 해설 보기 */</span> },
+  <span class="k">sendReset</span>: function() { <span class="c">/* 다시하기 */</span> },
+  <span class="k">sendClicked</span>: function(linkType) { <span class="c">/* 외부 링크 */</span> },
+  <span class="k">sendLeft</span>: function() { <span class="c">/* 이탈 — duration 포함 */</span> },
+
+  <span class="c">// 공통: 메시지 조립 + 발송</span>
+  <span class="k">send</span>: function(data) {
+    data.contentId = this.contentId;
+    data.contentTag = this.contentTag;
+    data.timestamp = <span class="k">new</span> Date().toISOString();
+    window.parent.postMessage({
+      type: <span class="s">'sendLogToContainer'</span>, data: data
+    }, <span class="s">'*'</span>);
+  },
+
+  <span class="c">// 종료 처리</span>
+  <span class="k">deinit</span>: function() {
+    window.parent.postMessage({ type: <span class="s">'iframeDeinit'</span> }, <span class="s">'*'</span>);
+  }
+};</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--purple)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 3. item.js 이벤트 후킹 <span class="method" style="background:var(--purple-bg2);color:var(--purple)">후킹</span></h4>
+              <p>제작팀 item.js를 수정하지 않고, submitAnswer/resetItem 함수를 래핑하여 xAPI 이벤트를 자동 발화합니다.</p>
+              <div class="json-block" style="margin-top:8px"><span class="json-label">함수 래핑 패턴</span>
+<span class="c">// 원본 함수 보존 후 래핑</span>
+var _origSubmit = window.submitAnswer;
+window.submitAnswer = function() {
+  _origSubmit();  <span class="c">// 원본 실행</span>
+  <span class="c">// 채점형 문항이면 completed, 활동형이면 presented</span>
+  <span class="k">if</span> (ITEM.type === <span class="s">'essay'</span> || !getResult().hasOwnProperty(<span class="s">'correct'</span>))
+    OCTO.sendPresented();
+  <span class="k">else</span>
+    OCTO.sendCompleted();
+};
+
+var _origReset = window.resetItem;
+window.resetItem = function() {
+  _origReset();
+  OCTO.sendReset();
+};</div>
+              <div class="info green">
+                <span class="ic">✅</span>
+                <span><strong>비침습 유지:</strong> item.js 파일 자체는 수정하지 않습니다. octo-bridge.js가 로드된 후 전역 함수를 래핑하는 방식으로, 원본 코드의 해시값이 변하지 않습니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--amber)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 4. restore 데이터 생성 로직 <span class="method" style="background:var(--amber-bg2);color:var(--amber)">생성</span></h4>
+              <p>매 이벤트마다 현재 사용자 입력 상태를 JSON으로 직렬화하여 restore 객체를 구성합니다. 뷰어가 다시 sendRestoreData로 돌려주면 이전 상태를 복원합니다.</p>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--green);background:var(--green)"></div></div>
+            <div class="flow-content">
+              <h4>STEP 5. index.html 수정 + 패키징 <span class="method" style="background:var(--green-bg2);color:var(--green)">출력</span></h4>
+              <p>index.html의 item.js 아래에 octo-bridge.js 스크립트 태그 1줄을 추가합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 6: OUTPUT ===== -->
+  <div class="section" id="sec-output">
+    <div class="section-title">산출물 구조 <span class="badge" style="background:var(--green-bg2);color:var(--green)">FOLDER</span></div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📁</div><h3>최종 폴더 구조</h3></div>
+      <div class="card-body">
+        <div class="folder-tree">
+<span class="dir">Q-{id}/</span>
+├── <span class="file">index.html</span>           <span class="cmt">← octo-bridge.js 스크립트 태그 1줄 추가</span>
+├── <span class="dir">css/</span>style.css
+├── <span class="dir">js/</span>
+│   ├── <span class="file">item.js</span>           <span class="cmt">← 원본 유지 (수정 없음)</span>
+│   └── <span class="new">octo-bridge.js</span>    <span class="cmt">← [NEW] OctoPlayer 연동 전체 (xAPI + 통신 + restore)</span>
+└── <span class="file">meta.json</span>
+        </div>
+        <div class="info blue" style="margin-top:12px">
+          <span class="ic">📌</span>
+          <span><strong>v1에서 3파일 추가 → v2에서 1파일 추가:</strong> xapi.js + interface.js + xapi_config.json을 <code>octo-bridge.js</code> 단일 파일로 통합했습니다. OctoPlayer 규격이 postMessage 단일 채널이므로 별도 config 파일이 불필요하고, xAPI와 interface가 밀접하게 결합되어 있어 분리할 이유가 없습니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 7: EXAMPLE ===== -->
+  <div class="section" id="sec-example">
+    <div class="section-title">실행 예시 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">DEMO</span></div>
+
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="showEx('ex1')">📡 타임라인</button>
+      <button class="ex-tab" onclick="showEx('ex2')">📄 completed 전문</button>
+      <button class="ex-tab" onclick="showEx('ex3')">📄 left 전문</button>
+    </div>
+
+    <div class="ex-panel active" id="ex1">
+      <h4 style="font-size:.78rem;font-weight:600;margin-bottom:16px;color:var(--blue)">객관식 문항 (Q-342) OctoPlayer 라이프사이클</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>시간</th><th>주체</th><th>행동</th><th>message type</th><th>xAPI verb</th></tr></thead>
+          <tbody>
+            <tr><td><code>0:00</code></td><td>뷰어</td><td>콘텐츠 iframe 로드</td><td>—</td><td>—</td></tr>
+            <tr><td><code>0:00</code></td><td style="color:var(--teal)">콘텐츠</td><td>userId 요청</td><td><code>requestUserId</code></td><td>—</td></tr>
+            <tr><td><code>0:00</code></td><td style="color:var(--teal)">콘텐츠</td><td>복원데이터 요청</td><td><code>requestRestoreData</code></td><td>—</td></tr>
+            <tr><td><code>0:00</code></td><td style="color:var(--amber)">뷰어</td><td>userId 전달</td><td><code>sendUserId</code></td><td>—</td></tr>
+            <tr><td><code>0:01</code></td><td style="color:var(--amber)">뷰어</td><td>contentId + contentTag + 복원데이터</td><td><code>sendRestoreData</code></td><td>—</td></tr>
+            <tr><td><code>0:01</code></td><td style="color:var(--teal)">콘텐츠</td><td>페이지 인</td><td><code>sendLogToContainer</code></td><td style="color:var(--blue)"><strong>started</strong></td></tr>
+            <tr><td><code>0:01</code></td><td style="color:var(--teal)">콘텐츠</td><td>현재 페이지 전달</td><td><code>iframeCurrentPage</code></td><td>—</td></tr>
+            <tr><td><code>0:30</code></td><td>학생</td><td>2번 보기 선택 → 제출</td><td><code>sendLogToContainer</code></td><td style="color:var(--teal)"><strong>completed</strong></td></tr>
+            <tr><td><code>0:35</code></td><td>학생</td><td>해설 보기 클릭</td><td><code>sendLogToContainer</code></td><td style="color:var(--amber)"><strong>viewed</strong></td></tr>
+            <tr><td><code>0:50</code></td><td>학생</td><td>다시하기 클릭</td><td><code>sendLogToContainer</code></td><td style="color:var(--coral)"><strong>reset</strong></td></tr>
+            <tr><td><code>1:20</code></td><td style="color:var(--amber)">뷰어</td><td>종료 명령</td><td><code>terminated</code></td><td>—</td></tr>
+            <tr><td><code>1:20</code></td><td style="color:var(--teal)">콘텐츠</td><td>이탈 로그 전송</td><td><code>sendLogToContainer</code></td><td><strong>left</strong></td></tr>
+            <tr><td><code>1:20</code></td><td style="color:var(--teal)">콘텐츠</td><td>종료 완료 알림</td><td><code>iframeDeinit</code></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="ex-panel" id="ex2">
+      <h4 style="font-size:.78rem;font-weight:600;margin-bottom:12px;color:var(--teal)">completed 이벤트 전문 (채점하기 클릭 시)</h4>
+      <div class="json-block"><span class="json-label">sendLogToContainer — completed</span>
+{
+  <span class="k">"contentId"</span>: <span class="s">"IFRAME-001"</span>,
+  <span class="k">"contentTag"</span>: { <span class="c">/* 뷰어에서 받은 원본 */</span> },
+  <span class="k">"timestamp"</span>: <span class="s">"2026-03-24T09:05:30.033Z"</span>,
+  <span class="k">"restore"</span>: {
+    <span class="k">"selectedOption"</span>: <span class="n">2</span>,
+    <span class="k">"submitted"</span>: <span class="n">true</span>,
+    <span class="k">"timerSec"</span>: <span class="n">30</span>
+  },
+  <span class="k">"xAPI"</span>: {
+    <span class="k">"verb"</span>: <span class="s">"completed"</span>,
+    <span class="k">"result"</span>: {
+      <span class="k">"response"</span>: {
+        <span class="k">"q-342-mc"</span>: { <span class="k">"gap1"</span>: <span class="n">2</span> }
+      },
+      <span class="k">"duration"</span>: <span class="s">"PT30S"</span>,
+      <span class="k">"success"</span>: <span class="n">true</span>,
+      <span class="k">"extensions"</span>: {
+        <span class="k">"skip"</span>: <span class="n">false</span>,
+        <span class="k">"req-act-cnt"</span>: <span class="n">1</span>,
+        <span class="k">"com-act-cnt"</span>: <span class="n">1</span>,
+        <span class="k">"com-act-rt"</span>: <span class="n">1.00</span>,
+        <span class="k">"crt-cnt"</span>: <span class="n">1</span>,
+        <span class="k">"incrt-cnt"</span>: <span class="n">0</span>,
+        <span class="k">"crt-rt"</span>: <span class="n">1.00</span>
+      }
+    },
+    <span class="k">"context"</span>: {
+      <span class="k">"extensions"</span>: {
+        <span class="k">"lcms/conts-id"</span>: <span class="s">"AAA-0001"</span>
+      }
+    }
+  }
+}</div>
+    </div>
+
+    <div class="ex-panel" id="ex3">
+      <h4 style="font-size:.78rem;font-weight:600;margin-bottom:12px">left 이벤트 전문 (terminated 수신 시)</h4>
+      <div class="json-block"><span class="json-label">sendLogToContainer — left</span>
+{
+  <span class="k">"contentId"</span>: <span class="s">"IFRAME-001"</span>,
+  <span class="k">"contentTag"</span>: { <span class="c">/* 뷰어에서 받은 원본 */</span> },
+  <span class="k">"timestamp"</span>: <span class="s">"2026-03-24T09:06:20.000Z"</span>,
+  <span class="k">"restore"</span>: {
+    <span class="k">"selectedOption"</span>: <span class="n">2</span>,
+    <span class="k">"submitted"</span>: <span class="n">true</span>,
+    <span class="k">"timerSec"</span>: <span class="n">80</span>
+  },
+  <span class="k">"xAPI"</span>: {
+    <span class="k">"verb"</span>: <span class="s">"left"</span>,
+    <span class="k">"result"</span>: {
+      <span class="k">"duration"</span>: <span class="s">"PT80S"</span>
+    },
+    <span class="k">"context"</span>: {
+      <span class="k">"extensions"</span>: {
+        <span class="k">"lcms/conts-id"</span>: <span class="s">"AAA-0001"</span>
+      }
+    }
+  }
+}</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSec(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function showEx(id){
+  document.querySelectorAll('.ex-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.ex-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

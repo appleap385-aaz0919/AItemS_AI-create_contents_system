@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="cycleGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cycleGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cycleGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cycleGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="cycleShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="#f0f4f8"/>
+
+  <!-- Title -->
+  <text x="200" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">순환 프로세스</text>
+
+  <!-- Center circle -->
+  <circle cx="200" cy="210" r="40" fill="#fff" stroke="#ddd" stroke-width="2" filter="url(#cycleShadow)"/>
+  <text x="200" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555" font-weight="bold">핵심</text>
+  <text x="200" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#555" font-weight="bold">개념</text>
+
+  <!-- Stage 1 (Top) -->
+  <circle cx="200" cy="90" r="45" fill="url(#cycleGrad1)" filter="url(#cycleShadow)"/>
+  <text x="200" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">계획</text>
+  <text x="200" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">계획</text>
+
+  <!-- Stage 2 (Right) -->
+  <circle cx="310" cy="210" r="45" fill="url(#cycleGrad2)" filter="url(#cycleShadow)"/>
+  <text x="310" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">실행</text>
+  <text x="310" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">실행</text>
+
+  <!-- Stage 3 (Bottom) -->
+  <circle cx="200" cy="330" r="45" fill="url(#cycleGrad3)" filter="url(#cycleShadow)"/>
+  <text x="200" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">점검</text>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">점검</text>
+
+  <!-- Stage 4 (Left) -->
+  <circle cx="90" cy="210" r="45" fill="url(#cycleGrad4)" filter="url(#cycleShadow)"/>
+  <text x="90" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">개선</text>
+  <text x="90" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">조치</text>
+
+  <!-- Curved Arrows -->
+  <!-- Top to Right -->
+  <path d="M 238 110 Q 280 130 295 168" fill="none" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="300,175 290,168 298,160" fill="#667eea"/>
+
+  <!-- Right to Bottom -->
+  <path d="M 295 252 Q 280 290 238 310" fill="none" stroke="#f093fb" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="230,315 240,310 235,300" fill="#f093fb"/>
+
+  <!-- Bottom to Left -->
+  <path d="M 162 310 Q 120 290 105 252" fill="none" stroke="#4facfe" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="100,245 110,252 102,260" fill="#4facfe"/>
+
+  <!-- Left to Top -->
+  <path d="M 105 168 Q 120 130 162 110" fill="none" stroke="#43e97b" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="170,105 160,110 165,120" fill="#43e97b"/>
+
+  <!-- Label -->
+  <text x="200" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#888">PDCA 사이클</text>
+</svg>

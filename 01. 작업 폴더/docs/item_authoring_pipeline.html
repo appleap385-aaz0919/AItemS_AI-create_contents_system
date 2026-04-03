@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문항 저작 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0b0f;--bg2:#12131a;--bg3:#1a1c26;--bg4:#222430;
+  --text:#e8e6e1;--text2:#9d9b95;--text3:#6b6965;
+  --purple:#8b7cf6;--purple-dim:#3d3580;--purple-bg:rgba(139,124,246,.08);
+  --teal:#3dd9a0;--teal-dim:#1a6e50;--teal-bg:rgba(61,217,160,.08);
+  --coral:#f07b5a;--coral-dim:#7a3d2a;--coral-bg:rgba(240,123,90,.08);
+  --blue:#5ba4f5;--blue-dim:#2a5080;--blue-bg:rgba(91,164,245,.08);
+  --green:#7bc95e;--green-dim:#3a6528;--green-bg:rgba(123,201,94,.08);
+  --accent-line:rgba(255,255,255,.04);
+  --radius:12px;
+}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
+
+.container{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+
+header{text-align:center;margin-bottom:56px;position:relative}
+header::after{content:'';position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--text3),transparent)}
+h1{font-size:1.8rem;font-weight:900;letter-spacing:-.02em;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--text3);font-size:.85rem;margin-top:8px;font-weight:300;letter-spacing:.04em}
+
+/* Pipeline flow */
+.pipeline{display:flex;flex-direction:column;gap:0;position:relative}
+.pipeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:repeating-linear-gradient(180deg,var(--text3) 0,var(--text3) 4px,transparent 4px,transparent 12px);opacity:.2;z-index:0}
+
+.flow-arrow{display:flex;justify-content:center;padding:12px 0;position:relative;z-index:1}
+.flow-arrow svg{opacity:.3}
+
+/* Team card */
+.team-card{position:relative;z-index:1;border:1px solid var(--accent-line);border-radius:var(--radius);background:var(--bg2);overflow:hidden;transition:border-color .3s,box-shadow .3s;cursor:pointer}
+.team-card:hover{border-color:rgba(255,255,255,.08)}
+.team-card.active{border-color:var(--card-color,.4)}
+
+.card-header{display:flex;align-items:center;gap:16px;padding:20px 24px;position:relative}
+.card-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--card-color);border-radius:0 2px 2px 0;opacity:.6;transition:opacity .3s}
+.team-card.active .card-header::before{opacity:1}
+
+.team-number{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:500;color:var(--card-color);background:var(--card-bg);padding:4px 10px;border-radius:6px;letter-spacing:.08em;white-space:nowrap}
+.team-name{font-size:1.1rem;font-weight:700;flex:1}
+.team-role{font-size:.78rem;color:var(--text2);font-weight:300}
+.expand-icon{width:20px;height:20px;color:var(--text3);transition:transform .3s,color .3s;flex-shrink:0}
+.team-card.active .expand-icon{transform:rotate(180deg);color:var(--card-color)}
+
+/* Detail panel */
+.card-detail{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.team-card.active .card-detail{max-height:2000px}
+
+.detail-inner{padding:0 24px 24px;border-top:1px solid var(--accent-line)}
+
+.detail-section{margin-top:20px}
+.detail-section h4{font-size:.72rem;font-weight:500;color:var(--card-color);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.detail-section h4::before{content:'';width:16px;height:1px;background:var(--card-color);opacity:.4}
+
+/* Process steps */
+.process-steps{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--bg3);border-radius:8px;border:1px solid transparent;transition:border-color .2s}
+.step:hover{border-color:var(--accent-line)}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--card-color);background:var(--card-bg);padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.step-content{flex:1}
+.step-title{font-size:.85rem;font-weight:500;margin-bottom:2px}
+.step-desc{font-size:.75rem;color:var(--text2);line-height:1.5;font-weight:300}
+
+/* Output badge */
+.output-block{margin-top:20px;padding:14px 16px;border-radius:8px;background:var(--bg);border:1px dashed rgba(255,255,255,.08);display:flex;align-items:flex-start;gap:12px}
+.output-label{font-size:.65rem;font-weight:500;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;margin-top:2px}
+.output-value{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--card-color);line-height:1.6}
+
+/* Tags */
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tag{font-size:.68rem;padding:3px 10px;border-radius:20px;background:var(--card-bg);color:var(--card-color);font-weight:400;border:1px solid rgba(255,255,255,.03)}
+
+/* Feedback loop label */
+.feedback-label{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 0;font-size:.7rem;color:var(--text3);font-weight:300}
+.feedback-label span{background:var(--bg3);padding:3px 12px;border-radius:20px;border:1px dashed rgba(255,255,255,.06)}
+
+/* Colors per team */
+.team-1{--card-color:var(--purple);--card-bg:var(--purple-bg)}
+.team-2{--card-color:var(--teal);--card-bg:var(--teal-bg)}
+.team-3{--card-color:var(--coral);--card-bg:var(--coral-bg)}
+.team-4{--card-color:var(--blue);--card-bg:var(--blue-bg)}
+.team-5{--card-color:var(--green);--card-bg:var(--green-bg)}
+
+/* Input/Output pills */
+.io-pill{text-align:center;padding:10px;position:relative;z-index:1}
+.io-pill span{display:inline-block;font-size:.75rem;font-weight:500;color:var(--text2);background:var(--bg3);padding:8px 24px;border-radius:20px;border:1px solid var(--accent-line)}
+
+@media(max-width:600px){
+  .container{padding:24px 16px 60px}
+  h1{font-size:1.4rem}
+  .card-header{padding:16px}
+  .detail-inner{padding:0 16px 16px}
+  .step{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>문항 저작 파이프라인</h1>
+    <p class="subtitle">ITEM AUTHORING PIPELINE — 5 TEAM WORKFLOW</p>
+  </header>
+
+  <div class="pipeline">
+
+    <!-- Input -->
+    <div class="io-pill"><span>📥 학습맵 입력</span></div>
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Team 1: 기획팀 -->
+    <div class="team-card team-1" onclick="toggle(this)">
+      <div class="card-header">
+        <span class="team-number">TEAM 01</span>
+        <div style="flex:1">
+          <div class="team-name">기획팀</div>
+          <div class="team-role">학습맵 분석 → 문항 메타정보 생성</div>
+        </div>
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="card-detail">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <h4>프로세스</h4>
+            <div class="process-steps">
+              <div class="step">
+                <span class="step-num">01</span>
+                <div class="step-content">
+                  <div class="step-title">학습맵 파싱</div>
+                  <div class="step-desc">입력된 학습맵의 트리 구조를 분석하여 대분류 → 중분류 → 소분류 → 최소 단위(leaf node)까지 depth를 파악합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">02</span>
+                <div class="step-content">
+                  <div class="step-title">최소 단위 추출</div>
+                  <div class="step-desc">leaf node 기준으로 각 학습 요소를 식별하고, 해당 요소가 요구하는 학습 목표·성취기준을 매핑합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">03</span>
+                <div class="step-content">
+                  <div class="step-title">문항 유형 결정</div>
+                  <div class="step-desc">학습 목표에 적합한 문항 유형을 결정합니다 (객관식, 주관식, OX, 드래그앤드롭, 매칭, 서술형 등).</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">04</span>
+                <div class="step-content">
+                  <div class="step-title">메타정보 스키마 생성</div>
+                  <div class="step-desc">문항 ID, 난이도, 배점, 문항유형, 성취기준코드, 평가영역, 키워드, 소요시간 등을 포함한 JSON 메타데이터를 생성합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="output-block">
+            <span class="output-label">산출물</span>
+            <div class="output-value">
+              item_meta.json<br>
+              { id, type, difficulty, score, achievement_code,<br>
+              &nbsp;&nbsp;domain, keywords[], time_limit, depth_path }
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">학습맵 분석</span>
+            <span class="tag">Bloom's Taxonomy</span>
+            <span class="tag">성취기준 매핑</span>
+            <span class="tag">메타데이터 스키마</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Team 2: 제작팀 -->
+    <div class="team-card team-2" onclick="toggle(this)">
+      <div class="card-header">
+        <span class="team-number">TEAM 02</span>
+        <div style="flex:1">
+          <div class="team-name">제작팀</div>
+          <div class="team-role">메타정보 기반 → HTML 문항 저작</div>
+        </div>
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="card-detail">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <h4>프로세스</h4>
+            <div class="process-steps">
+              <div class="step">
+                <span class="step-num">01</span>
+                <div class="step-content">
+                  <div class="step-title">메타정보 수신 및 해석</div>
+                  <div class="step-desc">기획팀에서 전달된 JSON 메타정보를 파싱하여 문항 유형, 난이도, 평가 목표 등을 확인합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">02</span>
+                <div class="step-content">
+                  <div class="step-title">문항 콘텐츠 설계</div>
+                  <div class="step-desc">지문, 발문, 보기, 정답, 해설을 설계합니다. 난이도와 성취기준에 부합하는 내용을 구성합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">03</span>
+                <div class="step-content">
+                  <div class="step-title">HTML 템플릿 매핑</div>
+                  <div class="step-desc">문항 유형에 맞는 HTML 템플릿을 선택하고, 인터랙션(라디오, 체크박스, 드래그, 입력 등) 요소를 매핑합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">04</span>
+                <div class="step-content">
+                  <div class="step-title">HTML 문항 저작</div>
+                  <div class="step-desc">웹 표준 기반 HTML/CSS/JS로 문항을 구현합니다. 반응형, 접근성(A11y), 수식(MathML/LaTeX) 등을 고려합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">05</span>
+                <div class="step-content">
+                  <div class="step-title">채점 로직 내장</div>
+                  <div class="step-desc">정답 비교, 부분 점수, 서술형 키워드 매칭 등의 클라이언트 사이드 채점 로직을 구현합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="output-block">
+            <span class="output-label">산출물</span>
+            <div class="output-value">
+              item_{id}.html<br>
+              완전한 렌더링 가능 HTML 문항<br>
+              (지문 + 발문 + 보기 + 인터랙션 + 채점로직)
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">HTML5</span>
+            <span class="tag">CSS3</span>
+            <span class="tag">Vanilla JS</span>
+            <span class="tag">반응형</span>
+            <span class="tag">접근성</span>
+            <span class="tag">MathML</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Team 3: 검수팀 -->
+    <div class="team-card team-3" onclick="toggle(this)">
+      <div class="card-header">
+        <span class="team-number">TEAM 03</span>
+        <div style="flex:1">
+          <div class="team-name">검수팀</div>
+          <div class="team-role">오류 검증 · 정보 정확성 · 품질 검수</div>
+        </div>
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="card-detail">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <h4>프로세스</h4>
+            <div class="process-steps">
+              <div class="step">
+                <span class="step-num">01</span>
+                <div class="step-content">
+                  <div class="step-title">메타정보 정합성 검증</div>
+                  <div class="step-desc">기획팀이 정의한 메타정보(문항유형, 난이도, 성취기준)와 실제 제작된 문항의 내용이 일치하는지 검증합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">02</span>
+                <div class="step-content">
+                  <div class="step-title">콘텐츠 정확성 검증</div>
+                  <div class="step-desc">지문의 사실 관계, 정답의 정확성, 오답 보기의 타당성, 해설의 논리성을 검토합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">03</span>
+                <div class="step-content">
+                  <div class="step-title">UI/UX 렌더링 검수</div>
+                  <div class="step-desc">HTML 문항이 다양한 디바이스·브라우저에서 정상 렌더링되는지, 인터랙션이 올바르게 동작하는지 확인합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">04</span>
+                <div class="step-content">
+                  <div class="step-title">채점 로직 검증</div>
+                  <div class="step-desc">정답/오답/부분점수 시나리오별로 채점 로직이 정확하게 작동하는지 테스트합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">05</span>
+                <div class="step-content">
+                  <div class="step-title">판정 (승인/반려)</div>
+                  <div class="step-desc">모든 검수 기준 통과 시 승인, 이슈 발견 시 상세 피드백과 함께 제작팀으로 반려합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="output-block">
+            <span class="output-label">산출물</span>
+            <div class="output-value">
+              review_report_{id}.json<br>
+              { status: "approved" | "rejected",<br>
+              &nbsp;&nbsp;issues[], feedback, reviewer, timestamp }
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">정합성 검증</span>
+            <span class="tag">크로스브라우징</span>
+            <span class="tag">채점 테스트</span>
+            <span class="tag">승인/반려</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-label"><span>↩ 반려 시 제작팀으로 피드백 전달</span></div>
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Team 4: 데이터팀 -->
+    <div class="team-card team-4" onclick="toggle(this)">
+      <div class="card-header">
+        <span class="team-number">TEAM 04</span>
+        <div style="flex:1">
+          <div class="team-name">데이터팀</div>
+          <div class="team-role">xAPI 적용 · interface 요구사항 구현</div>
+        </div>
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="card-detail">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <h4>프로세스</h4>
+            <div class="process-steps">
+              <div class="step">
+                <span class="step-num">01</span>
+                <div class="step-content">
+                  <div class="step-title">xAPI Statement 설계</div>
+                  <div class="step-desc">Actor-Verb-Object 구조로 학습 이벤트를 정의합니다. (attempted, answered, completed, passed, failed 등)</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">02</span>
+                <div class="step-content">
+                  <div class="step-title">xAPI 이벤트 삽입</div>
+                  <div class="step-desc">HTML 문항 내 사용자 인터랙션 포인트에 xAPI statement 발송 코드를 삽입합니다. (문항 시작, 응답, 제출, 완료)</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">03</span>
+                <div class="step-content">
+                  <div class="step-title">Interface 통신 구현</div>
+                  <div class="step-desc">LMS/LRS와의 통신 인터페이스를 구현합니다. postMessage, API 콜, 초기화/종료 핸들러 등을 적용합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">04</span>
+                <div class="step-content">
+                  <div class="step-title">데이터 매핑 검증</div>
+                  <div class="step-desc">메타정보의 성취기준·난이도가 xAPI context extensions에 올바르게 매핑되었는지 확인합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="output-block">
+            <span class="output-label">산출물</span>
+            <div class="output-value">
+              item_{id}_xapi.html<br>
+              xAPI statement 및 interface 통신이<br>
+              내장된 최종 HTML 문항
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">xAPI 1.0.3</span>
+            <span class="tag">Actor-Verb-Object</span>
+            <span class="tag">LRS 통신</span>
+            <span class="tag">postMessage</span>
+            <span class="tag">Context Extensions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Team 5: 플랫폼팀 -->
+    <div class="team-card team-5" onclick="toggle(this)">
+      <div class="card-header">
+        <span class="team-number">TEAM 05</span>
+        <div style="flex:1">
+          <div class="team-name">플랫폼팀</div>
+          <div class="team-role">xAPI 이벤트 · 통신 검증</div>
+        </div>
+        <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="card-detail">
+        <div class="detail-inner">
+          <div class="detail-section">
+            <h4>프로세스</h4>
+            <div class="process-steps">
+              <div class="step">
+                <span class="step-num">01</span>
+                <div class="step-content">
+                  <div class="step-title">xAPI 이벤트 발화 테스트</div>
+                  <div class="step-desc">문항 라이프사이클(시작→응답→제출→완료)에 따라 올바른 xAPI statement가 올바른 시점에 발송되는지 검증합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">02</span>
+                <div class="step-content">
+                  <div class="step-title">Statement 구조 검증</div>
+                  <div class="step-desc">발송된 xAPI statement의 JSON 구조가 xAPI 1.0.3 스펙에 부합하는지, 필수 필드 누락은 없는지 검증합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">03</span>
+                <div class="step-content">
+                  <div class="step-title">Interface 통신 테스트</div>
+                  <div class="step-desc">LMS ↔ 콘텐츠 간 postMessage 통신, 초기화 시퀀스, 종료 핸들링, 에러 처리가 정상 동작하는지 확인합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">04</span>
+                <div class="step-content">
+                  <div class="step-title">LRS 데이터 적재 확인</div>
+                  <div class="step-desc">실제 LRS에 데이터가 정상 적재되는지, 쿼리 시 기대한 결과가 반환되는지 end-to-end 테스트를 수행합니다.</div>
+                </div>
+              </div>
+              <div class="step">
+                <span class="step-num">05</span>
+                <div class="step-content">
+                  <div class="step-title">판정 (승인/반려)</div>
+                  <div class="step-desc">모든 검증 통과 시 최종 승인, 이슈 발견 시 상세 로그와 함께 데이터팀으로 반려합니다.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="output-block">
+            <span class="output-label">산출물</span>
+            <div class="output-value">
+              validation_report_{id}.json<br>
+              { xapi_events: ✅, interface: ✅,<br>
+              &nbsp;&nbsp;lrs_verified: ✅, status: "deployed" }
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag">이벤트 발화 검증</span>
+            <span class="tag">스펙 준수</span>
+            <span class="tag">E2E 테스트</span>
+            <span class="tag">LRS 적재</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-label"><span>↩ 반려 시 데이터팀으로 피드백 전달</span></div>
+    <div class="flow-arrow"><svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M2 15l6 7 6-7" fill="none" stroke="#e8e6e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Final Output -->
+    <div class="io-pill"><span>🚀 최종 배포 콘텐츠</span></div>
+
+  </div>
+</div>
+
+<script>
+function toggle(card){
+  const wasActive=card.classList.contains('active');
+  document.querySelectorAll('.team-card').forEach(c=>c.classList.remove('active'));
+  if(!wasActive)card.classList.add('active');
+}
+document.querySelector('.team-card').click();
+</script>
+</body>
+</html>

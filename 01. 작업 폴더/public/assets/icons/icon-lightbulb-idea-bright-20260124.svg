@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bulbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE047"/>
+      <stop offset="100%" style="stop-color:#FACC15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Glow effect -->
+  <circle cx="32" cy="26" r="20" fill="#FEF9C3" opacity="0.5" filter="url(#glow)"/>
+  <!-- Bulb body -->
+  <path d="M32 6 C18 6 12 18 12 26 C12 34 18 38 22 42 L22 48 L42 48 L42 42 C46 38 52 34 52 26 C52 18 46 6 32 6 Z" 
+        fill="url(#bulbGrad)" stroke="#EAB308" stroke-width="2"/>
+  <!-- Bulb base -->
+  <rect x="22" y="48" width="20" height="4" fill="#A8A29E" rx="1"/>
+  <rect x="24" y="52" width="16" height="3" fill="#78716C" rx="1"/>
+  <rect x="26" y="55" width="12" height="3" fill="#57534E" rx="1.5"/>
+  <!-- Light rays -->
+  <g stroke="#FCD34D" stroke-width="2" stroke-linecap="round">
+    <line x1="32" y1="-2" x2="32" y2="2"/>
+    <line x1="54" y1="26" x2="58" y2="26"/>
+    <line x1="6" y1="26" x2="10" y2="26"/>
+    <line x1="48" y1="10" x2="51" y2="7"/>
+    <line x1="13" y1="7" x2="16" y2="10"/>
+  </g>
+</svg>

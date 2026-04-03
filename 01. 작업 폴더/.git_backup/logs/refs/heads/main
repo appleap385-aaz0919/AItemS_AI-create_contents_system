@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 60880ce6e95812c1fbfc3e29b1a5b0af40ed9f1c aaz0919 <appleap385@gmail.com> 1774602416 +0900	commit (initial): feat: AItemS v01 prototype - 문항 저작 시스템
+60880ce6e95812c1fbfc3e29b1a5b0af40ed9f1c 60880ce6e95812c1fbfc3e29b1a5b0af40ed9f1c aaz0919 <appleap385@gmail.com> 1774602432 +0900	Branch: renamed refs/heads/master to refs/heads/main
+60880ce6e95812c1fbfc3e29b1a5b0af40ed9f1c 116d407b1aef95c939c761326db550e06d023f84 aaz0919 <appleap385@gmail.com> 1774602494 +0900	commit (merge): merge: integrate remote + AItemS v01 prototype
+116d407b1aef95c939c761326db550e06d023f84 40d607f3bde178c87632f387020a66f84e5f17fe aaz0919 <appleap385@gmail.com> 1774864158 +0900	commit: feat: 초중고 SVG 시각자료 생성기 9종 추가 + 학년별 AI 프롬프트 분기
+40d607f3bde178c87632f387020a66f84e5f17fe 72e2c7ef7f25b28ae07bdb0c1c7ca151eb89eeaa aaz0919 <appleap385@gmail.com> 1774865636 +0900	commit: feat: 초등3학년~고등 공통수학2 전체 학년 확장
+72e2c7ef7f25b28ae07bdb0c1c7ca151eb89eeaa 7ccddcc05a44852d00765b783c2b367df54ee385 aaz0919 <appleap385@gmail.com> 1774918277 +0900	commit: feat: 초등3~고등공통수학2 학년별 AI 프롬프트 세분화
+7ccddcc05a44852d00765b783c2b367df54ee385 1e5aa739d9bc04bc28c7c0a1f72bf0e5b8970a6a aaz0919 <appleap385@gmail.com> 1774930031 +0900	commit: feat: 전체 교육과정 확장 — 초3~고등공통수학2 (103개 단원)
+1e5aa739d9bc04bc28c7c0a1f72bf0e5b8970a6a 35a85a9e525d26408e993545051f8804242a0206 aaz0919 <appleap385@gmail.com> 1774930814 +0900	commit: fix: 검수팀 프롬프트 학년 하드코딩 제거 → 동적 학년 반영
+35a85a9e525d26408e993545051f8804242a0206 760c7a0f34f8ead366c058c5c16b9b3778eeffc5 aaz0919 <appleap385@gmail.com> 1775203122 +0900	commit: feat: SVG 생성기 확장, 검수 품질 개선, 학습맵 1793노드 재구축, UI 미니멀 디자인 적용

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF9A9E"/>
+      <stop offset="100%" style="stop-color:#FECFEF"/>
+    </linearGradient>
+    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A8EDEA"/>
+      <stop offset="100%" style="stop-color:#FED6E3"/>
+    </linearGradient>
+  </defs>
+  <!-- 배경 원 -->
+  <circle cx="32" cy="32" r="30" fill="url(#homeGrad)" opacity="0.3"/>
+  <!-- 집 본체 -->
+  <rect x="16" y="28" width="32" height="24" rx="4" fill="url(#homeGrad)"/>
+  <!-- 지붕 -->
+  <path d="M8 30 L32 10 L56 30 Z" fill="url(#roofGrad)" stroke="#FF6B9D" stroke-width="2" stroke-linejoin="round"/>
+  <!-- 문 -->
+  <rect x="26" y="36" width="12" height="16" rx="6" fill="#FFF5F5"/>
+  <!-- 문 손잡이 -->
+  <circle cx="35" cy="44" r="2" fill="#FF6B9D"/>
+  <!-- 창문 -->
+  <circle cx="22" cy="36" r="4" fill="#FFF5F5"/>
+  <circle cx="42" cy="36" r="4" fill="#FFF5F5"/>
+  <!-- 굴뚝 -->
+  <rect x="42" y="14" width="8" height="12" rx="2" fill="#FFB6C1"/>
+  <!-- 하트 연기 -->
+  <path d="M46 8 C44 6, 42 8, 46 12 C50 8, 48 6, 46 8" fill="#FF6B9D" opacity="0.6"/>
+</svg>

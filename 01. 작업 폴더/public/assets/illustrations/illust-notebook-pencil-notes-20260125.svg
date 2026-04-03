@@ -1,0 +1,16 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Notebook -->
+  <rect x="40" y="50" width="120" height="100" fill="#FFFFFF" stroke="#9E9E9E" stroke-width="1" />
+  <line x1="40" y1="50" x2="40" y2="150" stroke="#EF5350" stroke-width="2" /> <!-- Margin -->
+  
+  <!-- Lines -->
+  <line x1="40" y1="70" x2="160" y2="70" stroke="#E0E0E0" />
+  <line x1="40" y1="90" x2="160" y2="90" stroke="#E0E0E0" />
+  <line x1="40" y1="110" x2="160" y2="110" stroke="#E0E0E0" />
+  <line x1="40" y1="130" x2="160" y2="130" stroke="#E0E0E0" />
+  
+  <!-- Pencil -->
+  <path d="M120,60 L130,40 L160,40 L160,120 L150,140 L140,120 L140,60 L130,60 Z" fill="#FFC107" transform="rotate(45 150 100)" stroke="#FFA000" stroke-width="1" />
+  <path d="M149,139 L156,152 L163,139" fill="#E0E0E0" transform="rotate(45 156 145)" /> <!-- Tip -->
+  <path d="M156,152 L156,155" stroke="#212121" stroke-width="2" transform="rotate(45 156 153)" /> <!-- Lead -->
+</svg>

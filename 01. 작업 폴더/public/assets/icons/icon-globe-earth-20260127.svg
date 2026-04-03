@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>지구 아이콘</title>
+  <circle cx="32" cy="32" r="26" fill="#38BDF8" stroke="#0EA5E9" stroke-width="3"/>
+  <path d="M18 20 C22 14 32 12 38 18 C44 24 42 32 36 34 C30 36 30 42 24 44 C18 46 14 38 16 32 C18 26 14 24 18 20 Z" fill="#22C55E"/>
+  <path d="M40 40 C46 38 52 42 50 48 C48 54 38 54 36 48 C34 42 36 40 40 40 Z" fill="#16A34A"/>
+  <path d="M12 28 H52" stroke="#E0F2FE" stroke-width="2" opacity="0.7"/>
+  <path d="M32 6 V58" stroke="#E0F2FE" stroke-width="2" opacity="0.7"/>
+</svg>

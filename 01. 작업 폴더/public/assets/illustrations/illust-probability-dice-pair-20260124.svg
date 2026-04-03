@@ -1,0 +1,10 @@
+<svg width="60" height="40" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Die 1 -->
+  <rect x="5" y="10" width="20" height="20" rx="3" fill="white" stroke="#2563EB" stroke-width="1.5"/>
+  <circle cx="15" cy="20" r="2" fill="#2563EB"/>
+  
+  <!-- Die 2 -->
+  <rect x="30" y="8" width="20" height="20" rx="3" fill="white" stroke="#F59E0B" stroke-width="1.5" transform="rotate(10 40 18)"/>
+  <circle cx="36" cy="14" r="2" fill="#F59E0B" transform="rotate(10 40 18)"/>
+  <circle cx="44" cy="22" r="2" fill="#F59E0B" transform="rotate(10 40 18)"/>
+</svg>

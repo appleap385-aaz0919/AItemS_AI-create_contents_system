@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>축하 컨페티 아이콘</title>
+  <rect x="6" y="44" width="22" height="12" rx="4" fill="#7C3AED"/>
+  <rect x="10" y="40" width="14" height="8" rx="3" fill="#A78BFA"/>
+  <path d="M17 8 L22 18 L33 18 L24 25 L28 36 L17 29 L6 36 L10 25 L1 18 L12 18 Z" fill="#FBBF24" transform="translate(20 0) scale(0.7)"/>
+  <path d="M18 38 C30 28 42 20 56 12" stroke="#F97316" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <circle cx="48" cy="18" r="4" fill="#22C55E"/>
+  <rect x="42" y="26" width="6" height="6" rx="2" fill="#38BDF8" transform="rotate(18 45 29)"/>
+  <path d="M54 34 l6 4 l-6 4 l-6 -4 Z" fill="#EF4444"/>
+  <circle cx="36" cy="14" r="3" fill="#E879F9"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>로켓 발사 아이콘</title>
+  <path d="M32 6 C44 16 48 34 32 50 C16 34 20 16 32 6 Z" fill="#6366F1"/>
+  <circle cx="32" cy="26" r="6" fill="#E0E7FF"/>
+  <path d="M24 40 L16 48 L26 46 Z" fill="#4F46E5"/>
+  <path d="M40 40 L48 48 L38 46 Z" fill="#4F46E5"/>
+  <path d="M28 50 C26 58 30 62 32 62 C34 62 38 58 36 50 Z" fill="#F97316"/>
+  <path d="M30 50 C29 56 31 58 32 58 C33 58 35 56 34 50 Z" fill="#FACC15"/>
+</svg>

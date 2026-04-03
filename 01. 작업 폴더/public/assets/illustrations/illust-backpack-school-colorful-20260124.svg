@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="backpackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F472B6"/>
+      <stop offset="100%" style="stop-color:#EC4899"/>
+    </linearGradient>
+    <linearGradient id="bgPink" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDF2F8"/>
+      <stop offset="100%" style="stop-color:#FCE7F3"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#bgPink)"/>
+  
+  <!-- Backpack main body -->
+  <path d="M50 50 Q50 30 100 30 Q150 30 150 50 L155 160 Q155 180 100 180 Q45 180 45 160 Z" 
+        fill="url(#backpackGrad)" stroke="#DB2777" stroke-width="2"/>
+  
+  <!-- Front pocket -->
+  <rect x="60" y="90" width="80" height="50" rx="8" fill="#F9A8D4" stroke="#EC4899" stroke-width="2"/>
+  <!-- Pocket zipper -->
+  <line x1="70" y1="115" x2="130" y2="115" stroke="#BE185D" stroke-width="2" stroke-dasharray="4,2"/>
+  <circle cx="130" cy="115" r="4" fill="#FDE047" stroke="#F59E0B" stroke-width="1"/>
+  
+  <!-- Top flap -->
+  <path d="M55 50 Q55 40 100 35 Q145 40 145 50 L145 65 Q100 75 55 65 Z" fill="#F9A8D4" stroke="#EC4899" stroke-width="1"/>
+  
+  <!-- Straps -->
+  <path d="M65 45 Q55 60 55 85" stroke="#BE185D" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M135 45 Q145 60 145 85" stroke="#BE185D" stroke-width="8" stroke-linecap="round" fill="none"/>
+  
+  <!-- Decorative elements -->
+  <!-- Star keychain -->
+  <polygon points="100,165 103,172 111,172 105,177 107,185 100,181 93,185 95,177 89,172 97,172" fill="#FDE047" stroke="#F59E0B" stroke-width="1"/>
+  
+  <!-- Side pocket left -->
+  <ellipse cx="50" cy="120" rx="8" ry="20" fill="#F9A8D4" stroke="#EC4899" stroke-width="1"/>
+  <!-- Water bottle -->
+  <rect x="44" y="105" width="12" height="25" rx="3" fill="#60A5FA" stroke="#3B82F6" stroke-width="1"/>
+  <rect x="46" y="102" width="8" height="5" rx="2" fill="#3B82F6"/>
+  
+  <!-- Side pocket right -->
+  <ellipse cx="150" cy="120" rx="8" ry="20" fill="#F9A8D4" stroke="#EC4899" stroke-width="1"/>
+  
+  <!-- Pencils sticking out -->
+  <rect x="55" y="52" width="4" height="25" rx="1" fill="#FDE047" transform="rotate(-15 57 65)"/>
+  <polygon points="55,50 57,44 59,50" fill="#F8A488" transform="rotate(-15 57 47)"/>
+  <rect x="62" y="50" width="4" height="28" rx="1" fill="#F87171" transform="rotate(-5 64 64)"/>
+</svg>

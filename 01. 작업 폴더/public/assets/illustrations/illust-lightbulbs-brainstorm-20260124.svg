@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="brainstormBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FEF9C3"/>
+      <stop offset="100%" style="stop-color:#FDE68A"/>
+    </linearGradient>
+    <linearGradient id="bulb1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE047"/>
+      <stop offset="100%" style="stop-color:#FACC15"/>
+    </linearGradient>
+    <filter id="bulbGlow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#brainstormBg)"/>
+  
+  <!-- Center lightbulb (main idea) -->
+  <g transform="translate(100, 100)" filter="url(#bulbGlow)">
+    <!-- Glow -->
+    <circle cx="0" cy="-10" r="40" fill="#FEF9C3" opacity="0.5"/>
+    <!-- Bulb -->
+    <path d="M0,-45 C-25,-45 -35,-25 -35,-10 C-35,10 -20,20 -15,30 L15,30 C20,20 35,10 35,-10 C35,-25 25,-45 0,-45 Z" 
+          fill="url(#bulb1)" stroke="#EAB308" stroke-width="2"/>
+    <!-- Bulb base -->
+    <rect x="-12" y="30" width="24" height="6" fill="#A8A29E"/>
+    <rect x="-10" y="36" width="20" height="4" fill="#78716C"/>
+    <rect x="-8" y="40" width="16" height="4" rx="1" fill="#57534E"/>
+    <!-- Filament -->
+    <path d="M-5,5 Q0,-5 5,5 Q0,15 -5,5" fill="none" stroke="#F59E0B" stroke-width="2"/>
+  </g>
+  
+  <!-- Surrounding smaller lightbulbs -->
+  <!-- Top left -->
+  <g transform="translate(35, 45) scale(0.4)">
+    <circle cx="0" cy="0" r="25" fill="#FEF9C3" opacity="0.4"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#FDE047" stroke="#EAB308" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Top right -->
+  <g transform="translate(165, 50) scale(0.35)">
+    <circle cx="0" cy="0" r="25" fill="#A78BFA" opacity="0.3"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#C4B5FD" stroke="#8B5CF6" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Left -->
+  <g transform="translate(25, 115) scale(0.35)">
+    <circle cx="0" cy="0" r="25" fill="#6EE7B7" opacity="0.3"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#A7F3D0" stroke="#10B981" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Right -->
+  <g transform="translate(175, 120) scale(0.4)">
+    <circle cx="0" cy="0" r="25" fill="#FCA5A5" opacity="0.3"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#FECACA" stroke="#EF4444" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Bottom left -->
+  <g transform="translate(45, 175) scale(0.35)">
+    <circle cx="0" cy="0" r="25" fill="#93C5FD" opacity="0.3"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#BFDBFE" stroke="#3B82F6" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Bottom right -->
+  <g transform="translate(155, 170) scale(0.38)">
+    <circle cx="0" cy="0" r="25" fill="#FDBA74" opacity="0.3"/>
+    <path d="M0,-30 C-15,-30 -22,-15 -22,0 C-22,12 -12,18 -8,25 L8,25 C12,18 22,12 22,0 C22,-15 15,-30 0,-30 Z" 
+          fill="#FED7AA" stroke="#F97316" stroke-width="2"/>
+    <rect x="-6" y="25" width="12" height="8" fill="#78716C"/>
+  </g>
+  
+  <!-- Connection lines -->
+  <g stroke="#CA8A04" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+    <line x1="55" y1="65" x2="75" y2="80"/>
+    <line x1="145" y1="65" x2="125" y2="80"/>
+    <line x1="45" y1="115" x2="70" y2="105"/>
+    <line x1="155" y1="115" x2="130" y2="105"/>
+    <line x1="65" y1="160" x2="85" y2="135"/>
+    <line x1="135" y1="155" x2="115" y2="130"/>
+  </g>
+  
+  <!-- Sparkles -->
+  <g fill="#F59E0B">
+    <polygon points="100,20 102,25 107,25 103,28 105,33 100,30 95,33 97,28 93,25 98,25"/>
+    <polygon points="15,75 16,78 19,78 17,80 18,83 15,81 12,83 13,80 11,78 14,78" transform="scale(0.8)"/>
+    <polygon points="185,85 186,88 189,88 187,90 188,93 185,91 182,93 183,90 181,88 184,88" transform="scale(0.8)"/>
+  </g>
+</svg>

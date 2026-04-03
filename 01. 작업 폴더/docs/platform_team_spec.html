@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>플랫폼팀 에이전트 상세 설계</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0b0f;--bg2:#111218;--bg3:#181a24;--bg4:#1f2230;--text:#e8e6e1;--text2:#9d9b95;--text3:#6b6965;--text4:#4a4844;--green:#7bc95e;--green-bg:rgba(123,201,94,.06);--green-bg2:rgba(123,201,94,.12);--purple:#8b7cf6;--purple-bg:rgba(139,124,246,.06);--purple-bg2:rgba(139,124,246,.12);--teal:#3dd9a0;--teal-bg:rgba(61,217,160,.06);--teal-bg2:rgba(61,217,160,.12);--coral:#f07b5a;--coral-bg:rgba(240,123,90,.06);--coral-bg2:rgba(240,123,90,.12);--blue:#5ba4f5;--blue-bg:rgba(91,164,245,.06);--blue-bg2:rgba(91,164,245,.12);--amber:#f0b95a;--amber-bg:rgba(240,185,90,.06);--amber-bg2:rgba(240,185,90,.12);--red:#e85a5a;--red-bg:rgba(232,90,90,.06);--red-bg2:rgba(232,90,90,.12);--line:rgba(255,255,255,.04);--line2:rgba(255,255,255,.08);--radius:10px;--radius-lg:14px}
+html{font-size:14.5px;scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.65}
+code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--bg4);padding:1px 6px;border-radius:3px;color:var(--amber)}
+.wrap{max-width:1020px;margin:0 auto;padding:40px 24px 100px}
+.header{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.breadcrumb{font-size:.7rem;color:var(--text3);margin-bottom:12px}.breadcrumb .active{color:var(--green)}
+h1{font-size:1.9rem;font-weight:900;letter-spacing:-.03em}h1 span{color:var(--green)}
+.header-desc{color:var(--text2);font-size:.88rem;margin-top:8px;font-weight:300;max-width:720px;line-height:1.7}
+.header-stats{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.stat{padding:8px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-size:.72rem}
+.stat strong{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.nav-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--line);overflow-x:auto}
+.nav-tab{padding:10px 16px;font-size:.74rem;font-weight:500;color:var(--text3);background:transparent;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit}
+.nav-tab:hover{color:var(--text2)}.nav-tab.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.section{display:none;animation:fadeUp .4s ease}.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:1.1rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.badge{font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+.section-desc{color:var(--text2);font-size:.82rem;font-weight:300;margin-bottom:28px;max-width:680px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.card-head .icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.card-head h3{font-size:.86rem;font-weight:600;flex:1}
+.card-head .tag{font-size:.58rem;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.card-body{padding:20px}
+table{width:100%;border-collapse:collapse;font-size:.74rem}
+thead th{text-align:left;padding:9px 10px;background:var(--bg3);color:var(--text2);font-weight:500;font-size:.66rem;letter-spacing:.04em;white-space:nowrap;border-bottom:1px solid var(--line2)}
+thead th:first-child{border-radius:8px 0 0 0}thead th:last-child{border-radius:0 8px 0 0}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover{background:rgba(255,255,255,.015)}
+.table-wrap{overflow-x:auto}
+.json-block{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:.66rem;line-height:1.75;overflow-x:auto;color:var(--text2);position:relative;white-space:pre-wrap;word-break:break-all}
+.json-block .k{color:var(--purple)}.json-block .s{color:var(--teal)}.json-block .n{color:var(--amber)}.json-block .c{color:var(--text4);font-style:italic}
+.json-label{position:absolute;top:8px;right:12px;font-size:.56rem;color:var(--text4);letter-spacing:.05em;font-family:'JetBrains Mono',monospace}
+.info{padding:12px 16px;border-radius:8px;font-size:.72rem;line-height:1.6;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+.info.green{background:var(--green-bg);border:1px solid rgba(123,201,94,.1);color:var(--green)}
+.info.blue{background:var(--blue-bg);border:1px solid rgba(91,164,245,.1);color:var(--blue)}
+.info.teal{background:var(--teal-bg);border:1px solid rgba(61,217,160,.1);color:var(--teal)}
+.info.purple{background:var(--purple-bg);border:1px solid rgba(139,124,246,.1);color:var(--purple)}
+.info.amber{background:var(--amber-bg);border:1px solid rgba(240,185,90,.1);color:var(--amber)}
+.info.coral{background:var(--coral-bg);border:1px solid rgba(240,123,90,.1);color:var(--coral)}
+.info.red{background:var(--red-bg);border:1px solid rgba(232,90,90,.1);color:var(--red)}
+.info .ic{flex-shrink:0;margin-top:1px}
+.pc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin-top:8px}
+.pc h5{font-size:.74rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.pc p,.pc li{font-size:.7rem;color:var(--text2);line-height:1.7;font-weight:300}
+.pc ul{margin-top:6px;padding-left:16px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mg-item{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.mg-item .lb{font-size:.62rem;color:var(--text3);letter-spacing:.04em;font-weight:500;margin-bottom:3px}
+.mg-item .vl{font-size:.74rem;font-weight:500}
+.sev{font-size:.56rem;font-weight:600;padding:2px 7px;border-radius:10px}
+.sev-critical{background:var(--red-bg2);color:var(--red)}
+.sev-major{background:var(--amber-bg2);color:var(--amber)}
+.sev-minor{background:var(--blue-bg2);color:var(--blue)}
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:16px;align-items:flex-start}
+.flow-line{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
+.flow-dot{width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--bg);position:relative;z-index:1;flex-shrink:0}
+.flow-connector{width:1px;flex:1;min-height:16px;background:repeating-linear-gradient(180deg,var(--text4) 0,var(--text4) 3px,transparent 3px,transparent 8px)}
+.flow-content{flex:1;padding-bottom:20px}
+.flow-content h4{font-size:.8rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.method{font-size:.54rem;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.flow-content p{font-size:.74rem;color:var(--text2);font-weight:300;line-height:1.6}
+.domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.domain-card{border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden}
+.domain-card h4{font-size:.78rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.domain-card ul{padding-left:14px}
+.domain-card li{font-size:.68rem;color:var(--text2);line-height:1.7}
+.seq-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0}
+.seq-item{padding:6px 12px;border-radius:6px;font-size:.66rem;font-weight:600;border:1px solid var(--line)}
+.seq-arrow{color:var(--text4);font-size:.75rem}
+.reject-flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.reject-step{padding:8px 14px;border-radius:8px;font-size:.68rem;font-weight:500;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.reject-arrow{color:var(--text4);font-size:.8rem}
+.score-bar{height:6px;background:var(--bg4);border-radius:3px;margin-top:10px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px}
+.score-label{display:flex;justify-content:space-between;margin-top:4px;font-size:.6rem;color:var(--text3)}
+@media(max-width:640px){.wrap{padding:24px 16px 60px}h1{font-size:1.5rem}.mg,.domain-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="breadcrumb">파이프라인 › <span class="active">TEAM 05 플랫폼팀</span> › 상세 설계</div>
+    <h1><span>플랫폼팀</span> 에이전트 상세 설계</h1>
+    <p class="header-desc">데이터팀 산출물의 xAPI 이벤트 발화, postMessage 통신, OctoPlayer 라이프사이클, restore 복원을 Headless 브라우저로 자동 검증하는 에이전트. 실패 시 데이터팀에 이슈를 반려합니다.</p>
+    <div class="header-stats">
+      <div class="stat">검증영역 <strong>4</strong> 개</div>
+      <div class="stat">검증항목 <strong>24</strong> 개</div>
+      <div class="stat">테스트 <strong>Headless 자동</strong></div>
+      <div class="stat">반려 대상 <strong>데이터팀</strong></div>
+      <div class="stat">도구 <strong>Playwright</strong></div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSec('arch')">① 검증 아키텍처</button>
+    <button class="nav-tab" onclick="showSec('domains')">② 4대 검증 영역</button>
+    <button class="nav-tab" onclick="showSec('mock')">③ OctoPlayer 모킹</button>
+    <button class="nav-tab" onclick="showSec('pipeline')">④ 테스트 파이프라인</button>
+    <button class="nav-tab" onclick="showSec('report')">⑤ 검증 리포트</button>
+    <button class="nav-tab" onclick="showSec('reject')">⑥ 반려 프로세스</button>
+  </div>
+
+  <!-- ===== SEC 1: ARCHITECTURE ===== -->
+  <div class="section active" id="sec-arch">
+    <div class="section-title">검증 아키텍처 <span class="badge" style="background:var(--green-bg2);color:var(--green)">HEADLESS</span></div>
+    <p class="section-desc">플랫폼팀은 OctoPlayer 뷰어를 모킹하여, 데이터팀 산출물(폴더)을 Headless 브라우저에서 로딩하고 4개 영역 24개 항목을 자동 검증합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--green-bg);color:var(--green)">🏗️</div><h3>테스트 환경 구성</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">TEST ARCHITECTURE</span>
+<span class="c">┌─────────────────────────────────────────────────────┐</span>
+<span class="c">│</span> <span class="k">Playwright (Headless Chromium)</span>                       <span class="c">│</span>
+<span class="c">│</span>                                                     <span class="c">│</span>
+<span class="c">│</span>  ┌──────────────┐     ┌──────────────────────────┐  <span class="c">│</span>
+<span class="c">│</span>  │ <span class="s">뷰어 모킹 페이지</span> │     │ <span class="s">콘텐츠 iframe (문항)</span>      │  <span class="c">│</span>
+<span class="c">│</span>  │              │────▶│ Q-{id}/index.html        │  <span class="c">│</span>
+<span class="c">│</span>  │ mock-viewer  │◀────│  + octo-bridge.js        │  <span class="c">│</span>
+<span class="c">│</span>  │ .html        │     │  + item.js               │  <span class="c">│</span>
+<span class="c">│</span>  └──────────────┘     └──────────────────────────┘  <span class="c">│</span>
+<span class="c">│</span>         │                        │                   <span class="c">│</span>
+<span class="c">│</span>         ▼                        ▼                   <span class="c">│</span>
+<span class="c">│</span>  <span class="n">[postMessage 캡처]</span>      <span class="n">[DOM/JS 상태 검사]</span>        <span class="c">│</span>
+<span class="c">│</span>                                                     <span class="c">│</span>
+<span class="c">│</span>  ┌─────────────────────────────────────────────────┐ <span class="c">│</span>
+<span class="c">│</span>  │ <span class="k">테스트 러너</span>                                      │ <span class="c">│</span>
+<span class="c">│</span>  │  P1. xAPI 이벤트 검증 (7 Verb)                  │ <span class="c">│</span>
+<span class="c">│</span>  │  P2. postMessage 통신 검증                      │ <span class="c">│</span>
+<span class="c">│</span>  │  P3. OctoPlayer 라이프사이클 검증                │ <span class="c">│</span>
+<span class="c">│</span>  │  P4. restore 복원 검증                          │ <span class="c">│</span>
+<span class="c">│</span>  └─────────────────────────────────────────────────┘ <span class="c">│</span>
+<span class="c">└─────────────────────────────────────────────────────┘</span>
+              │
+              ▼
+<span class="c">┌─────────────────────────────────────────────────────┐</span>
+<span class="c">│</span> <span class="s">platform_report_{id}.json</span>                          <span class="c">│</span>
+<span class="c">│</span>  - status: <span class="s">"passed"</span> | <span class="s">"failed"</span>                    <span class="c">│</span>
+<span class="c">│</span>  - issues[]: 이슈 목록 → 데이터팀 반려             <span class="c">│</span>
+<span class="c">└─────────────────────────────────────────────────────┘</span></div>
+        <div class="info green">
+          <span class="ic">🔑</span>
+          <span><strong>핵심 원리:</strong> 실제 OctoPlayer 없이 뷰어를 모킹합니다. mock-viewer.html이 컨테이너+뷰어 역할을 하며, 콘텐츠 iframe을 로딩하고 postMessage를 주고받습니다. Playwright가 양쪽 메시지를 캡처하여 검증합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">⚖️</div><h3>판정 기준</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>판정</th><th>조건</th><th>후속 조치</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--green);font-weight:600">✅ PASSED</td><td>4개 영역 모두 통과, Critical 이슈 0건</td><td>최종 배포 패키지로 출력</td></tr>
+              <tr><td style="color:var(--red);font-weight:600">❌ FAILED</td><td>Critical 이슈 1건 이상</td><td>이슈 리포트 + 데이터팀 반려</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info amber">
+          <span class="ic">📌</span>
+          <span><strong>2단계 판정:</strong> 검수팀(3단계: 승인/조건부/반려)과 달리 플랫폼팀은 PASSED/FAILED 2단계입니다. 통신·이벤트는 "거의 맞음"이 없고, 동작하거나 안 하거나 이분법이기 때문입니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 2: DOMAINS ===== -->
+  <div class="section" id="sec-domains">
+    <div class="section-title">4대 검증 영역 <span class="badge" style="background:var(--green-bg2);color:var(--green)">24 CHECKS</span></div>
+    <p class="section-desc">각 영역별 검증 항목, 테스트 방법, 심각도를 정의합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">📡</div><h3>P1. xAPI 이벤트 발화 검증</h3><span class="tag" style="background:var(--teal-bg);color:var(--teal)">7 Verb · 8항목</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>테스트 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>P1-01</code></td><td>started 발화</td><td>iframe 로딩 완료 후 sendLogToContainer에 verb:"started" 포함 메시지 캡처</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P1-02</code></td><td>completed 발화</td><td>submitAnswer() DOM 클릭 후 verb:"completed" + result.extensions 포함 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P1-03</code></td><td>completed extensions 정합</td><td>crt-rt, crt-cnt, incrt-cnt, req-act-cnt, com-act-cnt, com-act-rt, skip, success, duration 존재 및 타입 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P1-04</code></td><td>viewed 발화</td><td>해설 버튼 클릭 후 verb:"viewed" 캡처</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P1-05</code></td><td>reset 발화</td><td>초기화 버튼 클릭 후 verb:"reset" + restore 객체 포함 캡처</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P1-06</code></td><td>left 발화</td><td>terminated 메시지 전송 후 verb:"left" + duration 포함 캡처</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P1-07</code></td><td>Verb 발화 순서</td><td>started → (completed/presented) → left 순서 보장 검증</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P1-08</code></td><td>context.extensions 포함</td><td>모든 이벤트에 lcms/conts-id 포함 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">📨</div><h3>P2. postMessage 통신 검증</h3><span class="tag" style="background:var(--blue-bg);color:var(--blue)">양방향 · 6항목</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>테스트 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>P2-01</code></td><td>requestUserId 발송</td><td>iframe 로딩 후 parent에 type:"requestUserId" 메시지 수신 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P2-02</code></td><td>requestRestoreData 발송</td><td>iframe 로딩 후 type:"requestRestoreData" 메시지 수신 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P2-03</code></td><td>sendRestoreData 수신 처리</td><td>뷰어 모킹에서 contentId+contentTag 전송 → 콘텐츠가 저장했는지 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P2-04</code></td><td>contentId/contentTag 전달</td><td>이후 모든 sendLogToContainer에 contentId, contentTag 포함 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P2-05</code></td><td>iframeCurrentPage 발송</td><td>로딩 시 type:"iframeCurrentPage" + data(페이지번호) + height 포함 캡처</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P2-06</code></td><td>terminated → deinit 응답</td><td>terminated 전송 후 left 이벤트 발송 + iframeDeinit 메시지 수신 확인</td><td><span class="sev sev-critical">Critical</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--purple-bg);color:var(--purple)">🔄</div><h3>P3. OctoPlayer 라이프사이클 검증</h3><span class="tag" style="background:var(--purple-bg);color:var(--purple)">E2E · 5항목</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>테스트 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>P3-01</code></td><td>초기화 시퀀스</td><td>requestUserId → requestRestoreData → sendRestoreData 수신 → started 발화 순서 검증 (3초 타임아웃)</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P3-02</code></td><td>학습 시퀀스</td><td>started 이후 사용자 인터랙션(보기 선택→제출) → completed 발화 → 피드백 DOM 표시 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P3-03</code></td><td>종료 시퀀스</td><td>terminated 전송 → left 발화(duration 포함) → iframeDeinit 수신 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P3-04</code></td><td>timestamp 일관성</td><td>모든 이벤트의 timestamp가 ISO 8601 형식이고 시간순 정렬인지 검증</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P3-05</code></td><td>duration 정확도</td><td>started→completed 시간 차이와 result.duration 값의 오차가 ±2초 이내인지</td><td><span class="sev sev-major">Major</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">💾</div><h3>P4. restore 복원 검증</h3><span class="tag" style="background:var(--amber-bg);color:var(--amber)">상태 · 5항목</span></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>검증 항목</th><th>테스트 방법</th><th>심각도</th></tr></thead>
+            <tbody>
+              <tr><td><code>P4-01</code></td><td>restore 데이터 포함</td><td>completed, reset, left 이벤트에 restore 객체가 비어있지 않은지 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P4-02</code></td><td>restore 직렬화 가능</td><td>restore 객체가 JSON.stringify/parse 왕복 가능한지 검증</td><td><span class="sev sev-major">Major</span></td></tr>
+              <tr><td><code>P4-03</code></td><td>restore로 상태 복원</td><td>completed 시점의 restore를 sendRestoreData로 재전송 → DOM 상태 복원 확인 (선택된 보기, 입력값 등)</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P4-04</code></td><td>복원 후 재채점 일관</td><td>복원 후 submitAnswer() → getResult() 값이 이전과 동일한지 검증</td><td><span class="sev sev-critical">Critical</span></td></tr>
+              <tr><td><code>P4-05</code></td><td>빈 restore 처리</td><td>restore가 null/undefined인 sendRestoreData 수신 시 에러 없이 초기 상태로 동작하는지</td><td><span class="sev sev-major">Major</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info amber">
+          <span class="ic">🧪</span>
+          <span><strong>P4-03 복원 테스트 흐름:</strong> ① 문항 로딩 → ② 2번 보기 선택 + 제출 → ③ completed 이벤트의 restore 캡처 → ④ 새 iframe 로딩 → ⑤ 캡처된 restore를 sendRestoreData로 전송 → ⑥ DOM에서 2번 보기가 선택 상태인지 확인</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 3: MOCK ===== -->
+  <div class="section" id="sec-mock">
+    <div class="section-title">OctoPlayer 모킹 <span class="badge" style="background:var(--purple-bg2);color:var(--purple)">mock-viewer.html</span></div>
+    <p class="section-desc">실제 OctoPlayer 없이 테스트하기 위한 모킹 페이지입니다. 컨테이너+뷰어 역할을 하며, 콘텐츠 iframe과 postMessage를 주고받습니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--purple-bg);color:var(--purple)">🎭</div><h3>mock-viewer.html 핵심 구조</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">MOCK VIEWER</span>
+<span class="c">// mock-viewer.html — 테스트 전용 뷰어 모킹</span>
+
+var capturedMessages = [];  <span class="c">// 콘텐츠→뷰어 메시지 캡처 배열</span>
+var mockConfig = {
+  <span class="k">contentId</span>: <span class="s">"TEST-IFRAME-001"</span>,
+  <span class="k">contentTag</span>: { <span class="k">subject</span>:<span class="s">"math"</span>, <span class="k">grade</span>:<span class="n">3</span> },
+  <span class="k">userId</span>: <span class="s">"test-user-uuid-001"</span>,
+  <span class="k">restoreData</span>: <span class="n">null</span>  <span class="c">// 복원 테스트 시 주입</span>
+};
+
+<span class="c">// 콘텐츠에서 오는 메시지 수신</span>
+window.addEventListener(<span class="s">'message'</span>, function(e) {
+  capturedMessages.push({
+    <span class="k">timestamp</span>: <span class="k">new</span> Date().toISOString(),
+    <span class="k">type</span>: e.data.type,
+    <span class="k">data</span>: e.data.data || e.data
+  });
+
+  <span class="c">// 자동 응답: requestUserId → sendUserId</span>
+  <span class="k">if</span>(e.data.type === <span class="s">'requestUserId'</span>) {
+    iframe.contentWindow.postMessage({
+      type:<span class="s">'sendUserId'</span>, data: mockConfig.userId
+    }, <span class="s">'*'</span>);
+  }
+
+  <span class="c">// 자동 응답: requestRestoreData → sendRestoreData</span>
+  <span class="k">if</span>(e.data.type === <span class="s">'requestRestoreData'</span>) {
+    iframe.contentWindow.postMessage({
+      type:<span class="s">'sendRestoreData'</span>,
+      data: mockConfig.restoreData || {},
+      contentId: mockConfig.contentId,
+      contentTag: mockConfig.contentTag
+    }, <span class="s">'*'</span>);
+  }
+});
+
+<span class="c">// 테스트 러너가 호출하는 헬퍼 함수들</span>
+function sendTerminated() { <span class="c">/* terminated 전송 */</span> }
+function getMessages(verbFilter) { <span class="c">/* 캡처된 메시지 필터링 */</span> }
+function clearMessages() { <span class="c">/* 캡처 초기화 */</span> }
+function reloadWithRestore(data) { <span class="c">/* restore 데이터로 새 iframe 로딩 */</span> }</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 4: PIPELINE ===== -->
+  <div class="section" id="sec-pipeline">
+    <div class="section-title">테스트 파이프라인 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">5 STEPS</span></div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--blue)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 1. 테스트 환경 구성 <span class="method" style="background:var(--blue-bg2);color:var(--blue)">셋업</span></h4>
+              <p>Playwright 브라우저 인스턴스 생성 → mock-viewer.html 로딩 → 콘텐츠 폴더를 로컬 서버로 서빙 → iframe에 콘텐츠 로딩</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--teal)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 2. 초기화 시퀀스 테스트 (P2+P3) <span class="method" style="background:var(--teal-bg2);color:var(--teal)">자동</span></h4>
+              <p>requestUserId/requestRestoreData 캡처 → 자동 응답 → started 발화 검증 → iframeCurrentPage 캡처. 3초 타임아웃 적용.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--purple)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 3. 학습 시퀀스 테스트 (P1) <span class="method" style="background:var(--purple-bg2);color:var(--purple)">시뮬레이션</span></h4>
+              <p>Playwright로 문항 인터랙션 시뮬레이션: 보기 클릭 → 제출 → completed 캡처 및 extensions 검증 → 해설 버튼 → viewed → 초기화 → reset. 문항 유형별 인터랙션 시나리오 자동 결정.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--amber)"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 4. 종료 + 복원 테스트 (P3+P4) <span class="method" style="background:var(--amber-bg2);color:var(--amber)">시뮬레이션</span></h4>
+              <p>terminated 전송 → left + deinit 검증 → 캡처된 restore로 새 iframe 로딩 → DOM 상태 복원 확인 → 재채점 일관성 검증</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot" style="border-color:var(--green);background:var(--green)"></div></div>
+            <div class="flow-content">
+              <h4>STEP 5. 리포트 생성 + 판정 <span class="method" style="background:var(--green-bg2);color:var(--green)">출력</span></h4>
+              <p>24개 항목 결과 집계 → PASSED/FAILED 판정 → platform_report_{id}.json 출력. 실패 시 데이터팀 반려.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 5: REPORT ===== -->
+  <div class="section" id="sec-report">
+    <div class="section-title">검증 리포트 <span class="badge" style="background:var(--green-bg2);color:var(--green)">JSON</span></div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--green-bg);color:var(--green)">📄</div><h3>platform_report_{id}.json</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">REPORT SCHEMA</span>
+{
+  <span class="k">"question_id"</span>: <span class="s">"Q-342"</span>,
+  <span class="k">"tested_at"</span>: <span class="s">"2026-03-24T09:10:00Z"</span>,
+  <span class="k">"status"</span>: <span class="s">"failed"</span>,
+
+  <span class="k">"summary"</span>: {
+    <span class="k">"total"</span>: <span class="n">24</span>, <span class="k">"passed"</span>: <span class="n">21</span>, <span class="k">"failed"</span>: <span class="n">3</span>,
+    <span class="k">"critical_failures"</span>: <span class="n">2</span>,
+    <span class="k">"major_failures"</span>: <span class="n">1</span>
+  },
+
+  <span class="k">"domains"</span>: {
+    <span class="k">"P1_xapi"</span>: {<span class="k">"passed"</span>:<span class="n">6</span>, <span class="k">"failed"</span>:<span class="n">2</span>, <span class="k">"status"</span>:<span class="s">"FAIL"</span>},
+    <span class="k">"P2_postmessage"</span>: {<span class="k">"passed"</span>:<span class="n">6</span>, <span class="k">"failed"</span>:<span class="n">0</span>, <span class="k">"status"</span>:<span class="s">"PASS"</span>},
+    <span class="k">"P3_lifecycle"</span>: {<span class="k">"passed"</span>:<span class="n">5</span>, <span class="k">"failed"</span>:<span class="n">0</span>, <span class="k">"status"</span>:<span class="s">"PASS"</span>},
+    <span class="k">"P4_restore"</span>: {<span class="k">"passed"</span>:<span class="n">4</span>, <span class="k">"failed"</span>:<span class="n">1</span>, <span class="k">"status"</span>:<span class="s">"FAIL"</span>}
+  },
+
+  <span class="k">"captured_events"</span>: [
+    {<span class="k">"verb"</span>:<span class="s">"started"</span>, <span class="k">"at"</span>:<span class="s">"0.8s"</span>, <span class="k">"valid"</span>:<span class="n">true</span>},
+    {<span class="k">"verb"</span>:<span class="s">"completed"</span>, <span class="k">"at"</span>:<span class="s">"2.3s"</span>, <span class="k">"valid"</span>:<span class="n">false</span>, <span class="k">"reason"</span>:<span class="s">"missing crt-rt"</span>},
+    {<span class="k">"verb"</span>:<span class="s">"left"</span>, <span class="k">"at"</span>:<span class="s">"4.1s"</span>, <span class="k">"valid"</span>:<span class="n">true</span>}
+  ],
+
+  <span class="k">"issues"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"P1-03"</span>,
+      <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+      <span class="k">"title"</span>: <span class="s">"completed extensions 누락"</span>,
+      <span class="k">"detail"</span>: <span class="s">"completed 이벤트에 crt-rt, crt-cnt 필드 없음"</span>,
+      <span class="k">"expected"</span>: <span class="s">"extensions에 skip, req-act-cnt, com-act-cnt, com-act-rt, crt-cnt, incrt-cnt, crt-rt 포함"</span>,
+      <span class="k">"actual"</span>: <span class="s">"extensions: {skip: false, req-act-cnt: 1, com-act-cnt: 1, com-act-rt: 1.00}"</span>,
+      <span class="k">"fix_guide"</span>: <span class="s">"octo-bridge.js sendCompleted()에서 getResult().correct를 기반으로 crt-cnt, incrt-cnt, crt-rt를 계산하여 extensions에 포함"</span>
+    },
+    {
+      <span class="k">"id"</span>: <span class="s">"P4-03"</span>,
+      <span class="k">"severity"</span>: <span class="s">"critical"</span>,
+      <span class="k">"title"</span>: <span class="s">"restore 복원 실패"</span>,
+      <span class="k">"detail"</span>: <span class="s">"restore 데이터로 재로딩 후 이전 선택 상태가 복원되지 않음"</span>,
+      <span class="k">"fix_guide"</span>: <span class="s">"octo-bridge.js의 sendRestoreData 수신 핸들러에서 restore.selectedOption 값으로 DOM 복원 로직 구현 필요"</span>
+    }
+  ]
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 6: REJECT ===== -->
+  <div class="section" id="sec-reject">
+    <div class="section-title">반려 프로세스 <span class="badge" style="background:var(--red-bg2);color:var(--red)">→ 데이터팀</span></div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--red-bg);color:var(--red)">🔄</div><h3>반려 흐름</h3></div>
+      <div class="card-body">
+        <div class="reject-flow">
+          <div class="reject-step" style="background:var(--red-bg);border-color:rgba(232,90,90,.2);color:var(--red)">❌ 플랫폼팀 FAILED</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--amber-bg);border-color:rgba(240,185,90,.2);color:var(--amber)">📋 이슈 리포트</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--blue-bg);border-color:rgba(91,164,245,.2);color:var(--blue)">🔧 데이터팀 octo-bridge.js 수정</div>
+          <span class="reject-arrow">→</span>
+          <div class="reject-step" style="background:var(--green-bg);border-color:rgba(123,201,94,.2);color:var(--green)">🔍 플랫폼팀 재검증</div>
+        </div>
+        <div class="pc" style="margin-top:16px">
+          <h5>📋 데이터팀에 전달되는 수정 요청</h5>
+          <ul>
+            <li><strong>수정 대상:</strong> <code>octo-bridge.js</code> (item.js는 수정 불가)</li>
+            <li><strong>이슈별 fix_guide:</strong> 구체적 함수명 + 수정 방향 포함</li>
+            <li><strong>재검증 범위:</strong> 수정된 이슈 관련 검증 항목만 재실행</li>
+            <li><strong>최대 반려:</strong> 2회. 3회차 실패 시 escalated 처리</li>
+          </ul>
+        </div>
+        <div class="info red" style="margin-top:12px">
+          <span class="ic">⚠️</span>
+          <span><strong>반려 대상 구분:</strong> P1·P2·P4 이슈는 데이터팀(octo-bridge.js) 반려. 단, P3 라이프사이클 중 item.js 자체 오류가 원인인 경우 검수팀을 거쳐 제작팀으로 에스컬레이션합니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSec(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

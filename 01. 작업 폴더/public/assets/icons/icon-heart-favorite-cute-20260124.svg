@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D"/>
+      <stop offset="50%" style="stop-color:#FF8FAB"/>
+      <stop offset="100%" style="stop-color:#FF6B9D"/>
+    </linearGradient>
+    <filter id="heartGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- 배경 빛 -->
+  <circle cx="32" cy="32" r="30" fill="#FFE4EC" opacity="0.5"/>
+  <!-- 메인 하트 -->
+  <path d="M32 56 C12 40 4 28 4 18 Q4 6 16 6 Q24 6 32 16 Q40 6 48 6 Q60 6 60 18 C60 28 52 40 32 56"
+        fill="url(#heartGrad)" filter="url(#heartGlow)"/>
+  <!-- 하트 하이라이트 -->
+  <ellipse cx="18" cy="20" rx="6" ry="8" fill="white" opacity="0.4" transform="rotate(-30 18 20)"/>
+  <!-- 하트 얼굴 - 눈 -->
+  <ellipse cx="22" cy="26" rx="3" ry="4" fill="#5D4E37"/>
+  <ellipse cx="42" cy="26" rx="3" ry="4" fill="#5D4E37"/>
+  <circle cx="23" cy="25" r="1.5" fill="white"/>
+  <circle cx="43" cy="25" r="1.5" fill="white"/>
+  <!-- 행복한 눈 -->
+  <path d="M20 26 Q22 22 24 26" fill="none" stroke="#5D4E37" stroke-width="2" stroke-linecap="round"/>
+  <path d="M40 26 Q42 22 44 26" fill="none" stroke="#5D4E37" stroke-width="2" stroke-linecap="round"/>
+  <!-- 큰 미소 -->
+  <path d="M24 36 Q32 46 40 36" fill="none" stroke="#5D4E37" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- 볼터치 -->
+  <ellipse cx="14" cy="32" rx="4" ry="2.5" fill="#FFB6C1" opacity="0.7"/>
+  <ellipse cx="50" cy="32" rx="4" ry="2.5" fill="#FFB6C1" opacity="0.7"/>
+  <!-- 작은 하트들 -->
+  <path d="M8 8 C6 6 4 7 4 9 C4 11 8 14 8 14 C8 14 12 11 12 9 C12 7 10 6 8 8" fill="#FF9AA2"/>
+  <path d="M56 10 C54 8 52 9 52 11 C52 13 56 16 56 16 C56 16 60 13 60 11 C60 9 58 8 56 10" fill="#FF9AA2"/>
+  <path d="M52 50 C51 49 50 49.5 50 50.5 C50 51.5 52 53 52 53 C52 53 54 51.5 54 50.5 C54 49.5 53 49 52 50" fill="#FF9AA2"/>
+  <!-- 반짝이 -->
+  <circle cx="28" cy="6" r="2" fill="#FFB6C1"/>
+  <circle cx="36" cy="4" r="1.5" fill="#FFB6C1"/>
+</svg>

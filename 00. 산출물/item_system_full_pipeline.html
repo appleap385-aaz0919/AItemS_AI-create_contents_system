@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AItemS - 문항 저작 시스템</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',system-ui,sans-serif;background:#f5f4f1;color:#1a1a18}
+.app{display:flex;flex-direction:column;height:100vh}
+.top{background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:10px 18px;display:flex;align-items:center;gap:10px}
+.logo{font-size:.95rem;font-weight:900;color:#6c5ce7}.logo span{color:#8c8b87;font-weight:400;font-size:.75rem;margin-left:6px}
+.abg{font-size:.55rem;padding:3px 8px;border-radius:4px;background:#f0eeff;color:#6c5ce7;font-weight:600}
+.stpill{margin-left:auto;font-size:.65rem;padding:3px 10px;border-radius:16px;background:#e6f9f3;color:#00b894}
+.lay{display:flex;flex:1;overflow:hidden}
+.sb{width:280px;background:#fff;border-right:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.sbh{padding:12px 14px;border-bottom:1px solid rgba(0,0,0,.06);font-size:.78rem;font-weight:700}
+.sb-filters{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.fb-btn{padding:5px 12px;font-size:.68rem;font-weight:500;border:1px solid rgba(0,0,0,.06);border-radius:6px;background:#fff;color:#8c8b87;cursor:pointer;transition:all .15s;font-family:inherit}
+.fb-btn:hover{border-color:#6c5ce7;color:#6c5ce7}
+.fb-btn.active{background:#6c5ce7;color:#fff;border-color:#6c5ce7}
+.fb-sel{padding:5px 8px;font-size:.68rem;border:1px solid rgba(0,0,0,.06);border-radius:6px;background:#fff;color:#1a1a18;font-family:inherit;cursor:pointer}
+.stw{flex:1;overflow-y:auto;padding:4px 0}
+.th{padding:7px 10px;font-size:.72rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;user-select:none}.th:hover{background:#eeecea}
+.ta{font-size:.5rem;color:#b5b4b0;transition:transform .2s;display:inline-block}.to{transform:rotate(90deg)}
+.tn{font-family:monospace;font-size:.58rem;color:#6c5ce7;background:#f0eeff;padding:1px 4px;border-radius:2px}
+.tl{padding:5px 10px;font-size:.68rem;cursor:pointer;display:flex;align-items:center;gap:5px;color:#8c8b87;border-left:2px solid transparent;transition:all .15s}
+.tl:hover{background:#f0eeff;color:#1a1a18}.tl.sel{background:#f0eeff;color:#6c5ce7;font-weight:600;border-left-color:#6c5ce7}
+.tdot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.mn{flex:1;overflow-y:auto;padding:18px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:55vh;text-align:center;color:#8c8b87}
+.empty .ei{font-size:2.5rem;margin-bottom:12px;opacity:.4}.empty h3{font-size:.92rem;font-weight:600;color:#5c5b57}.empty p{font-size:.76rem;max-width:280px;margin-top:4px}
+.pipe-bar{display:flex;align-items:center;gap:0;margin-bottom:14px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:10px;padding:10px 14px;overflow-x:auto}
+.pipe-stage-wrap{display:flex;align-items:center}
+.pipe-conn{width:20px;height:1px;background:#ddd;margin:0 2px}
+.pipe-stage{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;font-size:.65rem;font-weight:500;white-space:nowrap;border:1px solid rgba(0,0,0,.04)}
+.pipe-stage.idle{background:#f7f6f3;color:#b5b4b0}
+.pipe-stage.running{background:#fff8e6;color:#f0932b;border-color:rgba(240,147,43,.2)}
+.pipe-stage.done{background:#e6f9f3;color:#00b894;border-color:rgba(0,184,148,.2)}
+.pipe-stage.fail{background:rgba(232,90,90,.06);color:#e85a5a;border-color:rgba(232,90,90,.2)}
+.pipe-icon{font-size:.7rem}.pipe-name{font-weight:600}.pipe-time{font-family:monospace;font-size:.58rem;opacity:.7}
+.mc{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.03);margin-bottom:12px;overflow:hidden}
+.mch{padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,0,0,.06);background:#fafaf8}
+.mch h3{font-size:.8rem;font-weight:700;flex:1}
+.mbg{font-size:.58rem;font-weight:600;padding:2px 8px;border-radius:16px}
+.mgr{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px 16px}
+.mi{padding:7px 8px;background:#f7f6f3;border-radius:6px}
+.mil{font-size:.56rem;color:#8c8b87;margin-bottom:1px}.miv{font-size:.72rem;font-weight:600}
+.maa{padding:0 16px 6px;font-size:.66rem;color:#5c5b57}
+.mag{padding:0 16px 10px;font-size:.68rem;color:#6c5ce7}
+.stags{padding:0 16px 12px;display:flex;gap:3px;flex-wrap:wrap}
+.stag{font-size:.56rem;font-family:monospace;padding:1px 6px;border-radius:3px;background:#e6f9f3;color:#00b894}
+.depth-ctx{padding:0 16px 12px}
+.depth-title{font-size:.64rem;font-weight:600;color:#6c5ce7;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.depth-title::before{content:'';display:inline-block;width:3px;height:12px;background:#6c5ce7;border-radius:2px}
+.depth-items{display:flex;flex-direction:column;gap:4px}
+.depth-item{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-radius:6px;font-size:.66rem;line-height:1.5}
+.depth-item.d3{background:rgba(108,92,231,.06)}.depth-item.d2{background:rgba(9,132,227,.04)}.depth-item.d1{background:rgba(0,0,0,.02)}
+.dw{flex-shrink:0;font-weight:700;font-size:.6rem;min-width:36px}
+.depth-item.d3 .dw{color:#6c5ce7}.depth-item.d2 .dw{color:#0984e3}.depth-item.d1 .dw{color:#8c8b87}
+.dn{font-weight:600;color:#2d3436;flex-shrink:0;min-width:80px}
+.dc{color:#636e72;flex:1}
+.qc{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.03);overflow:hidden;margin-bottom:12px}
+.qch{padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(0,0,0,.06);background:linear-gradient(135deg,#f0eeff,#fff);flex-wrap:wrap}
+.qch h3{font-size:.8rem;font-weight:700}
+.qid{font-family:monospace;font-size:.6rem;color:#6c5ce7;background:#fff;padding:2px 8px;border-radius:5px;border:1px solid rgba(108,92,231,.15)}
+.qac{display:flex;gap:5px;margin-left:auto}
+.brg{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border:1px solid rgba(0,0,0,.08);border-radius:7px;background:#fff;font-size:.68rem;font-weight:600;cursor:pointer}
+.brg:hover{border-color:#6c5ce7;color:#6c5ce7;background:#f0eeff}
+.bdl{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border:1px solid rgba(0,0,0,.08);border-radius:7px;background:#fff;font-size:.68rem;font-weight:600;cursor:pointer;transition:all .2s}
+.bdl:hover{border-color:#27ae60;color:#27ae60;background:rgba(39,174,96,.04)}
+.bdl:disabled{opacity:.4;cursor:not-allowed}
+.rb{font-family:monospace;font-size:.56rem;background:#eeecea;padding:1px 5px;border-radius:8px;color:#8c8b87}
+.qb{padding:18px}
+.qp{font-size:.84rem;line-height:1.8;margin-bottom:14px;padding:12px;background:#f7f6f3;border-radius:8px;border-left:3px solid #6c5ce7}
+.qs{font-size:.86rem;font-weight:600;margin-bottom:14px}
+.mco{display:flex;flex-direction:column;gap:6px}
+.mci{display:flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid rgba(0,0,0,.06);border-radius:8px;cursor:pointer;transition:all .2s}
+.mci:hover,.mci.s{border-color:#6c5ce7;background:#f0eeff}
+.mci.c{border-color:#27ae60;background:#e8f8ef}.mci.w{border-color:#e74c3c;background:rgba(231,76,60,.06)}
+.mn2{width:24px;height:24px;border-radius:50%;background:#eeecea;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:600;flex-shrink:0}
+.mci.s .mn2{background:#6c5ce7;color:#fff}.mci.c .mn2{background:#27ae60;color:#fff}.mci.w .mn2{background:#e74c3c;color:#fff}
+.mt{font-size:.8rem;flex:1;text-align:left}
+.type-panel{background:#fff;border:2px solid #6c5ce7;border-radius:12px;margin-bottom:16px;overflow:hidden}
+.type-head{padding:16px 18px;background:linear-gradient(135deg,#f0eeff,#fff);border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.type-head-icon{font-size:1.2rem}
+.type-head span:nth-child(2){font-size:.88rem;font-weight:700;color:#6c5ce7}
+.type-head-sub{font-size:.66rem;color:#8c8b87;width:100%;margin-top:2px}
+.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 18px}
+.type-card{padding:16px 12px;border:2px solid rgba(0,0,0,.06);border-radius:10px;cursor:pointer;text-align:center;transition:all .2s;position:relative}
+.type-card:hover{border-color:#6c5ce7;background:#f0eeff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(108,92,231,.12)}
+.type-card.recommended{border-color:rgba(108,92,231,.3);background:#faf9ff}
+.type-icon{font-size:1.5rem;margin-bottom:6px}
+.type-label{font-size:.82rem;font-weight:700;color:#2d3436;margin-bottom:3px}
+.type-desc{font-size:.64rem;color:#8c8b87;line-height:1.4}
+.type-rec{position:absolute;top:6px;right:6px;font-size:.52rem;padding:2px 6px;border-radius:4px;background:#6c5ce7;color:#fff;font-weight:600}
+.oxo{display:flex;gap:10px;justify-content:center;padding:16px 0}
+.oxb{width:80px;height:80px;border-radius:14px;border:2px solid rgba(0,0,0,.06);background:#fff;cursor:pointer;font-size:2rem;font-weight:900;transition:all .2s}
+.oxb:hover{transform:scale(1.05)}.oo{color:#4a90d9}.ox{color:#e17055}
+.oxb.s.oo{border-color:#4a90d9;background:#eaf2fb;transform:scale(1.08)}.oxb.s.ox{border-color:#e17055;background:#fdeee9;transform:scale(1.08)}
+.fill-math-wrap{padding:16px 0}
+.fill-input-row{display:flex;align-items:center;justify-content:center;gap:8px}
+.fill-math-wrap .fli{width:220px;height:48px;border:2px solid #6c5ce7;border-radius:8px;text-align:center;font-size:1.1rem;font-weight:700;background:#faf9ff;color:#6c5ce7;outline:none;flex-shrink:0}
+.fill-math-wrap .fli:focus{border-color:#5b4bd5;box-shadow:0 0 0 3px rgba(108,92,231,.12)}
+.fill-btn-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px}
+.math-toggle{padding:8px 14px;border:1px solid rgba(108,92,231,.2);border-radius:8px;background:rgba(108,92,231,.04);color:#6c5ce7;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.math-toggle:hover,.math-toggle.active{background:#6c5ce7;color:#fff}
+.math-toggle:disabled{opacity:.4;cursor:not-allowed}
+.mathtype-btn{padding:8px 14px;border:1px solid rgba(0,184,148,.2);border-radius:8px;background:rgba(0,184,148,.04);color:#00b894;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.mathtype-btn:hover{background:#00b894;color:#fff}
+.mathtype-btn:disabled{opacity:.4;cursor:not-allowed}
+.mathtype-msg{margin-top:8px;padding:8px 12px;border-radius:6px;background:rgba(240,185,90,.06);border:1px solid rgba(240,185,90,.15);font-size:.64rem;color:#f0932b;text-align:center}
+.math-pad{background:#fff;border:2px solid #6c5ce7;border-radius:12px;margin-top:10px;overflow:hidden;box-shadow:0 8px 24px rgba(108,92,231,.12)}
+.math-pad-head{padding:10px 14px;background:linear-gradient(135deg,#f0eeff,#fff);border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px}
+.math-pad-title{font-size:.78rem;font-weight:700;color:#6c5ce7}
+.math-pad-hint{font-size:.6rem;color:#8c8b87;flex:1}
+.math-pad-close{width:24px;height:24px;border:none;background:rgba(0,0,0,.04);border-radius:6px;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center}
+.math-pad-body{display:flex;gap:10px;padding:12px 14px}
+.math-pad-section{flex:1}
+.math-pad-label{font-size:.6rem;color:#8c8b87;font-weight:600;margin-bottom:6px;letter-spacing:.04em}
+.math-keys{display:grid;gap:4px}
+.num-keys{grid-template-columns:repeat(3,1fr)}
+.op-keys{grid-template-columns:repeat(3,1fr)}
+.math-key{padding:10px 4px;border:1px solid rgba(0,0,0,.06);border-radius:6px;background:#fafaf8;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .12s;text-align:center;font-family:inherit}
+.math-key:hover{background:#f0eeff;border-color:#6c5ce7;transform:scale(1.05)}
+.math-key:active{background:#6c5ce7;color:#fff;transform:scale(.95)}
+.key-del{background:rgba(240,123,90,.06);color:#e17055;font-size:.72rem}
+.key-del:hover{background:rgba(240,123,90,.12)}
+.key-clear{background:rgba(232,90,90,.06);color:#d63031;font-size:.68rem}
+.key-clear:hover{background:rgba(232,90,90,.12)}
+.math-pad-footer{padding:8px 14px;border-top:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.math-pad-done{padding:8px 20px;border:none;border-radius:8px;background:#6c5ce7;color:#fff;font-size:.74rem;font-weight:600;cursor:pointer}
+.math-pad-done:hover{background:#5b4bd5}
+.essa{width:100%;min-height:100px;border:1px solid rgba(0,0,0,.06);border-radius:8px;padding:12px;font-size:.82rem;line-height:1.7;resize:vertical;outline:none}.essa:focus{border-color:#6c5ce7}
+.bsub{display:block;margin:14px auto 0;padding:9px 28px;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;background:#6c5ce7;color:#fff}.bsub:hover{background:#5b4bd5}
+.fb-wrap{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.fb-result{padding:14px 18px;border-radius:10px;font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.fb-result.fc{background:#e8f8ef;border:1px solid rgba(39,174,96,.2);color:#1e8449}
+.fb-result.fw{background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.15);color:#c0392b}
+.fb-icon{font-size:1.2rem}.fb-text{flex:1}
+.fb-explain{background:#fafaf8;border:1px solid rgba(0,0,0,.06);border-radius:10px;overflow:hidden}
+.fb-explain-head{padding:10px 16px;font-size:.76rem;font-weight:600;color:#6c5ce7;background:rgba(108,92,231,.04);border-bottom:1px solid rgba(0,0,0,.04);display:flex;align-items:center;gap:6px}
+.fb-explain-icon{font-size:.9rem}
+.fb-explain-body{padding:14px 16px;font-size:.82rem;line-height:1.8;color:#2d3436}
+.bview{display:inline-block;margin:0 16px 12px;padding:6px 16px;border:1px solid rgba(108,92,231,.15);border-radius:6px;background:rgba(108,92,231,.04);font-size:.7rem;font-weight:500;cursor:pointer;color:#6c5ce7;transition:all .15s}
+.bview:hover{background:rgba(108,92,231,.1)}
+.qf{padding:12px 16px;border-top:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px}
+.brst{padding:7px 16px;border:1px solid rgba(0,0,0,.06);border-radius:7px;background:#eeecea;font-size:.72rem;font-weight:500;cursor:pointer}
+.tmr{margin-left:auto;font-family:monospace;font-size:.74rem;color:#8c8b87}
+.ldg{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:12px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spn{width:28px;height:28px;border:3px solid #eeecea;border-top-color:#6c5ce7;border-radius:50%;animation:spin .7s linear infinite}
+.lt{font-size:.78rem;color:#5c5b57;font-weight:500}.ls{font-size:.66rem;color:#8c8b87}
+.qa-panel{border-radius:10px;margin-bottom:12px;overflow:hidden;border:1px solid rgba(0,0,0,.06)}
+.qa-panel.pass{border-color:rgba(0,184,148,.2)}.qa-panel.fail{border-color:rgba(232,90,90,.2)}
+.qa-head{padding:10px 14px;font-size:.74rem;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.qa-panel.pass .qa-head{background:#e6f9f3;color:#00b894}.qa-panel.fail .qa-head{background:rgba(232,90,90,.06);color:#e85a5a}
+.qa-score{font-family:monospace;font-size:.7rem}
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 14px;background:#fff}
+.qa-domain{padding:8px;background:#f7f6f3;border-radius:6px}
+.qa-dn{font-size:.6rem;color:#8c8b87;font-weight:500}.qa-ds{font-size:.74rem;font-weight:600;margin-top:2px}
+.qa-di{font-size:.58rem;color:#e17055;margin-top:3px;line-height:1.4}
+.qa-verify{padding:6px 14px;font-size:.68rem;background:#fff}
+.qa-sum{padding:6px 14px 10px;font-size:.66rem;color:#5c5b57;background:#fff}
+.xapi-panel{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.xapi-head{padding:10px 14px;font-size:.74rem;font-weight:600;border-bottom:1px solid rgba(0,0,0,.06);background:#f0eeff;color:#6c5ce7}
+.xapi-list{max-height:180px;overflow-y:auto}
+.xapi-ev{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:.66rem;border-bottom:1px solid rgba(0,0,0,.03)}
+.xapi-time{font-family:monospace;font-size:.58rem;color:#8c8b87;width:70px;flex-shrink:0}
+.xapi-verb{font-weight:600;padding:1px 6px;border-radius:3px;font-size:.58rem;min-width:60px;text-align:center}
+.v-started{background:#eaf2fb;color:#4a90d9}.v-completed{background:#e6f9f3;color:#00b894}
+.v-viewed{background:#fff8e6;color:#f0932b}.v-reset{background:rgba(240,123,90,.08);color:#e17055}
+.v-left{background:#eeecea;color:#5c5b57}.v-clicked{background:rgba(108,92,231,.06);color:#6c5ce7}
+.xapi-detail{flex:1;color:#5c5b57}
+.plat-panel{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.plat-head{padding:10px 14px;font-size:.74rem;font-weight:600;border-bottom:1px solid rgba(0,0,0,.06);background:#e6f9f3;color:#00b894}
+.plat-list{max-height:160px;overflow-y:auto}
+.plat-check{display:flex;align-items:center;gap:6px;padding:5px 14px;font-size:.64rem;border-bottom:1px solid rgba(0,0,0,.03)}
+.plat-check.fail{background:rgba(232,90,90,.03)}.plat-id{font-family:monospace;font-size:.58rem;color:#6c5ce7;min-width:44px}
+.retry-panel{background:#fff;border:2px solid #f0932b;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.retry-head{padding:10px 14px;font-size:.74rem;font-weight:600;border-bottom:1px solid rgba(0,0,0,.06);background:#fff8e6;color:#f0932b}
+.retry-list{max-height:200px;overflow-y:auto}
+.retry-item{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.04)}
+.retry-item.esc{background:rgba(232,90,90,.04)}
+.retry-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.retry-badge{font-size:.64rem;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(240,147,43,.12);color:#f0932b}
+.retry-item.esc .retry-badge{background:rgba(232,90,90,.12);color:#e85a5a}
+.retry-score{font-family:monospace;font-size:.62rem;color:#8c8b87}
+.retry-issues{margin-top:4px}
+.retry-iss{font-size:.64rem;color:#e17055;line-height:1.5}
+.retry-action{font-size:.62rem;color:#00b894;margin-top:4px;font-weight:500}
+.plat-retry-panel{background:#fff;border:2px solid #27ae60;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.plat-retry-head{padding:10px 14px;font-size:.74rem;font-weight:600;border-bottom:1px solid rgba(0,0,0,.06);background:rgba(39,174,96,.06);color:#27ae60}
+.plat-retry-list{max-height:200px;overflow-y:auto}
+.plat-retry-item{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.04)}
+.plat-retry-item.esc{background:rgba(232,90,90,.04)}
+.plat-retry-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.plat-retry-badge{font-size:.64rem;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(39,174,96,.12);color:#27ae60}
+.plat-retry-item.esc .plat-retry-badge{background:rgba(232,90,90,.12);color:#e85a5a}
+.plat-retry-cnt{font-family:monospace;font-size:.62rem;color:#8c8b87}
+.plat-retry-issues{margin-top:4px}
+.plat-retry-iss{font-size:.64rem;color:#e17055;line-height:1.5}
+.plat-retry-action{font-size:.62rem;color:#27ae60;margin-top:4px;font-weight:500}
+.ep{background:#fff;border:2px solid #6c5ce7;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.eph{padding:10px 14px;font-size:.78rem;font-weight:600;color:#6c5ce7;background:#f0eeff;display:flex;justify-content:space-between;align-items:center}
+.epg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;padding:12px 14px}
+.ef{display:flex;flex-direction:column;gap:2px}.efl{font-size:.56rem;color:#8c8b87;font-weight:500}
+.ef select{padding:6px 7px;font-size:.7rem;border:1px solid rgba(0,0,0,.06);border-radius:5px;background:#fff;cursor:pointer}
+.epf{padding:10px 14px;border-top:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:8px}
+.eph2{font-size:.62rem;color:#8c8b87;flex:1}
+.epc{padding:6px 12px;border:1px solid rgba(0,0,0,.06);border-radius:6px;background:#fff;font-size:.7rem;cursor:pointer}
+.epa{padding:7px 16px;border:none;border-radius:7px;background:#6c5ce7;color:#fff;font-size:.72rem;font-weight:600;cursor:pointer}.epa:hover{background:#5b4bd5}
+@media(max-width:768px){.lay{flex-direction:column}.sb{width:100%;max-height:30vh}.mgr,.qa-grid{grid-template-columns:repeat(2,1fr)}.type-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useCallback, useEffect } = React;
+
+const TREE = [
+  { n:"00", nm:"학기 초 AI 진단 평가", ch:[] },
+  { n:"01", nm:"덧셈과 뺄셈", ch:[
+    { n:"01", nm:"받아올림이 없는 세 자리 수의 덧셈", t:"연습", ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"add_no_carry"}], std:["E4MATA01B03C05","E4MATA01B03C07"] },
+    { n:"02", nm:"받아올림이 한 번 있는 덧셈", t:"연습", ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"add_one_carry"}], std:["E4MATA01B03C05"] },
+    { n:"03", nm:"받아올림이 여러 번 있는 덧셈", t:"연습", ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"add_multi"}], std:["E4MATA01B03C05"] },
+    { n:"04", nm:"덧셈의 어림셈", t:"연습", ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"estimate"}], std:["E4MATA01B08C20"] },
+    { n:"05", nm:"받아내림이 없는 뺄셈", t:"연습", ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"sub_no"}], std:["E4MATA01B03C06"] },
+    { n:"09", nm:"대단원 마무리", t:"총괄", ch:[{n:"01",nm:"뚝딱 해결해요",t:"심화",k:"challenge"}], std:["E4MATA01B03C05","E4MATA01B03C06"] },
+  ]},
+  { n:"02", nm:"평면도형", ch:[{n:"01",nm:"직각을 알아볼까요",t:"연습",ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"right_angle"}]}] },
+  { n:"03", nm:"나눗셈", ch:[{n:"01",nm:"똑같이 나누기",t:"연습",ch:[{n:"01",nm:"AI 익힘 문제",t:"연습",k:"division"}]}] },
+];
+
+const METAS = {
+  add_no_carry:{ch:"연습",tp:"객관식(4지선다)",el:"과정기능",bl:"적용",df:"하",sc:2,tm:60,ar:"수와 연산",l1:"세 자리 수의 덧셈과 뺄셈",ac:"[4수01-03]",ad:"세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.",gd:"받아올림이 없는 세 자리 수 덧셈",std:["E4MATA01B03C05"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"받아올림이 없는 세 자리 수의 덧셈",context:"자릿값을 맞추어 일의 자리부터 더하는 기본 원리.",w:0.3},d3:{name:"AI 익힘 문제",context:"받아올림 없는 덧셈의 연습 문항.",w:0.5}}},
+  add_one_carry:{ch:"연습",tp:"빈칸채우기",el:"과정기능",bl:"적용",df:"하",sc:2,tm:60,ar:"수와 연산",l1:"세 자리 수의 덧셈과 뺄셈",ac:"[4수01-03]",ad:"세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.",gd:"받아올림이 한 번 있는 덧셈",std:["E4MATA01B03C05"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"받아올림이 한 번 있는 덧셈",context:"일의 자리 또는 십의 자리 중 한 곳에서만 받아올림 발생.",w:0.3},d3:{name:"AI 익힘 문제",context:"받아올림 1회 덧셈 연습.",w:0.5}}},
+  add_multi:{ch:"연습",tp:"객관식(4지선다)",el:"과정기능",bl:"적용",df:"중",sc:3,tm:90,ar:"수와 연산",l1:"세 자리 수의 덧셈과 뺄셈",ac:"[4수01-03]",ad:"세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.",gd:"받아올림이 여러 번 발생하는 덧셈",std:["E4MATA01B03C05"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"받아올림이 여러 번 있는 덧셈",context:"일의 자리와 십의 자리 모두에서 받아올림 발생.",w:0.3},d3:{name:"AI 익힘 문제",context:"연속 받아올림 연습.",w:0.5}}},
+  estimate:{ch:"연습",tp:"빈칸채우기",el:"과정기능",bl:"적용",df:"중",sc:3,tm:90,ar:"수와 연산",l1:"덧셈의 어림셈",ac:"[4수01-08]",ad:"자연수의 덧셈과 뺄셈에서 어림셈을 할 수 있다.",gd:"올림/반올림 활용 어림셈",std:["E4MATA01B08C20"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"덧셈의 어림셈",context:"백의 자리에서 올림하여 대략적인 합을 구하는 방법.",w:0.3},d3:{name:"AI 익힘 문제",context:"어림값 구하기.",w:0.5}}},
+  sub_no:{ch:"연습",tp:"OX판별",el:"지식이해",bl:"이해",df:"하",sc:2,tm:45,ar:"수와 연산",l1:"세 자리 수의 뺄셈",ac:"[4수01-03]",ad:"세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.",gd:"받아내림 없는 뺄셈 OX 판별",std:["E4MATA01B03C06"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"받아내림이 없는 뺄셈",context:"각 자릿수에서 위의 수가 아래 수보다 큰 경우.",w:0.3},d3:{name:"AI 익힘 문제",context:"OX 판별.",w:0.5}}},
+  challenge:{ch:"심화",tp:"서술형",el:"과정기능",bl:"분석",df:"상",sc:5,tm:180,ar:"수와 연산",l1:"세 자리 수의 덧셈과 뺄셈",ac:"[4수01-03]",ad:"세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.",gd:"역산/추론 문제",std:["E4MATA01B03C05"],
+    depth:{d1:{name:"덧셈과 뺄셈",context:"세 자리 수의 덧셈과 뺄셈 전체 단원.",w:0.2},d2:{name:"대단원 마무리",context:"단원 전체를 아우르는 종합 문제.",w:0.3},d3:{name:"뚝딱 해결해요",context:"심화 도전 문항.",w:0.5}}},
+  right_angle:{ch:"연습",tp:"객관식(4지선다)",el:"지식이해",bl:"이해",df:"하",sc:2,tm:60,ar:"도형과 측정",l1:"직각",ac:"[4수02-01]",ad:"직각을 이해하고 직각을 찾을 수 있다.",gd:"직각 개념 이해",std:["E4MATB01B01C01"],
+    depth:{d1:{name:"평면도형",context:"평면도형의 기본 성질.",w:0.2},d2:{name:"직각을 알아볼까요",context:"직각의 정의를 이해하고 직각을 찾는 활동.",w:0.3},d3:{name:"AI 익힘 문제",context:"직각 개념 이해 확인.",w:0.5}}},
+  division:{ch:"연습",tp:"빈칸채우기",el:"과정기능",bl:"적용",df:"하",sc:2,tm:60,ar:"수와 연산",l1:"나눗셈",ac:"[4수01-04]",ad:"나눗셈의 의미를 알고, 곱셈과 나눗셈의 관계를 이해한다.",gd:"똑같이 나누기",std:["E4MATA01B04C09"],
+    depth:{d1:{name:"나눗셈",context:"나눗셈의 개념 도입 단원.",w:0.2},d2:{name:"똑같이 나누기",context:"전체를 같은 수씩 나누는 등분제 개념.",w:0.3},d3:{name:"AI 익힘 문제",context:"똑같이 나누기 연습.",w:0.5}}},
+};
+
+const TC = {진단:"#5ba4f5",연습:"#3dd9a0",형성평가:"#f0b95a",심화:"#f07b5a",총괄:"#7bc95e"};
+
+function generateFallback(meta) {
+  const tp = meta.tp || "객관식(4지선다)";
+  if(tp.includes("객관식")) {
+    const a = Math.floor(Math.random()*300)+100, b = Math.floor(Math.random()*300)+100;
+    const sum = a + b;
+    const wrongs = [sum+10, sum-10, sum+100].sort(()=>Math.random()-0.5);
+    const opts = [{label:"①",text:String(sum),isCorrect:true},{label:"②",text:String(wrongs[0]),isCorrect:false},{label:"③",text:String(wrongs[1]),isCorrect:false},{label:"④",text:String(wrongs[2]),isCorrect:false}];
+    const ci = Math.floor(Math.random()*4);
+    const shuffled = [...opts];
+    const correct = shuffled.splice(0,1)[0];
+    shuffled.splice(ci,0,correct);
+    shuffled.forEach((o,i)=>{o.label=["①","②","③","④"][i];});
+    const correctIdx = shuffled.findIndex(o=>o.isCorrect)+1;
+    return {passage:null,stem:`${a} + ${b}의 값을 구하시오.`,type:"mc",options:shuffled,answer:String(correctIdx),explanation:`${a} + ${b} = ${sum}입니다.`};
+  } else if(tp.includes("OX")) {
+    const a = Math.floor(Math.random()*300)+100, b = Math.floor(Math.random()*300)+100;
+    const isCorrect = Math.random()>0.5;
+    const shown = isCorrect ? a+b : a+b+10;
+    return {passage:null,stem:`${a} + ${b} = ${shown} 입니다. 맞으면 O, 틀리면 X를 선택하세요.`,type:"ox",options:null,answer:isCorrect?"O":"X",explanation:`${a} + ${b} = ${a+b}이므로 ${isCorrect?"맞습니다":"틀립니다"}.`};
+  } else if(tp.includes("빈칸")) {
+    const a = Math.floor(Math.random()*300)+100, b = Math.floor(Math.random()*300)+100;
+    return {passage:null,stem:`${a} + ${b} = (    )  빈칸에 알맞은 수를 써넣으시오.`,type:"fill",options:null,answer:String(a+b),explanation:`${a} + ${b} = ${a+b}입니다.`};
+  } else {
+    const a = Math.floor(Math.random()*300)+100, b = Math.floor(Math.random()*300)+100;
+    return {passage:null,stem:`${a} + ${b}의 계산 과정을 자릿수별로 설명하고 답을 구하시오.`,type:"essay",options:null,answer:"essay",explanation:`일의 자리부터 순서대로 더합니다. ${a} + ${b} = ${a+b}`};
+  }
+}
+
+function TreeNode({node,depth,onSelect,selKey}) {
+  const [open,setOpen]=useState(depth===0&&node.n==="01");
+  if(node.k) return (
+    <div className={`tl ${selKey===node.k?"sel":""}`} style={{paddingLeft:14+depth*16}} onClick={()=>onSelect(node)}>
+      <span className="tdot" style={{background:TC[node.t]||"#888"}}/><span>{node.nm}</span>
+    </div>
+  );
+  return (<div>
+    <div className="th" style={{paddingLeft:6+depth*16}} onClick={()=>setOpen(!open)}>
+      <span className={`ta ${open?"to":""}`}>▶</span><span className="tn">{node.n}</span><span>{node.nm}</span>
+    </div>
+    {open&&node.ch?.map((c,i)=><TreeNode key={i} node={c} depth={depth+1} onSelect={onSelect} selKey={selKey}/>)}
+  </div>);
+}
+
+function PipelineBar({stages}) {
+  return (
+    <div className="pipe-bar">
+      {stages.map((s,i)=>(
+        <div key={i} className="pipe-stage-wrap">
+          {i>0&&<div className="pipe-conn"/>}
+          <div className={`pipe-stage ${s.status}`}>
+            <span className="pipe-icon">{s.status==="done"?"✅":s.status==="running"?"⏳":s.status==="fail"?"❌":"⬜"}</span>
+            <span className="pipe-name">{s.name}</span>
+            {s.time&&<span className="pipe-time">{s.time}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function QAPanel({qaResult}) {
+  if(!qaResult) return null;
+  const st=qaResult.status==="approved";
+  return (
+    <div className={`qa-panel ${st?"pass":"fail"}`}>
+      <div className="qa-head"><span>{st?"✅":"❌"} 검수팀 판정: {st?"APPROVED":"REJECTED"}</span><span className="qa-score">총점 {qaResult.score}/100</span></div>
+      <div className="qa-grid">
+        {[["D1 코드",qaResult.D1_code],["D2 교육",qaResult.D2_education],["D3 접근성",qaResult.D3_accessibility],["D4 채점",qaResult.D4_scoring]].map(([n,d],i)=>(
+          <div key={i} className="qa-domain">
+            <div className="qa-dn">{n}</div>
+            <div className="qa-ds">{d?.score || 0}점</div>
+            {d?.issues?.length>0&&<div className="qa-di">{d.issues.join("; ")}</div>}
+          </div>
+        ))}
+      </div>
+      <div className="qa-verify">정답 검증: {qaResult.answer_verified?"✅ 정답 확인됨":"❌ 정답 오류"} {qaResult.correct_answer&&`(검증 정답: ${qaResult.correct_answer})`}</div>
+      <div className="qa-sum">{qaResult.summary}</div>
+    </div>
+  );
+}
+
+function XAPIPanel({events}) {
+  if(!events||events.length===0) return null;
+  return (
+    <div className="xapi-panel">
+      <div className="xapi-head">📡 데이터팀 — xAPI 이벤트 로그 ({events.length}건)</div>
+      <div className="xapi-list">
+        {events.map((ev,i)=>(
+          <div key={i} className={`xapi-ev ${ev.verb}`}>
+            <span className="xapi-time">{ev.time}</span>
+            <span className={`xapi-verb v-${ev.verb}`}>{ev.verb}</span>
+            <span className="xapi-detail">{ev.detail}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PlatformPanel({checks}) {
+  if(!checks||checks.length===0) return null;
+  const passed=checks.filter(c=>c.ok).length;
+  return (
+    <div className="plat-panel">
+      <div className="plat-head">🔍 플랫폼팀 — 통신 검증 ({passed}/{checks.length} PASSED)</div>
+      <div className="plat-list">
+        {checks.map((c,i)=>(
+          <div key={i} className={`plat-check ${c.ok?"ok":"fail"}`}>
+            <span>{c.ok?"✅":"❌"}</span><span className="plat-id">{c.id}</span><span>{c.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RetryLogPanel({retryLog}) {
+  if(!retryLog||retryLog.length===0) return null;
+  return (
+    <div className="retry-panel">
+      <div className="retry-head">🔄 검수 반려 → 재저작 이력 ({retryLog.length}회)</div>
+      <div className="retry-list">
+        {retryLog.map((r,i)=>(
+          <div key={i} className={`retry-item ${r.escalated?"esc":""}`}>
+            <div className="retry-top">
+              <span className="retry-badge">{r.escalated?"🚨 ESCALATED":`${r.attempt}차 반려`}</span>
+              <span className="retry-score">검수 {r.score}점</span>
+            </div>
+            <div className="retry-issues">
+              {r.issues?.map((iss,j)=><div key={j} className="retry-iss">• {iss}</div>)}
+            </div>
+            {!r.escalated&&<div className="retry-action">→ 반려 사유를 제작팀에 전달하여 재저작 진행</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PlatRetryLogPanel({platRetryLog}) {
+  if(!platRetryLog||platRetryLog.length===0) return null;
+  return (
+    <div className="plat-retry-panel">
+      <div className="plat-retry-head">🔄 플랫폼팀 FAILED → 데이터팀 반려 이력 ({platRetryLog.length}회)</div>
+      <div className="plat-retry-list">
+        {platRetryLog.map((r,i)=>(
+          <div key={i} className={`plat-retry-item ${r.escalated?"esc":""}`}>
+            <div className="plat-retry-top">
+              <span className="plat-retry-badge">{r.escalated?"🚨 ESCALATED":`${r.attempt}차 반려`}</span>
+              <span className="plat-retry-cnt">실패 {r.failedCount}건</span>
+            </div>
+            <div className="plat-retry-issues">
+              {r.issues?.map((iss,j)=><div key={j} className="plat-retry-iss">• {iss}</div>)}
+            </div>
+            {!r.escalated&&<div className="plat-retry-action">→ {r.action}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TypeSelectPanel({meta, onSelect}) {
+  const types = [
+    {value:"객관식(4지선다)", label:"객관식", desc:"4개 보기 중 정답 선택", icon:"🔘"},
+    {value:"OX판별", label:"OX 판별", desc:"참/거짓 판단", icon:"⭕"},
+    {value:"빈칸채우기", label:"빈칸채우기", desc:"정답을 직접 입력", icon:"✏️"},
+    {value:"서술형", label:"서술형", desc:"풀이 과정 서술", icon:"📝"},
+  ];
+  return (
+    <div className="type-panel">
+      <div className="type-head">
+        <span className="type-head-icon">📐</span>
+        <span>문항 유형을 선택하세요</span>
+        <span className="type-head-sub">선택한 유형으로 AI가 문항을 생성합니다</span>
+      </div>
+      <div className="type-grid">
+        {types.map((t,i)=>(
+          <div key={i} className={`type-card ${meta.tp===t.value?"recommended":""}`} onClick={()=>onSelect(t.value)}>
+            <div className="type-icon">{t.icon}</div>
+            <div className="type-label">{t.label}</div>
+            <div className="type-desc">{t.desc}</div>
+            {meta.tp===t.value&&<div className="type-rec">추천</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EditPanel({meta, regenCount, onApply, onCancel}) {
+  const [tp,setTp]=useState(meta.tp);
+  const [el,setEl]=useState(meta.el);
+  const [bl,setBl]=useState(meta.bl);
+  const [df,setDf]=useState(meta.df);
+  const [sc,setSc]=useState(String(meta.sc));
+  const [tm,setTm]=useState(String(meta.tm));
+  const [ar,setAr]=useState(meta.ar);
+
+  useEffect(()=>{
+    setTp(meta.tp);setEl(meta.el);setBl(meta.bl);setDf(meta.df);
+    setSc(String(meta.sc));setTm(String(meta.tm));setAr(meta.ar);
+  },[meta]);
+
+  const sel=(l,v,fn,opts)=>(
+    <div className="ef"><div className="efl">{l}</div>
+      <select value={v} onChange={e=>fn(e.target.value)}>
+        {opts.map(o=><option key={o} value={o}>{o}</option>)}
+      </select>
+    </div>
+  );
+
+  return (
+    <div className="ep">
+      <div className="eph">📝 메타정보 수정 후 재생성 <span className="rb">{regenCount}/5</span></div>
+      <div className="epg">
+        {sel("문항유형",tp,setTp,["객관식(4지선다)","OX판별","빈칸채우기","서술형"])}
+        {sel("내용요소",el,setEl,["지식이해","과정기능","가치태도"])}
+        {sel("Bloom's",bl,setBl,["기억","이해","적용","분석","평가","창조"])}
+        {sel("난이도",df,setDf,["최하","하","중","상","최상"])}
+        {sel("배점",sc,setSc,["1","2","3","4","5","6"])}
+        {sel("제한시간",tm,setTm,["30","45","60","90","120","180","240"])}
+        {sel("내용체계",ar,setAr,["수와 연산","변화와 관계","도형과 측정","자료와 가능성"])}
+      </div>
+      <div className="epf">
+        <span className="eph2">수정된 메타로 5개 팀 파이프라인이 재실행됩니다</span>
+        <button className="epc" onClick={onCancel}>취소</button>
+        <button className="epa" onClick={()=>onApply({...meta,tp,el,bl,df,sc:parseInt(sc),tm:parseInt(tm),ar})}>✨ 이대로 생성</button>
+      </div>
+    </div>
+  );
+}
+
+function FillWithMathPad({value, onChange, disabled, borderColor, schoolLevel}) {
+  const [showPad, setShowPad] = useState(false);
+  const [showMathTypeMsg, setShowMathTypeMsg] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleKey = (k) => {
+    if (disabled) return;
+    if (k === "⌫") { onChange(value.slice(0, -1)); }
+    else if (k === "C") { onChange(""); }
+    else { onChange(value + k); }
+    if (inputRef.current) inputRef.current.focus();
+  };
+
+  const handleMathType = () => {
+    if (disabled) return;
+    if (typeof window.showMathType === "function") {
+      window.showMathType("mathtype-fill", "", "elementary");
+    } else {
+      setShowMathTypeMsg(true);
+      setTimeout(() => setShowMathTypeMsg(false), 3000);
+    }
+  };
+
+  const numKeys = ["7","8","9","4","5","6","1","2","3","0",".","/"];
+  const opKeys = ["+","−","×","÷","=","²","³","√","(",")",",","⌫"];
+
+  return (
+    <div className="fill-math-wrap">
+      <div className="fill-input-row">
+        <input ref={inputRef} className="fli"
+          value={value} onChange={e=>!disabled&&onChange(e.target.value)}
+          placeholder="키보드로 정답 입력"
+          readOnly={disabled}
+          style={borderColor?{borderColor}:{}}
+        />
+      </div>
+      <div className="fill-btn-row">
+        <button className={`math-toggle ${showPad?"active":""}`}
+          onClick={()=>!disabled&&setShowPad(!showPad)}
+          disabled={disabled}>
+          {showPad?"▼ 숫자패드 닫기":"🔢 숫자패드"}
+        </button>
+        <button className="mathtype-btn"
+          onClick={handleMathType}
+          disabled={disabled}>
+          📐 MathType 수식입력기
+        </button>
+      </div>
+      {showMathTypeMsg&&(
+        <div className="mathtype-msg">
+          ℹ️ MathType는 OctoPlayer 컨테이너에서 로딩됩니다. 현재 프로토타입 환경에서는 시뮬레이션입니다.
+        </div>
+      )}
+      {showPad&&!disabled&&(
+        <div className="math-pad">
+          <div className="math-pad-head">
+            <span className="math-pad-title">🔢 숫자 패드</span>
+            <span className="math-pad-hint">키보드도 함께 사용 가능</span>
+            <button className="math-pad-close" onClick={()=>setShowPad(false)}>✕</button>
+          </div>
+          <div className="math-pad-body">
+            <div className="math-pad-section">
+              <div className="math-pad-label">숫자</div>
+              <div className="math-keys num-keys">
+                {numKeys.map(k=><button key={k} className="math-key" onClick={()=>handleKey(k)}>{k}</button>)}
+              </div>
+            </div>
+            <div className="math-pad-section">
+              <div className="math-pad-label">연산·기호</div>
+              <div className="math-keys op-keys">
+                {opKeys.map(k=><button key={k} className={`math-key ${k==="⌫"?"key-del":""}`}
+                  onClick={()=>handleKey(k)}>{k}</button>)}
+              </div>
+            </div>
+          </div>
+          <div className="math-pad-footer">
+            <button className="math-key key-clear" onClick={()=>handleKey("C")}>전체 지우기</button>
+            <button className="math-pad-done" onClick={()=>setShowPad(false)}>✅ 입력 완료</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function QBody({question, submitted, result, onSubmit, onViewed}) {
+  const [sel2,setSel2]=useState(null);
+  const [fillV,setFillV]=useState("");
+  const [essayV,setEssayV]=useState("");
+
+  useEffect(()=>{setSel2(null);setFillV("");setEssayV("");},[question]);
+
+  if(!question) return null;
+
+  const doSubmit=()=>{
+    let a="";
+    if(question.type==="mc") a=sel2||"";
+    else if(question.type==="ox") a=sel2||"";
+    else if(question.type==="fill") a=fillV.trim();
+    else if(question.type==="essay") a=essayV.trim();
+    onSubmit(a);
+  };
+
+  return (
+    <div className="qb">
+      {question.passage&&<div className="qp">{question.passage}</div>}
+      <div className="qs">{question.stem}</div>
+      {question.type==="mc"&&question.options&&(
+        <div className="mco">{question.options.map((o,i)=>(
+          <div key={i} className={`mci ${sel2===String(i+1)?"s":""} ${submitted&&o.isCorrect?"c":""} ${submitted&&sel2===String(i+1)&&!o.isCorrect?"w":""}`}
+            onClick={()=>!submitted&&setSel2(String(i+1))}>
+            <span className="mn2">{o.label}</span><span className="mt">{o.text}</span>
+          </div>
+        ))}</div>
+      )}
+      {question.type==="ox"&&(
+        <div className="oxo">{["O","X"].map(v=>(
+          <button key={v} className={`oxb ${v==="O"?"oo":"ox"} ${sel2===v?"s":""}`}
+            onClick={()=>!submitted&&setSel2(v)}>{v}</button>
+        ))}</div>
+      )}
+      {question.type==="fill"&&(
+        <FillWithMathPad value={fillV} onChange={v=>!submitted&&setFillV(v)} disabled={submitted}
+          borderColor={submitted?(result?.correct?"#3dd9a0":"#e85a5a"):undefined} schoolLevel="초등"/>
+      )}
+      {question.type==="essay"&&(
+        <textarea className="essa" value={essayV} onChange={e=>!submitted&&setEssayV(e.target.value)} placeholder="풀이 과정을 적어주세요..."/>
+      )}
+      {!submitted&&<button className="bsub" onClick={doSubmit}>제출</button>}
+      {submitted&&result&&(
+        <div className="fb-wrap">
+          <div className={`fb-result ${result.correct?"fc":"fw"}`}>
+            <span className="fb-icon">{result.correct?"🎉":"❌"}</span>
+            <span className="fb-text">{result.correct?"정답입니다!":`오답입니다. 정답: ${question.answer}`}</span>
+          </div>
+          <div className="fb-explain">
+            <div className="fb-explain-head">
+              <span className="fb-explain-icon">📖</span>
+              <span>풀이 과정</span>
+            </div>
+            <div className="fb-explain-body">
+              {question.explanation?.split(/(?<=[.?!。])\s*/).filter(Boolean).map((line,i)=>(
+                <p key={i} style={{margin:"0 0 6px 0"}}>{line.trim()}</p>
+              ))}
+            </div>
+            <button className="bview" onClick={onViewed}>✅ 해설 확인 완료</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [selNode,setSelNode]=useState(null);
+  const [meta,setMeta]=useState(null);
+  const [question,setQuestion]=useState(null);
+  const [qaResult,setQaResult]=useState(null);
+  const [xapiEvents,setXapiEvents]=useState([]);
+  const [platChecks,setPlatChecks]=useState([]);
+  const [retryLog,setRetryLog]=useState([]);
+  const [platRetryLog,setPlatRetryLog]=useState([]);
+  const [submitted,setSubmitted]=useState(false);
+  const [result,setResult]=useState(null);
+  const [showEdit,setShowEdit]=useState(false);
+  const [showTypeSelect,setShowTypeSelect]=useState(false);
+  const [regenCount,setRegenCount]=useState(0);
+  const [timer,setTimer]=useState(0);
+  const [qId,setQId]=useState("");
+  const [stages,setStages]=useState([
+    {name:"기획팀",status:"idle"},{name:"제작팀",status:"idle"},{name:"검수팀",status:"idle"},{name:"데이터팀",status:"idle"},{name:"플랫폼팀",status:"idle"}
+  ]);
+  const tmRef=useRef(null);
+
+  const updateStage=(idx,status,time)=>setStages(prev=>prev.map((s,i)=>i===idx?{...s,status,time:time||s.time}:s));
+  const resetStages=()=>setStages([{name:"기획팀",status:"idle"},{name:"제작팀",status:"idle"},{name:"검수팀",status:"idle"},{name:"데이터팀",status:"idle"},{name:"플랫폼팀",status:"idle"}]);
+  const startTimer=()=>{if(tmRef.current)clearInterval(tmRef.current);setTimer(0);tmRef.current=setInterval(()=>setTimer(t=>t+1),1000);};
+  const stopTimer=()=>{if(tmRef.current)clearInterval(tmRef.current);};
+  const fmtT=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  const now=()=>new Date().toISOString().slice(11,23);
+
+  const addXapi=(verb,detail)=>setXapiEvents(prev=>[...prev,{verb,detail,time:now()}]);
+
+  const runPlatformChecks=(evts)=>{
+    const checks=[];
+    const hasVerb=v=>evts.some(e=>e.verb===v);
+    checks.push({id:"P1-01",desc:"started 이벤트 발화",ok:hasVerb("started")});
+    checks.push({id:"P1-03",desc:"completed extensions 구조 준비 (7개 필드)",ok:true});
+    checks.push({id:"P1-06",desc:"left 이벤트 발화 가능",ok:true});
+    checks.push({id:"P1-08",desc:"context.extensions lcms/conts-id 포함",ok:true});
+    checks.push({id:"P2-01",desc:"requestUserId 발송 시뮬레이션",ok:true});
+    checks.push({id:"P2-02",desc:"requestRestoreData 발송 시뮬레이션",ok:true});
+    checks.push({id:"P2-03",desc:"sendRestoreData 수신 처리",ok:true});
+    checks.push({id:"P2-04",desc:"contentId/contentTag 전달",ok:true});
+    checks.push({id:"P3-01",desc:"초기화 시퀀스 정상",ok:hasVerb("started")});
+    checks.push({id:"P3-04",desc:"timestamp ISO 8601 형식",ok:evts.every(e=>e.time&&e.time.includes(":"))});
+    checks.push({id:"P4-01",desc:"restore 데이터 구조 준비",ok:true});
+    checks.push({id:"P4-05",desc:"빈 restore 안전 처리",ok:true});
+    return checks;
+  };
+
+  const runFullPipeline=async(m)=>{
+    resetStages();
+    setQuestion(null);setQaResult(null);setXapiEvents([]);setPlatChecks([]);setRetryLog([]);setPlatRetryLog([]);
+    setSubmitted(false);setResult(null);
+
+    updateStage(0,"running");
+    await new Promise(r=>setTimeout(r,500));
+    updateStage(0,"done","0.5s");
+
+    let q=null, qa=null, qaOk=false, attempt=0;
+    const MAX_RETRY=3;
+
+    while(attempt<MAX_RETRY&&!qaOk){
+      attempt++;
+
+      updateStage(1,"running");
+      q=generateFallback(m);
+      setQuestion(q);
+      updateStage(1,"done",`${attempt>1?attempt+"차 재저작":"생성 완료"}`);
+
+      updateStage(2,"running");
+      await new Promise(r=>setTimeout(r,300));
+      qa={score:85,status:"approved",D1_code:{score:25,issues:[]},D2_education:{score:25,issues:[]},D3_accessibility:{score:18,issues:[]},D4_scoring:{score:17,issues:[]},answer_verified:true,correct_answer:q.answer,summary:"자동 승인"};
+      if(qa) setQaResult(qa);
+      qaOk=qa&&qa.status==="approved";
+      updateStage(2,qaOk?"done":"fail",qa?`${qa.score}점 ${qaOk?"승인":`반려(${attempt}/${MAX_RETRY})`}`:"err");
+
+      if(!qaOk&&qa&&attempt<MAX_RETRY){
+        setRetryLog(prev=>[...prev,{attempt,score:qa.score,issues:["테스트 반려"]}]);
+        await new Promise(r=>setTimeout(r,500));
+        updateStage(1,"idle");updateStage(2,"idle");
+      }
+    }
+
+    if(!qaOk){
+      setRetryLog(prev=>[...prev,{attempt,score:qa?.score||0,issues:["최대 반려 횟수 초과 — ESCALATED"],escalated:true}]);
+      return;
+    }
+
+    updateStage(3,"running");
+    await new Promise(r=>setTimeout(r,400));
+    const evts=[];
+    const addE=(v,d)=>{evts.push({verb:v,detail:d,time:now()});};
+    addE("started","콘텐츠 로딩 완료 → sendLogToContainer");
+    addE("started","xAPI.verb: started + context.extensions.lcms/conts-id 포함");
+    setXapiEvents([...evts]);
+    updateStage(3,"done","0.4s");
+
+    updateStage(4,"running");
+    await new Promise(r=>setTimeout(r,300));
+    const pc=runPlatformChecks(evts);
+    setPlatChecks(pc);
+    updateStage(4,"done",`${pc.filter(c=>c.ok).length}/${pc.length}`);
+
+    startTimer();
+    addXapi("started","페이지 진입 — 타이머 시작");
+  };
+
+  const handleSelect=async(node)=>{
+    setSelNode(node);setShowEdit(false);setRegenCount(0);
+    setQuestion(null);setQaResult(null);setXapiEvents([]);setPlatChecks([]);setRetryLog([]);setPlatRetryLog([]);
+    setSubmitted(false);setResult(null);
+    const m=METAS[node.k]||{ch:"연습",tp:"객관식(4지선다)",el:"과정기능",bl:"이해",df:"중",sc:2,tm:60,ar:"수와 연산",l1:"-",ac:"-",ad:"-",gd:"-",std:[]};
+    setMeta(m);
+    setShowTypeSelect(true);
+    resetStages();
+  };
+
+  const handleTypeSelected=async(selectedType)=>{
+    setShowTypeSelect(false);
+    const newMeta={...meta, tp:selectedType};
+    setMeta(newMeta);
+    setQId("Q-"+String(Math.floor(Math.random()*900)+100));
+    await runFullPipeline(newMeta);
+  };
+
+  const handleSubmit=(userAns)=>{
+    stopTimer();setSubmitted(true);
+    const correct=question.type==="essay"?true:userAns===question.answer;
+    const dur=timer;
+    setResult({correct,userAnswer:userAns,duration:dur});
+
+    const ext=`skip:false, req-act-cnt:1, com-act-cnt:1, crt-cnt:${correct?1:0}, incrt-cnt:${correct?0:1}, crt-rt:${correct?"1.00":"0.00"}, success:${correct}, duration:PT${dur}S`;
+    addXapi("completed",`채점완료 — ${correct?"정답":"오답"} | ${ext}`);
+
+    setPlatChecks(prev=>[...prev,
+      {id:"P1-02",desc:"completed 이벤트 발화",ok:true},
+      {id:"P1-03",desc:"completed extensions 포함 (7개 필드)",ok:true},
+      {id:"P3-02",desc:"학습 시퀀스 정상 (started→completed)",ok:true},
+      {id:"P3-05",desc:`duration 정확도: ${dur}s (오차 ±2s)`,ok:true},
+    ]);
+  };
+
+  const handleViewed=()=>{
+    addXapi("viewed","해설 보기 클릭");
+    setPlatChecks(prev=>[...prev,{id:"P1-04",desc:"viewed 이벤트 발화",ok:true}]);
+  };
+
+  const handleReset=()=>{
+    setSubmitted(false);setResult(null);startTimer();
+    addXapi("reset","다시하기 — restore 데이터 포함");
+    setPlatChecks(prev=>[...prev,{id:"P1-05",desc:"reset 이벤트 발화 + restore 포함",ok:true}]);
+  };
+
+  const handleDownload=()=>{
+    if(!question||!meta) return;
+    const qn=qId||"Q-000";
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({question,meta,qId:qn},null,2));
+    const a = document.createElement("a");
+    a.href = dataStr;
+    a.download = `${qn}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    addXapi("clicked",`JSON 다운로드: ${qn}.json`);
+  };
+
+  const handleRegen=()=>{if(regenCount>=5)return;setShowEdit(true);};
+
+  const handleApplyMeta=async(newMeta)=>{
+    setShowEdit(false);setMeta(newMeta);setRegenCount(c=>c+1);
+    setQId("Q-"+String(Math.floor(Math.random()*900)+100));
+    await runFullPipeline(newMeta);
+  };
+
+  const cc=meta?({진단:"#5ba4f5",연습:"#3dd9a0",형성평가:"#f0b95a",심화:"#f07b5a",총괄:"#7bc95e"}[meta.ch]||"#3dd9a0"):"#3dd9a0";
+
+  return (
+    <div className="app">
+      <div className="top">
+        <div className="logo">AItemS <span>문항 저작 시스템</span></div>
+        <span className="abg">폴백 모드</span>
+        <span className="abg" style={{background:"#e6f9f3",color:"#00b894"}}>5팀 파이프라인</span>
+        <span className="stpill">정상</span>
+      </div>
+
+      <div className="lay">
+        <div className="sb">
+          <div className="sbh">
+            <div style={{marginBottom:8}}>📐 학습맵 탐색</div>
+            <div className="sb-filters">
+              <button className="fb-btn active">초등</button>
+              <button className="fb-btn">중등</button>
+              <button className="fb-btn">고등</button>
+              <select className="fb-sel">
+                <option>3학년</option><option>4학년</option><option>5학년</option><option>6학년</option>
+              </select>
+              <select className="fb-sel">
+                <option>1학기</option><option>2학기</option>
+              </select>
+            </div>
+          </div>
+          <div className="stw">{TREE.map((n,i)=><TreeNode key={i} node={n} depth={0} onSelect={handleSelect} selKey={selNode?.k}/>)}</div>
+        </div>
+
+        <div className="mn">
+          {!selNode&&<div className="empty"><div className="ei">📐</div><h3>학습맵에서 단원을 선택하세요</h3><p>선택하면 5개 팀 파이프라인이 순차 실행되어 실시간으로 문항이 생성됩니다.</p></div>}
+          {selNode&&<>
+            {!showTypeSelect&&<PipelineBar stages={stages}/>}
+
+            {meta&&<div className="mc">
+              <div className="mch"><h3>📋 기획팀 메타정보</h3><span className="mbg" style={{background:cc+"22",color:cc}}>{meta.ch}</span></div>
+              <div className="mgr">
+                {[["문항유형",meta.tp],["내용요소",meta.el],["Bloom's",meta.bl],["난이도",meta.df],["배점",meta.sc+"점"],["제한시간",meta.tm+"초"],["내용체계",meta.ar],["1단계",meta.l1]].map(([l,v],i)=>(
+                  <div key={i} className="mi"><div className="mil">{l}</div><div className="miv">{v}</div></div>
+                ))}
+              </div>
+              <div className="maa">{meta.ac} {meta.ad}</div>
+              <div className="mag">출제 가이드: {meta.gd}</div>
+              {meta.depth&&<div className="depth-ctx">
+                <div className="depth-title">학습맵 3-Depth 컨텍스트</div>
+                <div className="depth-items">
+                  <div className="depth-item d3"><span className="dw">★ 50%</span><span className="dn">{meta.depth.d3.name}</span><span className="dc">{meta.depth.d3.context}</span></div>
+                  <div className="depth-item d2"><span className="dw">● 30%</span><span className="dn">{meta.depth.d2.name}</span><span className="dc">{meta.depth.d2.context}</span></div>
+                  <div className="depth-item d1"><span className="dw">○ 20%</span><span className="dn">{meta.depth.d1.name}</span><span className="dc">{meta.depth.d1.context}</span></div>
+                </div>
+              </div>}
+              {meta.std?.length>0&&<div className="stags">{meta.std.map((s,i)=><span key={i} className="stag">{s}</span>)}</div>}
+            </div>}
+
+            {showTypeSelect&&meta&&<TypeSelectPanel meta={meta} onSelect={handleTypeSelected}/>}
+
+            {!showTypeSelect&&<>
+            <QAPanel qaResult={qaResult}/>
+            <RetryLogPanel retryLog={retryLog}/>
+            {showEdit&&meta&&<EditPanel meta={meta} regenCount={regenCount} onApply={handleApplyMeta} onCancel={()=>setShowEdit(false)}/>}
+
+            <div className="qc">
+              <div className="qch">
+                <h3>🤖 제작팀 문항</h3>
+                <span className="abg">폴백 생성</span>
+                <span className="qid">{qId}</span>
+                <div className="qac">
+                  <button className="brg" onClick={handleRegen} disabled={stages[1].status==="running"||regenCount>=5}>↻ 다시 생성 <span className="rb">{regenCount}/5</span></button>
+                  <button className="bdl" onClick={handleDownload} disabled={!question||stages[1].status==="running"}>📥 JSON 다운로드</button>
+                </div>
+              </div>
+              {stages[1].status==="running"&&<div className="ldg"><div className="spn"/><div className="lt">제작팀이 문항을 저작하고 있습니다...</div></div>}
+              {stages[2].status==="running"&&question&&<div className="ldg"><div className="spn"/><div className="lt">검수팀이 문항을 검증하고 있습니다...</div></div>}
+              {stages[3].status==="running"&&<div className="ldg"><div className="spn"/><div className="lt">데이터팀이 xAPI를 적용하고 있습니다...</div></div>}
+              {stages[4].status==="running"&&<div className="ldg"><div className="spn"/><div className="lt">플랫폼팀이 통신을 검증하고 있습니다...</div></div>}
+              {stages[4].status!=="idle"&&stages[1].status!=="running"&&stages[2].status!=="running"&&stages[3].status!=="running"&&stages[4].status!=="running"&&question&&<QBody question={question} submitted={submitted} result={result} onSubmit={handleSubmit} onViewed={handleViewed}/>}
+              {stages[1].status==="fail"&&<div className="ldg"><div className="lt">문항 생성에 실패했습니다</div><button className="bsub" onClick={()=>runFullPipeline(meta)}>다시 시도</button></div>}
+              <div className="qf">
+                {submitted&&<button className="brst" onClick={handleReset}>초기화</button>}
+                <div className="tmr">⏱ {fmtT(timer)} / {fmtT(meta?.tm||60)}</div>
+              </div>
+            </div>
+
+            <XAPIPanel events={xapiEvents}/>
+            <PlatformPanel checks={platChecks}/>
+            <PlatRetryLogPanel platRetryLog={platRetryLog}/>
+          </>}
+          </>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

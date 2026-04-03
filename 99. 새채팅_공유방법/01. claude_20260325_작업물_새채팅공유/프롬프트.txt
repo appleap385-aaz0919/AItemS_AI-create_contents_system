@@ -1,0 +1,2 @@
+"문항 저작도구 5팀 파이프라인 프로젝트입니다. session_journal.md에 전체 작업 이력이 있고, item_system_full_pipeline.jsx가 프로토타입입니다. 
+이전 작업 파악하고 이어서 진행해줘."

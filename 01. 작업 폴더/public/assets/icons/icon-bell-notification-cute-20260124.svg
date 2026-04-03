@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFEAA7"/>
+      <stop offset="100%" style="stop-color:#FDCB6E"/>
+    </linearGradient>
+    <filter id="bellGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- 배경 빛 -->
+  <circle cx="32" cy="32" r="30" fill="#FFF9E6" opacity="0.4"/>
+  <!-- 종 본체 -->
+  <path d="M16 38 Q16 18 32 14 Q48 18 48 38 L16 38" fill="url(#bellGrad)" filter="url(#bellGlow)"/>
+  <!-- 종 아래 테두리 -->
+  <ellipse cx="32" cy="38" rx="18" ry="4" fill="#F39C12"/>
+  <!-- 종 손잡이 -->
+  <circle cx="32" cy="10" r="4" fill="url(#bellGrad)" stroke="#F39C12" stroke-width="1.5"/>
+  <!-- 종 치는 부분 -->
+  <ellipse cx="32" cy="46" rx="5" ry="4" fill="#E67E22"/>
+  <!-- 종 얼굴 - 눈 -->
+  <ellipse cx="24" cy="28" rx="3" ry="3.5" fill="#5D4E37"/>
+  <ellipse cx="40" cy="28" rx="3" ry="3.5" fill="#5D4E37"/>
+  <circle cx="25" cy="27" r="1.2" fill="white"/>
+  <circle cx="41" cy="27" r="1.2" fill="white"/>
+  <!-- 행복한 눈 (^ ^) -->
+  <path d="M22 28 Q24 25 26 28" fill="none" stroke="#5D4E37" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 28 Q40 25 42 28" fill="none" stroke="#5D4E37" stroke-width="2" stroke-linecap="round"/>
+  <!-- 미소 -->
+  <path d="M26 34 Q32 40 38 34" fill="none" stroke="#5D4E37" stroke-width="2" stroke-linecap="round"/>
+  <!-- 볼터치 -->
+  <ellipse cx="18" cy="32" rx="3.5" ry="2" fill="#FF9AA2" opacity="0.6"/>
+  <ellipse cx="46" cy="32" rx="3.5" ry="2" fill="#FF9AA2" opacity="0.6"/>
+  <!-- 알림 뱃지 -->
+  <circle cx="50" cy="14" r="8" fill="#FF6B6B"/>
+  <text x="50" y="18" font-family="Arial" font-size="10" font-weight="bold" fill="white" text-anchor="middle">!</text>
+  <!-- 흔들리는 효과 -->
+  <path d="M8 20 Q6 22 8 24" fill="none" stroke="#FFEAA7" stroke-width="2" stroke-linecap="round"/>
+  <path d="M56 20 Q58 22 56 24" fill="none" stroke="#FFEAA7" stroke-width="2" stroke-linecap="round"/>
+  <!-- 반짝이 -->
+  <circle cx="10" cy="12" r="2" fill="#FFEAA7"/>
+  <circle cx="54" cy="8" r="1.5" fill="#FFEAA7"/>
+</svg>

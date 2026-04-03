@@ -1,0 +1,24 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid -->
+  <defs>
+    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#E5E7EB" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="100" height="100" fill="url(#grid)" />
+  
+  <!-- Axes -->
+  <path d="M50 5V95" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <path d="M5 50H95" stroke="#374151" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Arrowheads -->
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="0" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#374151" />
+    </marker>
+  </defs>
+  
+  <!-- Labels -->
+  <text x="52" y="10" font-family="Arial" font-size="8" fill="#374151">y</text>
+  <text x="92" y="48" font-family="Arial" font-size="8" fill="#374151">x</text>
+</svg>

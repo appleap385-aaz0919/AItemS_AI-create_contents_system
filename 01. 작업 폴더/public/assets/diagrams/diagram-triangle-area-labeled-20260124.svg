@@ -1,0 +1,7 @@
+<svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 50L40 10L70 50H10Z" fill="white" stroke="#2563EB" stroke-width="2"/>
+  <path d="M40 10V50" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="4 2"/>
+  <rect x="40" y="46" width="4" height="4" stroke="#9CA3AF" stroke-width="1"/>
+  <text x="35" y="30" font-family="Arial" font-size="10" fill="#4B5563">h</text>
+  <text x="35" y="58" font-family="Arial" font-size="10" fill="#4B5563">b</text>
+</svg>

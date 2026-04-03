@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="atomBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EDE9FE"/>
+      <stop offset="100%" style="stop-color:#DDD6FE"/>
+    </linearGradient>
+    <linearGradient id="nucleusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EC4899"/>
+      <stop offset="100%" style="stop-color:#BE185D"/>
+    </linearGradient>
+    <filter id="electronGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#atomBg)"/>
+  
+  <!-- Orbital paths -->
+  <ellipse cx="100" cy="100" rx="70" ry="35" fill="none" stroke="#A78BFA" stroke-width="2" transform="rotate(0 100 100)"/>
+  <ellipse cx="100" cy="100" rx="70" ry="35" fill="none" stroke="#8B5CF6" stroke-width="2" transform="rotate(60 100 100)"/>
+  <ellipse cx="100" cy="100" rx="70" ry="35" fill="none" stroke="#7C3AED" stroke-width="2" transform="rotate(-60 100 100)"/>
+  
+  <!-- Nucleus -->
+  <g transform="translate(100, 100)">
+    <!-- Protons -->
+    <circle cx="-8" cy="-5" r="12" fill="url(#nucleusGrad)"/>
+    <circle cx="8" cy="-5" r="12" fill="url(#nucleusGrad)"/>
+    <circle cx="0" cy="8" r="12" fill="url(#nucleusGrad)"/>
+    <!-- Neutrons -->
+    <circle cx="-5" cy="0" r="10" fill="#60A5FA"/>
+    <circle cx="5" cy="-8" r="10" fill="#60A5FA"/>
+    <circle cx="3" cy="5" r="10" fill="#60A5FA"/>
+    <!-- Nucleus highlight -->
+    <circle cx="-3" cy="-10" r="4" fill="white" opacity="0.3"/>
+  </g>
+  
+  <!-- Electrons -->
+  <g filter="url(#electronGlow)">
+    <!-- Electron 1 -->
+    <circle cx="170" cy="100" r="8" fill="#FDE047" stroke="#EAB308" stroke-width="1"/>
+    <circle cx="168" cy="98" r="2" fill="white" opacity="0.5"/>
+    <!-- Electron 2 -->
+    <circle cx="65" cy="45" r="8" fill="#FDE047" stroke="#EAB308" stroke-width="1"/>
+    <circle cx="63" cy="43" r="2" fill="white" opacity="0.5"/>
+    <!-- Electron 3 -->
+    <circle cx="65" cy="155" r="8" fill="#FDE047" stroke="#EAB308" stroke-width="1"/>
+    <circle cx="63" cy="153" r="2" fill="white" opacity="0.5"/>
+  </g>
+  
+  <!-- Motion trails -->
+  <g stroke="#FDE047" stroke-width="2" opacity="0.4">
+    <path d="M165 95 Q170 100 165 105" fill="none"/>
+    <path d="M60 50 Q65 45 70 50" fill="none"/>
+    <path d="M60 160 Q65 155 70 160" fill="none"/>
+  </g>
+  
+  <!-- Labels -->
+  <g font-size="8" fill="#6D28D9" font-family="sans-serif">
+    <text x="100" y="185">원자 (Atom)</text>
+  </g>
+  
+  <!-- Decorative particles -->
+  <g fill="#C4B5FD" opacity="0.5">
+    <circle cx="25" cy="30" r="3"/>
+    <circle cx="175" cy="25" r="2"/>
+    <circle cx="20" cy="170" r="2.5"/>
+    <circle cx="180" cy="175" r="3"/>
+  </g>
+  
+  <!-- Energy waves -->
+  <g stroke="#A78BFA" stroke-width="1" fill="none" opacity="0.3">
+    <circle cx="100" cy="100" r="80"/>
+    <circle cx="100" cy="100" r="88"/>
+    <circle cx="100" cy="100" r="96"/>
+  </g>
+</svg>

@@ -1,0 +1,34 @@
+롤백 방법
+-------------------------------
+
+방법 1 — 태그로 특정 버전 확인만 (코드 안 바뀜)
+git show v2026-03-30-visual-enhance
+
+방법 2 — 오늘 버전으로 완전 되돌리기 (작업 폴더에서)
+cd "D:\jaehyuk.myung\claude_demo\Demo_20_문제은행\01. 작업 폴더"
+git checkout v2026-03-30-visual-enhance
+
+⚠️ 이 상태는 "detached HEAD"라서 추가 수정하려면 아래처럼 브랜치 생성 필요:
+
+git checkout -b rollback-branch v2026-03-30-visual-enhance
+
+방법 3 — 현재 main을 오늘 버전으로 리셋 (가장 강력)
+git reset --hard v2026-03-30-visual-enhance
+
+방법 4 — 이전 버전(AItemS v01 prototype)으로 되돌리기
+git reset --hard 116d407
+
+--------------------------------
+
+태그 목록 확인
+git tag
+
+현재 태그: v2026-03-30-visual-enhance → 40d607f (오늘 작업 전체 포함)
+
+---------------------------------
+
+백업은 이미 완료됐어요. 지금 당장 뭔가 할 필요 없습니다.
+나중에 오늘 이전으로 되돌리고 싶을 때만 아래 2줄 실행하면 됩니다:
+
+cd "D:\jaehyuk.myung\claude_demo\Demo_20_문제은행\01. 작업 폴더"
+git reset --hard v2026-03-30-visual-enhance

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>라면 그릇 아이콘</title>
+  <path d="M12 40 H52 C52 50 44 58 32 58 C20 58 12 50 12 40 Z" fill="#FB7185" stroke="#E11D48" stroke-width="3"/>
+  <path d="M16 34 H48" stroke="#E11D48" stroke-width="3" stroke-linecap="round"/>
+  <path d="M18 36 C22 30 26 30 30 36 C34 42 38 42 42 36 C46 30 50 30 54 36" stroke="#FDE68A" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M24 12 C22 18 22 22 24 28" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M32 10 C30 16 30 22 32 30" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M40 12 C38 18 38 22 40 28" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>

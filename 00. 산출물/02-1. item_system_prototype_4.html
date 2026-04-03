@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문항 저작 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f7f6f3;--bg2:#fff;--bg3:#eeecea;--bg4:#e5e3df;--text:#1a1a18;--text2:#5c5b57;--text3:#8c8b87;--text4:#b5b4b0;--purple:#6c5ce7;--purple-bg:#f0eeff;--teal:#00b894;--teal-bg:#e6f9f3;--coral:#e17055;--coral-bg:#fdeee9;--blue:#4a90d9;--blue-bg:#eaf2fb;--amber:#f0932b;--amber-bg:#fef3e5;--green:#27ae60;--green-bg:#e8f8ef;--red:#e74c3c;--line:rgba(0,0,0,.06);--line2:rgba(0,0,0,.1);--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);--shadow-lg:0 4px 12px rgba(0,0,0,.08);--radius:10px;--radius-lg:14px}
+html{font-size:14.5px}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--bg3);padding:1px 5px;border-radius:3px}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.logo{font-size:1rem;font-weight:900;color:var(--purple);letter-spacing:-.02em}
+.logo span{color:var(--text3);font-weight:400;font-size:.8rem;margin-left:6px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.status-pill{font-size:.68rem;font-weight:500;padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.status-dot{width:6px;height:6px;border-radius:50%}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:340px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.sidebar-header{padding:16px 18px;border-bottom:1px solid var(--line)}
+.sidebar-header h2{font-size:.82rem;font-weight:700;margin-bottom:8px}
+.filter-row{display:flex;gap:6px}
+.filter-btn{padding:5px 12px;font-size:.7rem;font-weight:500;border:1px solid var(--line);border-radius:6px;background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .15s}
+.filter-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.tree-container{flex:1;overflow-y:auto;padding:8px 0}
+.tree-d1{border-bottom:1px solid var(--line)}
+.tree-d1-head{padding:10px 18px;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;user-select:none}
+.tree-d1-head:hover{background:var(--bg3)}
+.tree-d1-head .arrow{font-size:.6rem;color:var(--text4);transition:transform .2s;width:12px}
+.tree-d1.open .arrow{transform:rotate(90deg)}
+.tree-d1-head .num{color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:.65rem;background:var(--purple-bg);padding:1px 6px;border-radius:3px}
+.tree-d1-body{display:none;padding-bottom:4px}
+.tree-d1.open .tree-d1-body{display:block}
+.tree-d2-head{padding:7px 18px 7px 36px;font-size:.74rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;color:var(--text2)}
+.tree-d2-head:hover{background:var(--bg3)}
+.tree-d2-head .arrow{font-size:.55rem;color:var(--text4);transition:transform .2s;width:10px}
+.tree-d2.open .tree-d2-head .arrow{transform:rotate(90deg)}
+.tree-d2-body{display:none}
+.tree-d2.open .tree-d2-body{display:block}
+.tree-leaf{padding:6px 18px 6px 54px;font-size:.72rem;cursor:pointer;transition:all .15s;color:var(--text3);display:flex;align-items:center;gap:6px;border-left:2px solid transparent;margin-left:16px}
+.tree-leaf:hover{background:var(--purple-bg);color:var(--text)}
+.tree-leaf.selected{background:var(--purple-bg);color:var(--purple);font-weight:600;border-left-color:var(--purple)}
+.tree-leaf .type-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.leaf-d2{padding-left:36px;margin-left:0}
+.main{flex:1;overflow-y:auto;padding:24px 32px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;text-align:center;color:var(--text3)}
+.empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:.4}
+.empty-state h3{font-size:1rem;font-weight:600;color:var(--text2);margin-bottom:4px}
+.empty-state p{font-size:.8rem;max-width:300px}
+.content{display:none;animation:slideUp .3s ease}
+.content.visible{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.breadcrumb{font-size:.7rem;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.breadcrumb .bc-sep{color:var(--text4)}
+.breadcrumb .bc-active{color:var(--purple);font-weight:600}
+.meta-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.meta-header{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);background:var(--bg)}
+.meta-header h3{font-size:.85rem;font-weight:700;flex:1}
+.meta-tag{font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:20px}
+.meta-body{padding:16px 20px}
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.meta-item{padding:10px 12px;background:var(--bg);border-radius:8px}
+.meta-item .label{font-size:.62rem;color:var(--text3);font-weight:500;letter-spacing:.03em;margin-bottom:3px}
+.meta-item .value{font-size:.78rem;font-weight:600}
+.meta-guide{margin-top:12px;padding:12px 14px;background:var(--purple-bg);border-radius:8px;border:1px solid rgba(108,92,231,.1)}
+.meta-guide .guide-title{font-size:.68rem;font-weight:600;color:var(--purple);margin-bottom:4px}
+.meta-guide .guide-text{font-size:.74rem;color:var(--text2);line-height:1.6}
+.std-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.std-tag{font-size:.62rem;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:4px;background:var(--teal-bg);color:var(--teal)}
+.pipeline-badge{display:inline-flex;align-items:center;gap:6px;font-size:.6rem;padding:4px 10px;border-radius:20px;margin-left:8px}
+.q-wrap{position:relative}
+.q-loading{display:none;position:absolute;inset:0;background:rgba(255,255,255,.88);z-index:10;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--radius-lg);gap:12px}
+.q-loading.show{display:flex}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.q-loading .spinner{width:28px;height:28px;border:3px solid var(--bg3);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite}
+.q-loading .load-text{font-size:.78rem;color:var(--text2);font-weight:500}
+.question-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
+.q-header{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--purple-bg),var(--bg2));flex-wrap:wrap}
+.q-header h3{font-size:.85rem;font-weight:700}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--purple);background:var(--bg2);padding:3px 10px;border-radius:6px;border:1px solid rgba(108,92,231,.15)}
+.q-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
+.btn-regen,.btn-download{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;color:var(--text2)}
+.btn-regen:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+.btn-download:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.btn-regen:active,.btn-download:active{transform:scale(.97)}
+.btn-regen .regen-icon{display:inline-block;font-size:.82rem;transition:transform .4s}
+.btn-regen.spinning .regen-icon{animation:spin .6s ease}
+.regen-count{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:var(--bg3);padding:1px 6px;border-radius:10px;color:var(--text3)}
+.btn-download.downloading{pointer-events:none;opacity:.6}
+.q-body{padding:24px}
+.q-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.btn-submit{padding:10px 28px;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:#5b4bd5}
+.btn-secondary{background:var(--bg3);color:var(--text2)}
+.btn-secondary:hover{background:var(--bg4)}
+.timer{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text3);display:flex;align-items:center;gap:4px}
+.feedback{margin-top:16px;padding:14px 16px;border-radius:8px;font-size:.8rem;line-height:1.6;display:none}
+.feedback.show{display:block;animation:slideUp .3s}
+.feedback.correct{background:var(--green-bg);border:1px solid rgba(39,174,96,.15);color:#1e8449}
+.feedback.wrong{background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.12);color:var(--red)}
+.q-passage{font-size:.88rem;line-height:1.8;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:8px;border-left:3px solid var(--purple)}
+.q-stem{font-size:.88rem;font-weight:600;margin-bottom:16px}
+.fill-eq{font-size:1.4rem;font-weight:700;text-align:center;margin:20px 0;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.fill-input{width:100px;height:44px;border:2px dashed var(--purple);border-radius:8px;text-align:center;font-size:1.2rem;font-weight:700;font-family:'Noto Sans KR',sans-serif;background:var(--purple-bg);color:var(--purple);outline:none}
+.fill-input:focus{border-style:solid}
+.mc-options{display:flex;flex-direction:column;gap:8px}
+.mc-option{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.mc-option:hover{border-color:var(--purple);background:var(--purple-bg)}
+.mc-option.selected{border-color:var(--purple);background:var(--purple-bg)}
+.mc-option.correct{border-color:var(--green);background:var(--green-bg)}
+.mc-option.wrong{border-color:var(--red);background:rgba(231,76,60,.06)}
+.mc-num{width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;flex-shrink:0;transition:all .2s}
+.mc-option.selected .mc-num{background:var(--purple);color:#fff}
+.mc-option.correct .mc-num{background:var(--green);color:#fff}
+.mc-option.wrong .mc-num{background:var(--red);color:#fff}
+.mc-text{font-size:.84rem;flex:1}
+.ox-options{display:flex;gap:12px;justify-content:center}
+.ox-btn{width:100px;height:100px;border-radius:16px;border:2px solid var(--line);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;transition:all .2s}
+.ox-btn:hover{transform:scale(1.05)}
+.ox-btn.ox-o{color:var(--blue)}
+.ox-btn.ox-x{color:var(--coral)}
+.ox-btn.selected{transform:scale(1.08);box-shadow:var(--shadow-lg)}
+.ox-btn.ox-o.selected{border-color:var(--blue);background:var(--blue-bg)}
+.ox-btn.ox-x.selected{border-color:var(--coral);background:var(--coral-bg)}
+.essay-area{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;padding:14px;font-size:.84rem;font-family:'Noto Sans KR',sans-serif;line-height:1.7;resize:vertical;outline:none}
+.essay-area:focus{border-color:var(--purple)}
+.essay-hint{font-size:.7rem;color:var(--text3);margin-top:6px;display:flex;align-items:center;gap:4px}
+.meta-edit-panel{display:none;background:var(--bg2);border:2px solid var(--purple);border-radius:var(--radius-lg);margin-bottom:20px;overflow:hidden;animation:slideUp .3s ease}
+.meta-edit-panel.show{display:block}
+.meta-edit-header{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--purple-bg),var(--bg2))}
+.meta-edit-header h3{font-size:.85rem;font-weight:700;color:var(--purple);flex:1}
+.meta-edit-body{padding:16px 20px}
+.edit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.edit-field{display:flex;flex-direction:column;gap:4px}
+.edit-field .edit-label{font-size:.62rem;color:var(--text3);font-weight:500;letter-spacing:.03em}
+.edit-field select{padding:8px 10px;font-size:.76rem;font-weight:500;border:1px solid var(--line);border-radius:6px;background:var(--bg2);color:var(--text);font-family:inherit;cursor:pointer;appearance:auto}
+.edit-field select:focus{border-color:var(--purple);outline:none;box-shadow:0 0 0 2px rgba(108,92,231,.15)}
+.meta-edit-footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.btn-apply-meta{padding:9px 20px;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:var(--purple);color:#fff;transition:all .15s}
+.btn-apply-meta:hover{background:#5b4bd5}
+.btn-cancel-meta{padding:9px 16px;border:1px solid var(--line);border-radius:8px;font-size:.78rem;font-weight:500;cursor:pointer;font-family:inherit;background:var(--bg2);color:var(--text2);transition:all .15s}
+.btn-cancel-meta:hover{background:var(--bg3)}
+.edit-hint{font-size:.66rem;color:var(--text3);flex:1}
+@media(max-width:768px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;max-height:40vh;border-right:none;border-bottom:1px solid var(--line)}
+  .main{padding:16px}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .q-actions{margin-left:0;margin-top:8px;width:100%}
+}
+</style>
+
+<div class="topbar">
+  <div class="logo">AItemS <span>문항 저작 시스템</span></div>
+  <div class="topbar-right">
+    <div class="status-pill" style="background:var(--teal-bg);color:var(--teal)"><span class="status-dot" style="background:var(--teal)"></span> 정상</div>
+    <div class="status-pill" style="background:var(--bg3);color:var(--text2)">학습맵 1,819건</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>학습맵 탐색</h2>
+      <div class="filter-row">
+        <button class="filter-btn active">초등</button>
+        <button class="filter-btn">중등</button>
+        <button class="filter-btn">고등</button>
+        <select style="padding:5px 8px;font-size:.7rem;border:1px solid var(--line);border-radius:6px;background:var(--bg2);color:var(--text);font-family:inherit">
+          <option>3학년 1학기</option>
+        </select>
+      </div>
+    </div>
+    <div class="tree-container" id="tree"></div>
+  </div>
+
+  <div class="main">
+    <div class="empty-state" id="empty-state">
+      <div class="icon">📐</div>
+      <h3>학습맵에서 단원을 선택하세요</h3>
+      <p>왼쪽 트리에서 최소 단위까지 탐색하면, 해당 단원에 맞는 문항이 자동 생성됩니다.</p>
+    </div>
+    <div class="content" id="content">
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="meta-card">
+        <div class="meta-header">
+          <h3>기획팀 메타정보</h3>
+          <span class="pipeline-badge" style="background:var(--purple-bg);color:var(--purple)">기획팀 생성</span>
+          <span class="meta-tag" id="meta-character" style="background:var(--teal-bg);color:var(--teal)">연습</span>
+        </div>
+        <div class="meta-body">
+          <div class="meta-grid" id="meta-grid"></div>
+          <div class="std-tags" id="std-tags"></div>
+          <div class="meta-guide"><div class="guide-title">출제 가이드</div><div class="guide-text" id="guide-text"></div></div>
+        </div>
+      </div>
+      <div class="meta-edit-panel" id="meta-edit-panel">
+        <div class="meta-edit-header">
+          <h3>📝 메타정보 수정 후 재생성</h3>
+          <span class="regen-count" id="edit-regen-count">0/5</span>
+        </div>
+        <div class="meta-edit-body">
+          <div class="edit-grid">
+            <div class="edit-field"><div class="edit-label">문항유형</div><select id="edit-tp"><option>객관식(4지선다)</option><option>객관식(5지선다)</option><option>OX판별</option><option>빈칸채우기</option><option>서술형</option><option>드래그앤드롭</option><option>순서배열</option><option>매칭</option></select></div>
+            <div class="edit-field"><div class="edit-label">내용요소</div><select id="edit-el"><option>지식이해</option><option>과정기능</option><option>가치태도</option></select></div>
+            <div class="edit-field"><div class="edit-label">Bloom's</div><select id="edit-bl"><option>기억</option><option>이해</option><option>적용</option><option>분석</option><option>평가</option><option>창조</option></select></div>
+            <div class="edit-field"><div class="edit-label">난이도</div><select id="edit-df"><option>최하</option><option>하</option><option>중</option><option>상</option><option>최상</option></select></div>
+            <div class="edit-field"><div class="edit-label">배점</div><select id="edit-sc"><option value="1">1점</option><option value="2">2점</option><option value="3">3점</option><option value="4">4점</option><option value="5">5점</option><option value="6">6점</option></select></div>
+            <div class="edit-field"><div class="edit-label">제한시간</div><select id="edit-tm"><option value="30">30초</option><option value="45">45초</option><option value="60">60초</option><option value="90">90초</option><option value="120">120초</option><option value="180">180초</option><option value="240">240초</option></select></div>
+            <div class="edit-field"><div class="edit-label">내용체계 영역</div><select id="edit-ar"><option>수와 연산</option><option>변화와 관계</option><option>도형과 측정</option><option>자료와 가능성</option></select></div>
+          </div>
+        </div>
+        <div class="meta-edit-footer">
+          <span class="edit-hint">수정한 메타정보로 새 문항이 생성됩니다</span>
+          <button class="btn-cancel-meta" onclick="closeEditPanel()">취소</button>
+          <button class="btn-apply-meta" onclick="applyAndRegenerate()">✨ 이대로 생성</button>
+        </div>
+      </div>
+      <div class="q-wrap">
+        <div class="q-loading" id="q-loading"><div class="spinner"></div><div class="load-text">문항을 다시 생성하고 있습니다...</div></div>
+        <div class="question-card">
+          <div class="q-header">
+            <h3>제작팀 문항</h3>
+            <span class="pipeline-badge" style="background:var(--teal-bg);color:var(--teal)">제작팀 저작</span>
+            <span class="q-number" id="q-number">Q-001</span>
+            <div class="q-actions">
+              <button class="btn-regen" id="btn-regen" onclick="regenerateQuestion()"><span class="regen-icon">↻</span> 다시 생성 <span class="regen-count" id="regen-count">0/5</span></button>
+              <button class="btn-download" id="btn-download" onclick="downloadZip()"><span>📥</span> ZIP 다운로드</button>
+            </div>
+          </div>
+          <div class="q-body" id="q-body"></div>
+          <div class="q-footer">
+            <button class="btn-submit btn-primary" onclick="submitAnswer()">제출</button>
+            <button class="btn-submit btn-secondary" onclick="resetQuestion()">초기화</button>
+            <div class="timer">⏱ <span id="timer-val">0:00</span> / <span id="timer-limit">1:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TREE DATA (초3 1학기 - real data)
+// ============================================================
+var TREE=[
+{n:'00',nm:'학기 초 AI 진단 평가',ch:[]},
+{n:'01',nm:'덧셈과 뺄셈',ch:[
+  {n:'00',nm:'AI 진단 평가',t:'진단',ch:[],std:['E4MATA01B03C05','E4MATA01B03C06']},
+  {n:'00',nm:'대단원 진단 평가',t:'진단',ch:[{n:'01',nm:'알고 있나요',t:'진단'}],std:['E4MATA01B03C05']},
+  {n:'00',nm:'대단원 도입',t:'진단',ch:[{n:'02',nm:'대단원 도입',t:'진단'}],std:['E4MATA01B03C05','E4MATA01B03C06']},
+  {n:'01',nm:'받아올림이 없는 세 자리 수의 덧셈을 어떻게 할까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습',k:'add_no_carry'}],std:['E4MATA01B03C05','E4MATA01B03C07']},
+  {n:'02',nm:'받아올림이 한 번 있는 세 자리 수의 덧셈을 어떻게 할까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습',k:'add_one_carry'}],std:['E4MATA01B03C05','E4MATA01B03C07']},
+  {n:'03',nm:'받아올림이 여러 번 있는 세 자리 수의 덧셈을 어떻게 할까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습',k:'add_multi_carry'}],std:['E4MATA01B03C05','E4MATA01B03C07']},
+  {n:'04',nm:'덧셈의 어림셈을 어떻게 할까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습',k:'add_estimate'}],std:['E4MATA01B08C20']},
+  {n:'05',nm:'받아내림이 없는 세 자리 수의 뺄셈을 어떻게 할까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습',k:'sub_no_borrow'}],std:['E4MATA01B03C06','E4MATA01B03C08']},
+  {n:'09',nm:'대단원 마무리',t:'총괄',ch:[
+    {n:'01',nm:'뚝딱 해결해요',t:'심화',k:'challenge'},
+    {n:'02',nm:'창의적으로 해결하기',t:'심화',k:'creative'},
+    {n:'03',nm:'한눈에 보기',t:'형성평가',k:'review'},
+    {n:'04',nm:'스스로 확인해 볼까요',t:'형성평가',k:'self_check'},
+    {n:'05',nm:'함께 놀아요',t:'총괄'},
+    {n:'06',nm:'곰곰 생각해요',t:'심화',k:'think_deep'},
+    {n:'07',nm:'수학 더하기',t:'총괄'}
+  ],std:['E4MATA01B03C05','E4MATA01B03C06']},
+  {n:'10',nm:'AI 형성 평가',t:'형성평가',ch:[],std:['E4MATA01B03C05','E4MATA01B03C06']}
+]},
+{n:'02',nm:'평면도형',ch:[
+  {n:'00',nm:'AI 진단 평가',t:'진단',ch:[]},
+  {n:'01',nm:'직각을 알아볼까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습'}]},
+  {n:'02',nm:'직각삼각형을 알아볼까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습'}]}
+]},
+{n:'03',nm:'나눗셈',ch:[{n:'00',nm:'AI 진단 평가',t:'진단',ch:[]},{n:'01',nm:'똑같이 나누는 것을 어떻게 나타낼까요',t:'연습',ch:[{n:'01',nm:'AI 익힘 문제',t:'연습'}]}]},
+{n:'04',nm:'곱셈',ch:[{n:'00',nm:'AI 진단 평가',t:'진단',ch:[]}]},
+{n:'05',nm:'길이와 시간',ch:[{n:'00',nm:'AI 진단 평가',t:'진단',ch:[]}]},
+{n:'06',nm:'분수와 소수',ch:[{n:'00',nm:'AI 진단 평가',t:'진단',ch:[]}]},
+{n:'07',nm:'학기 말 AI 총괄 평가',ch:[]}
+];
+
+// ============================================================
+// QUESTIONS + VARIANTS
+// ============================================================
+var Q={
+  add_no_carry:{m:{ch:'연습',tp:'객관식(4지선다)',el:'과정기능',bl:'적용',df:'하',sc:2,tm:60,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'받아올림이 없는 세 자리 수 덧셈. 오답은 자릿값 혼동 유발.',st:['E4MATA01B03C05','E4MATA01B03C07']},
+    vs:[
+      {h:'<div class="q-stem">다음 덧셈의 계산 결과로 알맞은 것은?</div><div class="fill-eq" style="margin-bottom:24px">234 + 152 = ?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">376</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">386</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">396</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">486</span></div></div><div class="feedback" id="feedback"></div>',a:'2',qt:'mc'},
+      {h:'<div class="q-stem">다음 덧셈의 계산 결과로 알맞은 것은?</div><div class="fill-eq" style="margin-bottom:24px">321 + 214 = ?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">525</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">535</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">545</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">635</span></div></div><div class="feedback" id="feedback"></div>',a:'2',qt:'mc'},
+      {h:'<div class="q-stem">빈칸에 알맞은 수를 쓰세요.</div><div class="fill-eq">412 + 135 = <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'547',qt:'fill'}
+    ]},
+  add_one_carry:{m:{ch:'연습',tp:'빈칸채우기',el:'과정기능',bl:'적용',df:'하',sc:2,tm:60,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산 원리',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'받아올림이 한 번 있는 덧셈. 일의 자리 합이 10 이상.',st:['E4MATA01B03C05','E4MATA01B03C07']},
+    vs:[
+      {h:'<div class="q-stem">빈칸에 알맞은 수를 쓰세요.</div><div class="fill-eq">167 + 245 = <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div style="text-align:center;margin-top:8px;font-size:.74rem;color:var(--text3)">💡 일의 자리: 7+5=12 → 십의 자리로 1 받아올림</div><div class="feedback" id="feedback"></div>',a:'412',qt:'fill'},
+      {h:'<div class="q-stem">빈칸에 알맞은 수를 쓰세요.</div><div class="fill-eq">258 + 136 = <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'394',qt:'fill'},
+      {h:'<div class="q-stem">다음 계산 결과로 알맞은 것은?</div><div class="fill-eq" style="margin-bottom:24px">347 + 128 = ?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">465</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">475</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">485</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">575</span></div></div><div class="feedback" id="feedback"></div>',a:'2',qt:'mc'}
+    ]},
+  add_multi_carry:{m:{ch:'연습',tp:'객관식(4지선다)',el:'과정기능',bl:'적용',df:'중',sc:3,tm:90,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'받아올림이 여러 번 발생하는 덧셈.',st:['E4MATA01B03C05','E4MATA01B03C07']},
+    vs:[
+      {h:'<div class="q-stem">다음 계산 결과로 알맞은 것은?</div><div class="fill-eq" style="margin-bottom:24px">478 + 356 = ?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">724</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">734</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">834</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">844</span></div></div><div class="feedback" id="feedback"></div>',a:'3',qt:'mc'},
+      {h:'<div class="q-stem">빈칸에 알맞은 수를 쓰세요.</div><div class="fill-eq">389 + 467 = <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'856',qt:'fill'}
+    ]},
+  add_estimate:{m:{ch:'연습',tp:'빈칸채우기',el:'과정기능',bl:'적용',df:'중',sc:3,tm:90,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'덧셈의 어림셈',ac:'[4수01-08]',ad:'자연수의 덧셈과 뺄셈에서 어림셈을 할 수 있다.',gd:'어림셈 문제. 올림/반올림 활용.',st:['E4MATA01B08C20']},
+    vs:[
+      {h:'<div class="q-passage">주희네 학교 학생은 387명이고, 민수네 학교 학생은 425명입니다.</div><div class="q-stem">두 학교 학생 수의 합을 올림하여 백의 자리까지 어림하면?</div><div class="fill-eq">387 + 425 ≈ <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'900',qt:'fill'},
+      {h:'<div class="q-passage">과일 가게에 사과 278개, 배 356개가 있습니다.</div><div class="q-stem">반올림하여 백의 자리까지 어림하면?</div><div class="fill-eq">278 + 356 ≈ <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'600',qt:'fill'}
+    ]},
+  sub_no_borrow:{m:{ch:'연습',tp:'OX판별',el:'지식이해',bl:'이해',df:'하',sc:2,tm:45,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 뺄셈의 계산 원리',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'받아내림 없는 뺄셈 판별.',st:['E4MATA01B03C06','E4MATA01B03C08']},
+    vs:[
+      {h:'<div class="q-stem">다음 계산이 맞으면 O, 틀리면 X를 선택하세요.</div><div class="fill-eq" style="margin:24px 0">876 − 453 = 423</div><div class="ox-options" id="ox-opts"><div class="ox-btn ox-o" onclick="selectOX(this,\'O\')">O</div><div class="ox-btn ox-x" onclick="selectOX(this,\'X\')">X</div></div><div class="feedback" id="feedback"></div>',a:'O',qt:'ox'},
+      {h:'<div class="q-stem">다음 계산이 맞으면 O, 틀리면 X를 선택하세요.</div><div class="fill-eq" style="margin:24px 0">695 − 231 = 464</div><div class="ox-options" id="ox-opts"><div class="ox-btn ox-o" onclick="selectOX(this,\'O\')">O</div><div class="ox-btn ox-x" onclick="selectOX(this,\'X\')">X</div></div><div class="feedback" id="feedback"></div>',a:'O',qt:'ox'},
+      {h:'<div class="q-stem">빈칸에 알맞은 수를 쓰세요.</div><div class="fill-eq">587 − 243 = <input class="fill-input" type="text" id="fill-ans" maxlength="4" autocomplete="off"></div><div class="feedback" id="feedback"></div>',a:'344',qt:'fill'}
+    ]},
+  challenge:{m:{ch:'심화',tp:'서술형',el:'과정기능',bl:'분석',df:'상',sc:5,tm:180,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산 원리',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'역산/추론 문제. 빈 자릿수를 추론.',st:['E4MATA01B03C05','E4MATA01B03C06']},
+    vs:[
+      {h:'<div class="q-passage">□ 안에 알맞은 숫자를 넣으세요.</div><div class="fill-eq" style="font-size:1.6rem;margin:20px 0">3□7 + 2□5 = 602</div><div class="q-stem">□ 안에 들어갈 숫자를 각각 구하고, 풀이 과정을 설명하세요.</div><textarea class="essay-area" id="essay-ans" placeholder="풀이 과정을 적어주세요..."></textarea><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'},
+      {h:'<div class="q-passage">□ 안에 알맞은 숫자를 넣으세요.</div><div class="fill-eq" style="font-size:1.6rem;margin:20px 0">5□4 − □73 = 251</div><div class="q-stem">□ 안에 들어갈 숫자를 각각 구하고, 풀이 과정을 설명하세요.</div><textarea class="essay-area" id="essay-ans" placeholder="풀이 과정을 적어주세요..."></textarea><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'}
+    ]},
+  creative:{m:{ch:'심화',tp:'서술형',el:'과정기능',bl:'창조',df:'최상',sc:6,tm:240,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'학생이 직접 문제를 만들고 풀이.',st:['E4MATA01B03C05','E4MATA01B03C06']},
+    vs:[
+      {h:'<div class="q-stem">받아올림이 두 번 일어나는 세 자리 수의 덧셈 문제를 직접 만들고, 풀이 과정을 써 보세요.</div><div style="margin:16px 0"><div style="font-size:.76rem;color:var(--text3);margin-bottom:8px">📝 나만의 문제:</div><textarea class="essay-area" style="min-height:60px" placeholder="예: ○○○ + ○○○ = ?"></textarea></div><div><div style="font-size:.76rem;color:var(--text3);margin-bottom:8px">📝 풀이 과정:</div><textarea class="essay-area" id="essay-ans" placeholder="자릿수별 계산 과정을 써 주세요..."></textarea></div><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'}
+    ]},
+  review:{m:{ch:'형성평가',tp:'매칭',el:'지식이해',bl:'이해',df:'하',sc:3,tm:60,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산 원리',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'개념 정리 매칭 문제.',st:['E4MATA01B03C05','E4MATA01B03C06']},
+    vs:[
+      {h:'<div class="q-stem">왼쪽의 계산을 오른쪽 결과와 알맞게 연결하세요.</div><div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;margin-top:16px;align-items:center"><div style="padding:10px 14px;background:var(--blue-bg);border-radius:8px;text-align:center;font-weight:600">345 + 123</div><div style="text-align:center;color:var(--text4)">→</div><div style="padding:10px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;text-align:center">468</div><div style="padding:10px 14px;background:var(--teal-bg);border-radius:8px;text-align:center;font-weight:600">567 − 234</div><div style="text-align:center;color:var(--text4)">→</div><div style="padding:10px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;text-align:center">333</div><div style="padding:10px 14px;background:var(--coral-bg);border-radius:8px;text-align:center;font-weight:600">289 + 176</div><div style="text-align:center;color:var(--text4)">→</div><div style="padding:10px 14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;text-align:center">465</div></div><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'}
+    ]},
+  self_check:{m:{ch:'형성평가',tp:'객관식(4지선다)',el:'과정기능',bl:'적용',df:'중',sc:3,tm:90,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 뺄셈의 계산',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'형성평가. 실생활 응용 문항.',st:['E4MATA01B03C05','E4MATA01B03C06']},
+    vs:[
+      {h:'<div class="q-passage">은주는 325쪽짜리 책을 읽고 있습니다. 어제까지 178쪽을 읽었습니다.</div><div class="q-stem">은주가 남은 쪽수는 몇 쪽인가요?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">137쪽</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">147쪽</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">153쪽</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">247쪽</span></div></div><div class="feedback" id="feedback"></div>',a:'2',qt:'mc'},
+      {h:'<div class="q-passage">도서관에 어린이 책 456권이 있었는데 오늘 123권이 새로 들어왔습니다.</div><div class="q-stem">어린이 책은 모두 몇 권인가요?</div><div class="mc-options" id="mc-opts"><div class="mc-option" data-val="1" onclick="selectMC(this)"><span class="mc-num">①</span><span class="mc-text">569권</span></div><div class="mc-option" data-val="2" onclick="selectMC(this)"><span class="mc-num">②</span><span class="mc-text">579권</span></div><div class="mc-option" data-val="3" onclick="selectMC(this)"><span class="mc-num">③</span><span class="mc-text">589권</span></div><div class="mc-option" data-val="4" onclick="selectMC(this)"><span class="mc-num">④</span><span class="mc-text">679권</span></div></div><div class="feedback" id="feedback"></div>',a:'2',qt:'mc'}
+    ]},
+  think_deep:{m:{ch:'심화',tp:'서술형',el:'과정기능',bl:'평가',df:'상',sc:5,tm:180,ar:'수와 연산',l1:'세 자리 수의 덧셈과 뺄셈',l2:'세 자리 수의 덧셈의 계산 원리',ac:'[4수01-03]',ad:'세 자리 수의 덧셈과 뺄셈의 계산 원리를 이해하고 그 계산을 할 수 있다.',gd:'오류 분석 문항. 잘못된 계산을 찾아서 설명.',st:['E4MATA01B03C05','E4MATA01B03C06']},
+    vs:[
+      {h:'<div class="q-passage">민수가 다음과 같이 계산했습니다.</div><div class="fill-eq" style="flex-direction:column;gap:4px;margin:20px 0"><div style="font-size:1.1rem">&nbsp;&nbsp;364</div><div style="font-size:1.1rem">+ 278</div><div style="border-top:2px solid var(--text);padding-top:4px;font-size:1.1rem;color:var(--red)">&nbsp;&nbsp;532</div></div><div class="q-stem">잘못된 부분을 찾고, 올바른 답과 이유를 설명하세요.</div><textarea class="essay-area" id="essay-ans" placeholder="잘못된 부분과 올바른 계산 과정을 적어주세요..."></textarea><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'},
+      {h:'<div class="q-passage">영희가 다음과 같이 계산했습니다.</div><div class="fill-eq" style="flex-direction:column;gap:4px;margin:20px 0"><div style="font-size:1.1rem">&nbsp;&nbsp;527</div><div style="font-size:1.1rem">− 348</div><div style="border-top:2px solid var(--text);padding-top:4px;font-size:1.1rem;color:var(--red)">&nbsp;&nbsp;221</div></div><div class="q-stem">잘못된 부분을 찾고, 올바른 답과 이유를 설명하세요.</div><textarea class="essay-area" id="essay-ans" placeholder="잘못된 부분과 올바른 계산 과정을 적어주세요..."></textarea><div class="feedback" id="feedback"></div>',a:'essay',qt:'essay'}
+    ]}
+};
+
+var DEF_M={ch:'연습',tp:'객관식',el:'과정기능',bl:'이해',df:'중',sc:2,tm:60,ar:'수와 연산',l1:'-',l2:'-',ac:'-',ad:'-',gd:'문항 생성 중...',st:[]};
+var DEF_H='<div style="text-align:center;padding:40px;color:var(--text3)"><div style="font-size:2rem;margin-bottom:12px">⏳</div><div style="font-size:.88rem;font-weight:600;color:var(--text2)">문항 생성 중...</div><div style="font-size:.76rem;margin-top:8px">기획팀 메타정보를 기반으로 제작팀이 문항을 저작하고 있습니다.</div></div>';
+
+// ============================================================
+// STATE
+// ============================================================
+var curKey=null,curMeta=null,curV=null,curVidx=0,regenN=0,MAX_R=5,leafInfo={},tmr=null,tmrS=0;
+
+// ============================================================
+// RENDER TREE
+// ============================================================
+var TC={진단:'var(--blue)',연습:'var(--teal)',형성평가:'var(--amber)',심화:'var(--coral)',총괄:'var(--green)'};
+
+function renderTree(){
+  var c=document.getElementById('tree'),h='';
+  TREE.forEach(function(d1,i){
+    var op=i===1?' open':'';
+    h+='<div class="tree-d1'+op+'"><div class="tree-d1-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="arrow">▶</span><span class="num">'+d1.n+'</span>'+d1.nm+'</div><div class="tree-d1-body">';
+    if(!d1.ch||!d1.ch.length){h+='<div class="tree-leaf leaf-d2" onclick="pickLeaf(this,\''+esc(d1.nm)+'\',\'\',\'\',\''+esc(d1.nm)+'\',\'\')"><span class="type-dot" style="background:var(--blue)"></span>'+d1.nm+'</div>';}
+    (d1.ch||[]).forEach(function(d2){
+      if(!d2.ch||!d2.ch.length){
+        h+='<div class="tree-leaf leaf-d2" onclick="pickLeaf(this,\''+esc(d1.nm)+'\',\''+esc(d2.nm)+'\',\'\',\''+esc(d2.nm)+'\',\''+(d2.k||'')+'\')"><span class="type-dot" style="background:'+(TC[d2.t]||'var(--text4)')+'"></span>'+d2.nm+'</div>';
+      } else {
+        h+='<div class="tree-d2"><div class="tree-d2-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="arrow">▶</span>'+d2.nm+'</div><div class="tree-d2-body">';
+        d2.ch.forEach(function(d3){
+          h+='<div class="tree-leaf" onclick="pickLeaf(this,\''+esc(d1.nm)+'\',\''+esc(d2.nm)+'\',\''+esc(d3.nm)+'\',\''+esc(d3.nm)+'\',\''+(d3.k||'')+'\')"><span class="type-dot" style="background:'+(TC[d3.t||d2.t]||'var(--text4)')+'"></span>'+d3.nm+'</div>';
+        });
+        h+='</div></div>';
+      }
+    });
+    h+='</div></div>';
+  });
+  c.innerHTML=h;
+}
+function esc(s){return (s||'').replace(/'/g,"\\'")}
+
+// ============================================================
+// PICK LEAF
+// ============================================================
+function pickLeaf(el,d1,d2,d3,ln,key){
+  document.querySelectorAll('.tree-leaf').forEach(function(l){l.classList.remove('selected')});
+  el.classList.add('selected');
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('content').classList.add('visible');
+  closeEditPanel();
+
+  leafInfo={d1:d1,d2:d2,d3:d3,ln:ln};
+  curKey=key||null;
+  regenN=0;
+  document.getElementById('regen-count').textContent='0/'+MAX_R;
+
+  // breadcrumb
+  var bc='<span>초등</span><span class="bc-sep">›</span><span>3학년</span><span class="bc-sep">›</span><span>1학기</span>';
+  if(d1)bc+='<span class="bc-sep">›</span><span>'+d1+'</span>';
+  if(d2)bc+='<span class="bc-sep">›</span><span>'+(d2.length>25?d2.slice(0,25)+'…':d2)+'</span>';
+  if(d3)bc+='<span class="bc-sep">›</span><span class="bc-active">'+d3+'</span>';
+  else if(d2){var s=d2.length>25?d2.slice(0,25)+'…':d2;bc+='<span class="bc-sep">›</span><span class="bc-active">'+s+'</span>';}
+  document.getElementById('breadcrumb').innerHTML=bc;
+
+  if(curKey&&Q[curKey]){curMeta=Q[curKey].m;curVidx=0;curV=Q[curKey].vs[0];}
+  else{curMeta=DEF_M;curV={h:DEF_H,a:null,qt:'none'};curVidx=-1;}
+  showMeta(curMeta);
+  showQ(curV);
+}
+
+function showMeta(m){
+  var cc={진단:'blue',연습:'teal',형성평가:'amber',심화:'coral',총괄:'green'}[m.ch]||'teal';
+  var el=document.getElementById('meta-character');el.textContent=m.ch;el.style.background='var(--'+cc+'-bg)';el.style.color='var(--'+cc+')';
+  document.getElementById('meta-grid').innerHTML='<div class="meta-item"><div class="label">문항유형</div><div class="value">'+m.tp+'</div></div><div class="meta-item"><div class="label">내용요소</div><div class="value">'+m.el+'</div></div><div class="meta-item"><div class="label">Bloom\'s</div><div class="value">'+m.bl+'</div></div><div class="meta-item"><div class="label">난이도</div><div class="value">'+m.df+'</div></div><div class="meta-item"><div class="label">배점</div><div class="value">'+m.sc+'점</div></div><div class="meta-item"><div class="label">제한시간</div><div class="value">'+m.tm+'초</div></div><div class="meta-item"><div class="label">내용체계 영역</div><div class="value">'+m.ar+'</div></div><div class="meta-item"><div class="label">1단계 내용요소</div><div class="value">'+m.l1+'</div></div><div class="meta-item" style="grid-column:span 2"><div class="label">성취기준</div><div class="value">'+m.ac+' '+m.ad+'</div></div>';
+  document.getElementById('std-tags').innerHTML=(m.st||[]).map(function(s){return'<span class="std-tag">'+s+'</span>'}).join('');
+  document.getElementById('guide-text').textContent=m.gd;
+}
+
+function showQ(v){
+  document.getElementById('q-number').textContent='Q-'+String(Math.floor(Math.random()*900)+100);
+  document.getElementById('q-body').innerHTML=v.h;
+  document.getElementById('timer-limit').textContent=fmtT(curMeta.tm);
+  startTmr(curMeta.tm);
+}
+
+// ============================================================
+// REGENERATE
+// ============================================================
+function regenerateQuestion(){
+  if(!curKey||!Q[curKey])return;
+  if(regenN>=MAX_R){alert('최대 '+MAX_R+'회까지 재생성할 수 있습니다.');return;}
+  // Populate edit panel with current meta values
+  populateEditPanel(curMeta);
+  document.getElementById('meta-edit-panel').classList.add('show');
+  document.getElementById('edit-regen-count').textContent=regenN+'/'+MAX_R;
+}
+
+function populateEditPanel(m){
+  setSelVal('edit-tp',m.tp);
+  setSelVal('edit-el',m.el);
+  setSelVal('edit-bl',m.bl);
+  setSelVal('edit-df',m.df);
+  document.getElementById('edit-sc').value=String(m.sc);
+  document.getElementById('edit-tm').value=String(m.tm);
+  setSelVal('edit-ar',m.ar);
+}
+
+function setSelVal(id,val){
+  var sel=document.getElementById(id);
+  for(var i=0;i<sel.options.length;i++){
+    if(sel.options[i].text===val||sel.options[i].value===val){sel.selectedIndex=i;return;}
+  }
+}
+
+function closeEditPanel(){
+  document.getElementById('meta-edit-panel').classList.remove('show');
+}
+
+function applyAndRegenerate(){
+  if(regenN>=MAX_R){alert('최대 '+MAX_R+'회까지 재생성할 수 있습니다.');return;}
+  // Read edited values
+  var editedMeta=JSON.parse(JSON.stringify(curMeta));
+  editedMeta.tp=document.getElementById('edit-tp').value;
+  editedMeta.el=document.getElementById('edit-el').value;
+  editedMeta.bl=document.getElementById('edit-bl').value;
+  editedMeta.df=document.getElementById('edit-df').value;
+  editedMeta.sc=parseInt(document.getElementById('edit-sc').value);
+  editedMeta.tm=parseInt(document.getElementById('edit-tm').value);
+  editedMeta.ar=document.getElementById('edit-ar').value;
+
+  // Close panel, show loading
+  closeEditPanel();
+  var btn=document.getElementById('btn-regen'),ld=document.getElementById('q-loading');
+  btn.classList.add('spinning');ld.classList.add('show');
+
+  setTimeout(function(){
+    // Apply edited meta
+    curMeta=editedMeta;
+    showMeta(curMeta);
+
+    // Cycle to next variant
+    var vs=Q[curKey].vs;
+    curVidx=(curVidx+1)%vs.length;
+    curV=vs[curVidx];
+    regenN++;
+    document.getElementById('regen-count').textContent=regenN+'/'+MAX_R;
+    showQ(curV);
+    btn.classList.remove('spinning');ld.classList.remove('show');
+  },1000);
+}
+
+// ============================================================
+// ZIP DOWNLOAD
+// ============================================================
+function downloadZip(){
+  if(!curV||curV.qt==='none')return;
+  var btn=document.getElementById('btn-download');
+  btn.classList.add('downloading');btn.innerHTML='<span>⏳</span> 생성 중...';
+
+  var m=curMeta,qn=document.getElementById('q-number').textContent;
+  var dp=[leafInfo.d1,leafInfo.d2,leafInfo.d3].filter(Boolean).join(' > ');
+
+  var css=buildCSS();
+  var js=buildJS(curV);
+  var html=buildHTML(curV,m,qn,dp);
+  var meta=JSON.stringify({meta_version:"2.0.0",generated_at:new Date().toISOString(),question_id:qn,school_level:"E",grade:3,semester:1,depth_path:dp,leaf_name:leafInfo.ln,standard_ids:m.st,content_area:m.ar,content_level1:m.l1,item_character:m.ch,item_type:m.tp,content_element:m.el,blooms_level:m.bl,difficulty:m.df,score:m.sc,time_limit_sec:m.tm,achievement_code:m.ac,achievement_desc:m.ad,authoring_guide:m.gd},null,2);
+  var readme='문항 패키지: '+qn+'\n생성: '+new Date().toLocaleString('ko-KR')+'\n경로: '+dp+'\n유형: '+m.tp+' / 난이도: '+m.df+' / 배점: '+m.sc+'점\n성취기준: '+m.ac+' '+m.ad+'\n\n파일 구성:\n/index.html - 문항 (브라우저에서 열기)\n/css/style.css - 스타일시트\n/js/item.js - 인터랙션 스크립트\n/meta.json - 메타정보\n/README.txt - 이 파일\n';
+
+  var zip=new JSZip();
+  var f=zip.folder(qn);
+  f.file('index.html',html);
+  f.file('meta.json',meta);
+  f.file('README.txt',readme);
+  f.folder('css').file('style.css',css);
+  f.folder('js').file('item.js',js);
+
+  zip.generateAsync({type:'blob'}).then(function(blob){
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download=qn+'.zip';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    btn.classList.remove('downloading');btn.innerHTML='<span>📥</span> ZIP 다운로드';
+  });
+}
+
+function buildHTML(v,m,qn,dp){
+  var qhtml=v.h.replace(/ onclick="[^"]*"/g,'');
+  return '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1.0">\n<title>'+qn+' — '+dp+'</title>\n<link rel="stylesheet" href="css/style.css">\n</head>\n<body>\n<div class="item-container">\n<header class="item-header">\n<div class="item-meta-bar"><span class="badge type">'+m.tp+'</span><span class="badge diff">'+m.df+'</span><span class="badge score">'+m.sc+'점</span><span class="badge time">'+m.tm+'초</span><span class="item-id">'+qn+'</span></div>\n<div class="item-path">'+dp+'</div>\n<div class="item-std">'+m.ac+' '+m.ad+'</div>\n</header>\n<main class="item-body">\n'+qhtml+'\n</main>\n<footer class="item-footer">\n<button class="btn-submit" onclick="submitAnswer()">제출</button>\n<button class="btn-reset" onclick="resetItem()">초기화</button>\n<div class="item-timer">⏱ <span id="timer-display">0:00</span> / '+fmtT(m.tm)+'</div>\n</footer>\n</div>\n<script src="js/item.js"></'+'script>\n</body>\n</html>';
+}
+
+function buildCSS(){
+  return "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');\n*{margin:0;padding:0;box-sizing:border-box}\n:root{--bg:#f7f6f3;--bg2:#fff;--bg3:#eeecea;--text:#1a1a18;--text2:#5c5b57;--text3:#8c8b87;--purple:#6c5ce7;--purple-bg:#f0eeff;--teal:#00b894;--teal-bg:#e6f9f3;--coral:#e17055;--coral-bg:#fdeee9;--blue:#4a90d9;--blue-bg:#eaf2fb;--amber:#f0932b;--amber-bg:#fef3e5;--green:#27ae60;--green-bg:#e8f8ef;--red:#e74c3c;--line:rgba(0,0,0,.06);--shadow:0 1px 3px rgba(0,0,0,.06)}\nbody{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.6;display:flex;justify-content:center;padding:24px}\n.item-container{max-width:680px;width:100%;background:var(--bg2);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}\n.item-header{padding:16px 24px;border-bottom:1px solid var(--line);background:#fafaf8}\n.item-meta-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}\n.badge{font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:20px}\n.badge.type{background:var(--purple-bg);color:var(--purple)}.badge.diff{background:var(--amber-bg);color:var(--amber)}.badge.score{background:var(--teal-bg);color:var(--teal)}.badge.time{background:var(--blue-bg);color:var(--blue)}\n.item-id{margin-left:auto;font-family:monospace;font-size:.7rem;color:var(--text3)}\n.item-path{font-size:.74rem;color:var(--text2);margin-bottom:4px}\n.item-std{font-size:.7rem;color:var(--text3)}\n.item-body{padding:24px}\n.item-footer{padding:14px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}\n.item-timer{margin-left:auto;font-family:monospace;font-size:.78rem;color:var(--text3)}\n.btn-submit,.btn-reset{padding:9px 24px;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit}\n.btn-submit{background:var(--purple);color:#fff}.btn-submit:hover{opacity:.9}\n.btn-reset{background:var(--bg3);color:var(--text2)}.btn-reset:hover{background:#dddbd7}\n.q-passage{font-size:.88rem;line-height:1.8;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:8px;border-left:3px solid var(--purple)}\n.q-stem{font-size:.88rem;font-weight:600;margin-bottom:16px}\n.fill-eq{font-size:1.4rem;font-weight:700;text-align:center;margin:20px 0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}\n.fill-input{width:100px;height:44px;border:2px dashed var(--purple);border-radius:8px;text-align:center;font-size:1.2rem;font-weight:700;background:var(--purple-bg);color:var(--purple);outline:none;font-family:inherit}.fill-input:focus{border-style:solid}\n.mc-options{display:flex;flex-direction:column;gap:8px}\n.mc-option{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:all .2s}.mc-option:hover,.mc-option.selected{border-color:var(--purple);background:var(--purple-bg)}\n.mc-option.correct{border-color:var(--green);background:var(--green-bg)}.mc-option.wrong{border-color:var(--red);background:rgba(231,76,60,.06)}\n.mc-num{width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;flex-shrink:0}\n.mc-option.selected .mc-num{background:var(--purple);color:#fff}.mc-option.correct .mc-num{background:var(--green);color:#fff}.mc-option.wrong .mc-num{background:var(--red);color:#fff}\n.mc-text{font-size:.84rem;flex:1}\n.ox-options{display:flex;gap:12px;justify-content:center}\n.ox-btn{width:100px;height:100px;border-radius:16px;border:2px solid var(--line);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;transition:all .2s}.ox-btn:hover{transform:scale(1.05)}.ox-btn.ox-o{color:var(--blue)}.ox-btn.ox-x{color:var(--coral)}.ox-btn.selected{transform:scale(1.08)}.ox-btn.ox-o.selected{border-color:var(--blue);background:var(--blue-bg)}.ox-btn.ox-x.selected{border-color:var(--coral);background:var(--coral-bg)}\n.essay-area{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;padding:14px;font-size:.84rem;font-family:inherit;line-height:1.7;resize:vertical;outline:none}.essay-area:focus{border-color:var(--purple)}\n.essay-hint{font-size:.7rem;color:var(--text3);margin-top:6px}\n.feedback{margin-top:16px;padding:14px 16px;border-radius:8px;font-size:.8rem;line-height:1.6;display:none}.feedback.show{display:block}.feedback.correct{background:var(--green-bg);border:1px solid rgba(39,174,96,.15);color:#1e8449}.feedback.wrong{background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.12);color:var(--red)}";
+}
+
+function buildJS(v){
+  return 'var ANS='+JSON.stringify(v.a)+',QT='+JSON.stringify(v.qt)+',TL='+curMeta.tm+';\ndocument.querySelectorAll(".mc-option").forEach(function(e){e.addEventListener("click",function(){document.querySelectorAll(".mc-option").forEach(function(o){o.classList.remove("selected")});this.classList.add("selected")})});\ndocument.querySelectorAll(".ox-btn").forEach(function(e){e.addEventListener("click",function(){document.querySelectorAll(".ox-btn").forEach(function(b){b.classList.remove("selected")});this.classList.add("selected");this.dataset.val=this.classList.contains("ox-o")?"O":"X"})});\nfunction submitAnswer(){var fb=document.getElementById("feedback");if(!fb)return;if(QT==="mc"){var s=document.querySelector(".mc-option.selected");if(!s)return;var ok=s.dataset.val===ANS;document.querySelectorAll(".mc-option").forEach(function(o){if(o.dataset.val===ANS)o.classList.add("correct");else if(o.classList.contains("selected"))o.classList.add("wrong")});fb.className="feedback show "+(ok?"correct":"wrong");fb.innerHTML=ok?"🎉 정답입니다!":"❌ 오답입니다.";}else if(QT==="fill"){var inp=document.getElementById("fill-ans");if(!inp)return;var ok=inp.value.trim()===ANS;inp.style.borderColor=ok?"var(--green)":"var(--red)";fb.className="feedback show "+(ok?"correct":"wrong");fb.innerHTML=ok?"🎉 정답입니다!":"❌ 오답입니다. 정답: "+ANS;}else if(QT==="ox"){var s=document.querySelector(".ox-btn.selected");if(!s)return;var ok=s.dataset.val===ANS;fb.className="feedback show "+(ok?"correct":"wrong");fb.innerHTML=ok?"🎉 정답입니다!":"❌ 오답입니다.";}else if(QT==="essay"){fb.className="feedback show correct";fb.innerHTML="✅ 답안이 제출되었습니다.";}clearInterval(window._t);}\nfunction resetItem(){document.querySelectorAll(".mc-option").forEach(function(o){o.className="mc-option"});document.querySelectorAll(".ox-btn").forEach(function(b){b.classList.remove("selected")});var f=document.getElementById("fill-ans");if(f){f.value="";f.style.borderColor="";}var e=document.getElementById("essay-ans");if(e)e.value="";var fb=document.getElementById("feedback");if(fb){fb.className="feedback";fb.innerHTML="";}startT();}\nfunction startT(){clearInterval(window._t);var s=0,el=document.getElementById("timer-display");if(!el)return;el.textContent="0:00";el.style.color="";window._t=setInterval(function(){s++;el.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(s>=TL)el.style.color="var(--red)";},1000);}\nstartT();';
+}
+
+// ============================================================
+// INTERACTIONS (prototype)
+// ============================================================
+function selectMC(el){document.querySelectorAll('.mc-option').forEach(function(o){o.classList.remove('selected')});el.classList.add('selected');}
+function selectOX(el,val){document.querySelectorAll('.ox-btn').forEach(function(b){b.classList.remove('selected')});el.classList.add('selected');el.dataset.val=val;}
+
+function submitAnswer(){
+  if(!curV||curV.qt==='none')return;
+  var fb=document.getElementById('feedback');
+  if(curV.qt==='mc'){var s=document.querySelector('.mc-option.selected');if(!s)return;var ok=s.dataset.val===curV.a;document.querySelectorAll('.mc-option').forEach(function(o){if(o.dataset.val===curV.a)o.classList.add('correct');else if(o.classList.contains('selected'))o.classList.add('wrong')});fb.className='feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'🎉 정답입니다!':'❌ 오답입니다. 정답은 '+curV.a+'번입니다.';}
+  else if(curV.qt==='fill'){var inp=document.getElementById('fill-ans');var ok=inp.value.trim()===curV.a;inp.style.borderColor=ok?'var(--green)':'var(--red)';inp.style.background=ok?'var(--green-bg)':'rgba(231,76,60,.08)';fb.className='feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'🎉 정답입니다!':'❌ 오답입니다. 정답은 '+curV.a+'입니다.';}
+  else if(curV.qt==='ox'){var s=document.querySelector('.ox-btn.selected');if(!s)return;var ok=s.dataset.val===curV.a;fb.className='feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'🎉 정답입니다!':'❌ 오답입니다. 정답은 '+curV.a+'입니다.';}
+  else if(curV.qt==='essay'){fb.className='feedback show correct';fb.innerHTML='✅ 답안이 제출되었습니다. 검수팀에서 검토 후 채점됩니다.';}
+  stopTmr();
+}
+
+function resetQuestion(){
+  if(!curV)return;
+  document.querySelectorAll('.mc-option').forEach(function(o){o.className='mc-option'});
+  document.querySelectorAll('.ox-btn').forEach(function(b){b.classList.remove('selected')});
+  var f=document.getElementById('fill-ans');if(f){f.value='';f.style.borderColor='';f.style.background='';}
+  var e=document.getElementById('essay-ans');if(e)e.value='';
+  var fb=document.getElementById('feedback');if(fb){fb.className='feedback';fb.innerHTML='';}
+  startTmr(curMeta.tm);
+}
+
+function startTmr(limit){stopTmr();tmrS=0;var el=document.getElementById('timer-val');el.textContent='0:00';el.style.color='';tmr=setInterval(function(){tmrS++;el.textContent=fmtT(tmrS);if(tmrS>=limit)el.style.color='var(--red)';},1000);}
+function stopTmr(){clearInterval(tmr);}
+function fmtT(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+renderTree();
+</script>
+</body>
+</html>

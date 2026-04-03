@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AItemS — 5팀 파이프라인 설계 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f4f1;--card:#fff;--navy:#1B1F3B;--purple:#6C5CE7;--teal:#00B894;--blue:#0984E3;--amber:#F0932B;--green:#27AE60;--coral:#E17055;--red:#D63031;--text:#2D3436;--sub:#636E72;--line:rgba(0,0,0,.06);--radius:12px}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh}
+.top{background:var(--navy);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.logo{font-size:1.1rem;font-weight:900;color:var(--purple)}.logo span{color:rgba(255,255,255,.5);font-weight:300;font-size:.82rem;margin-left:6px}
+.top-pills{margin-left:auto;display:flex;gap:8px}
+.pill{font-size:.65rem;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.1)}
+.layout{display:flex;min-height:calc(100vh - 56px)}
+.nav{width:260px;background:var(--card);border-right:1px solid var(--line);padding:20px 0;flex-shrink:0;overflow-y:auto}
+.nav-group{padding:0 16px;margin-bottom:20px}
+.nav-label{font-size:.62rem;color:var(--sub);font-weight:600;letter-spacing:.08em;padding:0 8px;margin-bottom:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;font-size:.78rem;font-weight:500;color:var(--text)}
+.nav-item:hover{background:rgba(108,92,231,.06)}
+.nav-item.active{background:rgba(108,92,231,.1);color:var(--purple);font-weight:600}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:.56rem;padding:2px 6px;border-radius:10px;background:rgba(108,92,231,.08);color:var(--purple);font-weight:600}
+.main{flex:1;padding:28px;overflow-y:auto}
+.page{display:none;animation:fadeIn .3s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-title{font-size:1.6rem;font-weight:900;color:var(--navy);margin-bottom:4px;letter-spacing:-.02em}
+.page-sub{font-size:.85rem;color:var(--sub);font-weight:300;margin-bottom:24px;max-width:600px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card .st-label{font-size:.62rem;color:var(--sub);font-weight:500;letter-spacing:.04em}
+.stat-card .st-value{font-size:1.4rem;font-weight:900;margin-top:4px}
+.stat-card .st-sub{font-size:.6rem;color:var(--sub);margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-size:.85rem;font-weight:700}
+.card-h .ch-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.card-h .ch-tag{margin-left:auto;font-size:.56rem;font-weight:600;padding:2px 8px;border-radius:4px}
+.card-b{padding:18px}
+table{width:100%;border-collapse:collapse;font-size:.74rem}
+thead th{text-align:left;padding:8px 10px;background:#f7f6f3;font-weight:500;font-size:.66rem;color:var(--sub);letter-spacing:.04em;border-bottom:1px solid var(--line)}
+tbody td{padding:8px 10px;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+.badge{font-size:.58rem;font-weight:600;padding:2px 8px;border-radius:10px}
+.b-critical{background:rgba(214,48,49,.08);color:var(--red)}
+.b-major{background:rgba(240,147,43,.08);color:var(--amber)}
+.b-minor{background:rgba(9,132,227,.08);color:var(--blue)}
+.flow-h{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap;align-items:center}
+.flow-step{padding:8px 16px;border-radius:8px;font-size:.72rem;font-weight:600;border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.flow-arrow{color:var(--sub);font-size:.9rem}
+.info-box{padding:12px 16px;border-radius:8px;font-size:.74rem;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin-top:12px}
+.info-box.purple{background:rgba(108,92,231,.05);border:1px solid rgba(108,92,231,.1);color:var(--purple)}
+.info-box.green{background:rgba(39,174,96,.05);border:1px solid rgba(39,174,96,.1);color:var(--green)}
+.info-box.amber{background:rgba(240,147,43,.05);border:1px solid rgba(240,147,43,.1);color:var(--amber)}
+.doc-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.doc-item{padding:14px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;gap:12px}
+.doc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.doc-info{flex:1}.doc-name{font-size:.78rem;font-weight:600}.doc-desc{font-size:.62rem;color:var(--sub);margin-top:2px}
+.doc-status{font-size:.6rem;padding:3px 8px;border-radius:4px;background:rgba(39,174,96,.08);color:var(--green);font-weight:600}
+code{font-family:'JetBrains Mono',monospace;font-size:.72em;background:#f0eeff;padding:1px 5px;border-radius:3px;color:var(--purple)}
+.sect-desc{font-size:.8rem;color:var(--sub);line-height:1.7;margin-bottom:16px;max-width:680px}
+@media(max-width:768px){.layout{flex-direction:column}.nav{width:100%;max-height:none;border-right:none;border-bottom:1px solid var(--line);padding:10px 0}.stats{grid-template-columns:repeat(2,1fr)}.doc-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">AItemS <span>문항 저작도구</span></div>
+  <div class="top-pills">
+    <div class="pill">5팀 파이프라인</div>
+    <div class="pill">v2.0</div>
+    <div class="pill">2026.03</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="nav">
+    <div class="nav-group">
+      <div class="nav-label">OVERVIEW</div>
+      <div class="nav-item active" onclick="showPage('home')"><div class="nav-dot" style="background:var(--navy)"></div>대시보드</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">5개 팀 설계</div>
+      <div class="nav-item" onclick="showPage('t1')"><div class="nav-dot" style="background:var(--blue)"></div>기획팀<span class="nav-badge">v2</span></div>
+      <div class="nav-item" onclick="showPage('t2')"><div class="nav-dot" style="background:var(--purple)"></div>제작팀<span class="nav-badge">+가이드4종</span></div>
+      <div class="nav-item" onclick="showPage('t3')"><div class="nav-dot" style="background:var(--teal)"></div>검수팀<span class="nav-badge">38항목</span></div>
+      <div class="nav-item" onclick="showPage('t4')"><div class="nav-dot" style="background:var(--amber)"></div>데이터팀<span class="nav-badge">OctoPlayer</span></div>
+      <div class="nav-item" onclick="showPage('t5')"><div class="nav-dot" style="background:var(--green)"></div>플랫폼팀<span class="nav-badge">24항목</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">CROSS-CUTTING</div>
+      <div class="nav-item" onclick="showPage('guides')"><div class="nav-dot" style="background:var(--coral)"></div>플랫폼 가이드 4종</div>
+      <div class="nav-item" onclick="showPage('reject')"><div class="nav-dot" style="background:var(--red)"></div>반려 루프</div>
+      <div class="nav-item" onclick="showPage('outputs')"><div class="nav-dot" style="background:var(--navy)"></div>산출물 목록</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-title">5팀 파이프라인 설계 대시보드</div>
+      <div class="page-sub">AI 기반 학습맵에서 문항을 자동 생성·검수·배포하는 5개 에이전트 팀의 전체 설계 현황입니다.</div>
+      <div class="stats">
+        <div class="stat-card" style="--c:var(--purple)"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple)"></div><div class="st-label">에이전트 팀</div><div class="st-value" style="color:var(--purple)">5</div><div class="st-sub">기획·제작·검수·데이터·플랫폼</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)"></div><div class="st-label">검수 항목</div><div class="st-value" style="color:var(--teal)">38</div><div class="st-sub">D1(11)+D2(10)+D3(12)+D4(5)</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div><div class="st-label">플랫폼 검증</div><div class="st-value" style="color:var(--green)">24</div><div class="st-sub">P1(8)+P2(6)+P3(5)+P4(5)</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber)"></div><div class="st-label">xAPI Verb</div><div class="st-value" style="color:var(--amber)">7</div><div class="st-sub">커스텀 경량 xAPI</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--coral)"></div><div class="st-label">가이드</div><div class="st-value" style="color:var(--coral)">4종</div><div class="st-sub">UDL·MathType·번역·reset.css</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div><div class="st-label">문항유형</div><div class="st-value" style="color:var(--blue)">10</div><div class="st-sub">기본4+인터랙3+멀티미디어3</div></div>
+      </div>
+      <div class="card"><div class="card-h">📊 파이프라인 흐름</div><div class="card-b">
+        <div class="flow-h">
+          <div class="flow-step" style="background:rgba(9,132,227,.06);color:var(--blue)">📋 기획팀</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(108,92,231,.06);color:var(--purple)">🤖 제작팀</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(0,184,148,.06);color:var(--teal)">✅ 검수팀</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(240,147,43,.06);color:var(--amber)">📡 데이터팀</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(39,174,96,.06);color:var(--green)">🔍 플랫폼팀</div>
+        </div>
+        <div class="info-box purple">📌 검수팀 반려 → 제작팀 재저작 (최대 3회). 플랫폼팀 FAILED → 데이터팀 반려 (최대 2회). 데이터팀·플랫폼팀은 검수 통과 후에만 실행.</div>
+      </div></div>
+    </div>
+
+    <!-- T1: 기획팀 -->
+    <div class="page" id="page-t1">
+      <div class="page-title">TEAM 01 기획팀</div>
+      <div class="page-sub">학습맵 XLSX(1,819행) + 표준체계 XLSX(419행) → 규칙엔진 3축 + LLM 보정 → 메타정보 JSON 출력</div>
+      <div class="stats">
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div><div class="st-label">입력</div><div class="st-value" style="color:var(--blue)">2</div><div class="st-sub">학습맵 + 표준체계 XLSX</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div><div class="st-label">구현</div><div class="st-value" style="color:var(--blue)">하이브리드</div><div class="st-sub">규칙엔진 + LLM 보정</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div><div class="st-label">출력</div><div class="st-value" style="color:var(--blue)">JSON</div><div class="st-sub">10+ 필드 메타정보</div></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(9,132,227,.08);color:var(--blue)">⚙️</div>규칙엔진 3축</div><div class="card-b">
+        <table><thead><tr><th>축</th><th>입력</th><th>출력</th></tr></thead><tbody>
+        <tr><td>① 활동유형 매핑</td><td>Depth3 활동유형</td><td>문항 성격 (진단/연습/심화/총괄)</td></tr>
+        <tr><td>② 내용체계 매핑</td><td>4영역 분류</td><td>문항유형 후보 결정</td></tr>
+        <tr><td>③ 교급×학년 보정</td><td>학교급, 학년</td><td>난이도·배점·제한시간 산출</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- T2: 제작팀 -->
+    <div class="page" id="page-t2">
+      <div class="page-title">TEAM 02 제작팀</div>
+      <div class="page-sub">Claude API 2-Pass 파이프라인으로 문항 콘텐츠와 HTML/CSS/JS 코드를 순차 생성합니다.</div>
+      <div class="stats">
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple)"></div><div class="st-label">Pass</div><div class="st-value" style="color:var(--purple)">2</div><div class="st-sub">콘텐츠 → 코드</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple)"></div><div class="st-label">문항유형</div><div class="st-value" style="color:var(--purple)">10종</div><div class="st-sub">기본4+인터랙3+멀티미디어3</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple)"></div><div class="st-label">산출물</div><div class="st-value" style="color:var(--purple)">폴더</div><div class="st-sub">index.html+css+js+meta.json</div></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(108,92,231,.08);color:var(--purple)">🤖</div>2-Pass 구조</div><div class="card-b">
+        <table><thead><tr><th>Pass</th><th>입력</th><th>출력</th><th>프롬프트 핵심</th></tr></thead><tbody>
+        <tr><td>1st (콘텐츠)</td><td>메타 JSON</td><td>발문, 보기, 정답, 해설 JSON</td><td>오개념 기반 오답 생성, Bloom's 부합</td></tr>
+        <tr><td>2nd (코드)</td><td>1st 출력 + 가이드 4종</td><td>HTML/CSS/JS 코드</td><td>UDL 접근성, MathType, reset.css 변수</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- T3: 검수팀 -->
+    <div class="page" id="page-t3">
+      <div class="page-title">TEAM 03 검수팀</div>
+      <div class="page-sub">4대 검증 영역 38항목, 100점 만점. LLM 교차 검증 + 규칙 기반 검증 하이브리드.</div>
+      <div class="stats">
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)"></div><div class="st-label">총 항목</div><div class="st-value" style="color:var(--teal)">38</div><div class="st-sub">v2 (UDL/MathType/메타편집)</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)"></div><div class="st-label">만점</div><div class="st-value" style="color:var(--teal)">100</div><div class="st-sub">D1(25)+D2(30)+D3(20)+D4(25)</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal)"></div><div class="st-label">최대 반려</div><div class="st-value" style="color:var(--teal)">3회</div><div class="st-sub">초과 시 ESCALATED</div></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(0,184,148,.08);color:var(--teal)">✅</div>4대 검증 영역</div><div class="card-b">
+        <table><thead><tr><th>영역</th><th>항목수</th><th>배점</th><th>방법</th><th>주요 내용</th></tr></thead><tbody>
+        <tr><td>D1 코드 무결성</td><td>11</td><td>25점</td><td>규칙</td><td>HTML/CSS/JS 파싱, reset.css 순서, MathType 구조</td></tr>
+        <tr><td>D2 교육적 정확성</td><td>10</td><td>30점</td><td>LLM</td><td>정답 검증, 메타편집 재생성 정합성, 수식 정확성</td></tr>
+        <tr><td>D3 접근성 (UDL)</td><td>12</td><td>20점</td><td>규칙+UDL</td><td>대체 텍스트, 명도대비, 키보드, label, lang, 마크업</td></tr>
+        <tr><td>D4 채점 로직</td><td>5</td><td>25점</td><td>시뮬레이션</td><td>정답/오답/미응답 시뮬레이션, getResult 일관성</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- T4: 데이터팀 -->
+    <div class="page" id="page-t4">
+      <div class="page-title">TEAM 04 데이터팀</div>
+      <div class="page-sub">OctoPlayer 3레이어 구조 기반, 비침습 xAPI 적용. octo-bridge.js 1파일로 item.js 수정 없이 이벤트 발화.</div>
+      <div class="stats">
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber)"></div><div class="st-label">xAPI Verb</div><div class="st-value" style="color:var(--amber)">7</div><div class="st-sub">started~left</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber)"></div><div class="st-label">통신</div><div class="st-value" style="color:var(--amber)">postMessage</div><div class="st-sub">단일 채널</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber)"></div><div class="st-label">원칙</div><div class="st-value" style="color:var(--amber)">비침습</div><div class="st-sub">item.js 수정 안 함</div></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(240,147,43,.08);color:var(--amber)">📡</div>Verb 7종</div><div class="card-b">
+        <table><thead><tr><th>Verb</th><th>시점</th><th>주요 데이터</th></tr></thead><tbody>
+        <tr><td><code>started</code></td><td>콘텐츠 로딩 완료</td><td>context.extensions</td></tr>
+        <tr><td><code>completed</code></td><td>채점 완료</td><td>extensions: crt-rt, crt-cnt, skip 등 7개</td></tr>
+        <tr><td><code>viewed</code></td><td>해설 보기</td><td>—</td></tr>
+        <tr><td><code>reset</code></td><td>초기화</td><td>restore 데이터</td></tr>
+        <tr><td><code>left</code></td><td>페이지 이탈</td><td>duration</td></tr>
+        <tr><td><code>presented</code></td><td>문항 표시</td><td>—</td></tr>
+        <tr><td><code>clicked</code></td><td>클릭</td><td>—</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- T5: 플랫폼팀 -->
+    <div class="page" id="page-t5">
+      <div class="page-title">TEAM 05 플랫폼팀</div>
+      <div class="page-sub">Playwright Headless 자동 테스트. mock-viewer.html로 OctoPlayer 모킹, 4영역 24항목 검증.</div>
+      <div class="stats">
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div><div class="st-label">검증 항목</div><div class="st-value" style="color:var(--green)">24</div><div class="st-sub">P1(8)+P2(6)+P3(5)+P4(5)</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div><div class="st-label">판정</div><div class="st-value" style="color:var(--green)">2단계</div><div class="st-sub">PASSED / FAILED</div></div>
+        <div class="stat-card"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div><div class="st-label">반려</div><div class="st-value" style="color:var(--green)">→ 데이터팀</div><div class="st-sub">최대 2회</div></div>
+      </div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(39,174,96,.08);color:var(--green)">🔍</div>4대 검증 영역</div><div class="card-b">
+        <table><thead><tr><th>영역</th><th>항목수</th><th>주요 내용</th></tr></thead><tbody>
+        <tr><td>P1 xAPI 이벤트</td><td>8</td><td>7 Verb 발화 시점·순서, completed extensions 7개 필드</td></tr>
+        <tr><td>P2 postMessage</td><td>6</td><td>requestUserId, sendRestoreData, contentId/Tag</td></tr>
+        <tr><td>P3 라이프사이클</td><td>5</td><td>초기화→학습→종료 E2E, timestamp, duration ±2s</td></tr>
+        <tr><td>P4 restore</td><td>5</td><td>DOM 복원, 재채점 일관성, 빈 restore 안전 처리</td></tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <!-- GUIDES -->
+    <div class="page" id="page-guides">
+      <div class="page-title">플랫폼 가이드 4종</div>
+      <div class="page-sub">제작팀 2nd pass 프롬프트와 산출물에 반영되는 동아출판 플랫폼 규격입니다.</div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(108,92,231,.08);color:var(--purple)">♿</div>G1. 웹접근성 UDL v0.1<div class="ch-tag" style="background:rgba(108,92,231,.08);color:var(--purple)">96항목</div></div><div class="card-b"><div class="sect-desc">2025년 적용 필수 9개: 대체 텍스트(5.1.1), IR기법, 명도대비 4.5:1(5.4.3), 키보드 초점 시각화(6.1.2), 키보드 조작(6.1.1), label 매칭(7.3.2), 색 무관 정보(5.4.1), 페이지 제목(6.4.2), lang="ko"(7.1.1), 마크업 무결성(8.1.1). 검수팀 D3 영역과 직접 연동.</div></div></div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(0,184,148,.08);color:var(--teal)">📐</div>G2. MathType 수식입력기<div class="ch-tag" style="background:rgba(0,184,148,.08);color:var(--teal)">KaTeX 대체</div></div><div class="card-b"><div class="sect-desc">KaTeX CDN → MathType(common-mathtype.js) 전면 교체. showMathType(id, val, toolbar), showHandType(), confirmMathType(), closeMathType(). 교급별 toolbar: elementary/high/디폴트 중등. div 기반(input 금지), #editorContainer 필수.</div></div></div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(9,132,227,.08);color:var(--blue)">🌐</div>G3. 번역API (파파고)<div class="ch-tag" style="background:rgba(9,132,227,.08);color:var(--blue)">setTranslation</div></div><div class="card-b"><div class="sect-desc">POST /v-api/v1/translate/text (텍스트) 및 /web (HTML). X-API-KEY: donga-naver-papago-GoT9zJh4. 지원: ko, en, ja, zh-CN, vi(웹 번역은 vi 제외). 최대 200,000 bytes. 동일 언어 시 API 미호출.</div></div></div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(240,147,43,.08);color:var(--amber)">🎨</div>G4. 표준 reset.css<div class="ch-tag" style="background:rgba(240,147,43,.08);color:var(--amber)">필수 포함</div></div><div class="card-b"><div class="sect-desc">Spoqa Han Sans Neo + Noto Sans KR. CSS 변수: --primary-color:#0084ff, --elementary_bg-color:#0084ff, --secondary-color:#e6eef9, --good:#f44e80. 산출물에 css/reset.css로 포함, style.css보다 먼저 로드.</div></div></div>
+    </div>
+
+    <!-- REJECT -->
+    <div class="page" id="page-reject">
+      <div class="page-title">반려 루프 설계</div>
+      <div class="page-sub">검수팀↔제작팀, 플랫폼팀↔데이터팀 간 반려-재작업 프로세스입니다.</div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(0,184,148,.08);color:var(--teal)">🔄</div>검수팀 → 제작팀 반려</div><div class="card-b">
+        <div class="flow-h">
+          <div class="flow-step" style="background:rgba(108,92,231,.06);color:var(--purple)">제작팀 1차 생성</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(0,184,148,.06);color:var(--teal)">검수팀 판정</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(214,48,49,.06);color:var(--red)">반려 사유 전달</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(108,92,231,.06);color:var(--purple)">재저작 (apiGenerateWithFix)</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(0,184,148,.06);color:var(--teal)">재검수</div>
+        </div>
+        <div class="info-box amber">⚠️ 반려 조건: 60점 미만 or Critical 1건 이상. 최대 3회 반려 후 ESCALATED. 반려 사유가 프롬프트에 포함되어 Claude API를 재호출합니다.</div>
+      </div></div>
+      <div class="card"><div class="card-h"><div class="ch-icon" style="background:rgba(39,174,96,.08);color:var(--green)">🔄</div>플랫폼팀 → 데이터팀 반려</div><div class="card-b">
+        <div class="flow-h">
+          <div class="flow-step" style="background:rgba(214,48,49,.06);color:var(--red)">FAILED</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(240,147,43,.06);color:var(--amber)">이슈 리포트 (fix_guide)</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(240,147,43,.06);color:var(--amber)">데이터팀 octo-bridge.js 수정</div><span class="flow-arrow">→</span>
+          <div class="flow-step" style="background:rgba(39,174,96,.06);color:var(--green)">재검증</div>
+        </div>
+        <div class="info-box green">📌 수정 대상: octo-bridge.js만 (item.js 수정 불가). 최대 2회. P3 라이프사이클 중 item.js 원인이면 검수팀→제작팀 에스컬레이션.</div>
+      </div></div>
+    </div>
+
+    <!-- OUTPUTS -->
+    <div class="page" id="page-outputs">
+      <div class="page-title">산출물 목록</div>
+      <div class="page-sub">현재까지 생성된 전체 산출물입니다.</div>
+      <div class="doc-list">
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(27,31,59,.06)">📊</div><div class="doc-info"><div class="doc-name">파이프라인 흐름도</div><div class="doc-desc">item_authoring_pipeline.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(9,132,227,.06)">📋</div><div class="doc-info"><div class="doc-name">기획팀 설계 v2</div><div class="doc-desc">planning_team_spec_v2.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(108,92,231,.06)">🤖</div><div class="doc-info"><div class="doc-name">제작팀 설계</div><div class="doc-desc">production_team_spec.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(0,184,148,.06)">✅</div><div class="doc-info"><div class="doc-name">검수팀 설계 v2</div><div class="doc-desc">qa_team_spec_v2.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(240,147,43,.06)">📡</div><div class="doc-info"><div class="doc-name">데이터팀 설계 v2</div><div class="doc-desc">data_team_spec_v2.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(39,174,96,.06)">🔍</div><div class="doc-info"><div class="doc-name">플랫폼팀 설계</div><div class="doc-desc">platform_team_spec.html</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(108,92,231,.06)">⚡</div><div class="doc-info"><div class="doc-name">프로토타입 (5팀 파이프라인)</div><div class="doc-desc">item_system_full_pipeline.jsx</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(225,112,85,.06)">📄</div><div class="doc-info"><div class="doc-name">프레젠테이션</div><div class="doc-desc">pipeline_design.pptx</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(225,112,85,.06)">📝</div><div class="doc-info"><div class="doc-name">설계 보고서</div><div class="doc-desc">pipeline_design_report.docx</div></div><div class="doc-status">완료</div></div>
+        <div class="doc-item"><div class="doc-icon" style="background:rgba(27,31,59,.06)">🖥️</div><div class="doc-info"><div class="doc-name">통합 대시보드</div><div class="doc-desc">pipeline_dashboard.html</div></div><div class="doc-status">완료</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.closest('.nav-item').classList.add('active');
+}
+</script>
+</body>
+</html>

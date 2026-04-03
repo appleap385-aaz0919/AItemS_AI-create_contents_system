@@ -1,0 +1,46 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Horizontal Parallel Lines -->
+  <line x1="20" y1="100" x2="280" y2="100" stroke="#333" stroke-width="2" />
+  <text x="285" y="105" font-family="sans-serif" font-size="14" fill="#333">L1</text>
+  <path d="M140,100 L150,90 M145,100 L155,90" stroke="#333" stroke-width="1"/> <!-- Parallel mark -->
+  
+  <line x1="20" y1="200" x2="280" y2="200" stroke="#333" stroke-width="2" />
+  <text x="285" y="205" font-family="sans-serif" font-size="14" fill="#333">L2</text>
+  <path d="M140,200 L150,190 M145,200 L155,190" stroke="#333" stroke-width="1"/> <!-- Parallel mark -->
+  
+  <!-- Transversal Line -->
+  <line x1="80" y1="280" x2="220" y2="20" stroke="#333" stroke-width="2" />
+  <text x="225" y="30" font-family="sans-serif" font-size="14" fill="#333">t</text>
+  
+  <!-- Angles -->
+  <!-- Interior Alternate -->
+  <!-- Intersection 1: (177, 100) approx -->
+  <!-- Intersection 2: (123, 200) approx -->
+
+  <!-- Angle at Intersect 1 (Bottom Left) -->
+  <path d="M167,100 A15,15 0 0,1 170,113" fill="none" stroke="#EF4444" stroke-width="2"/>
+  <text x="155" y="125" font-family="sans-serif" font-size="12" fill="#EF4444">x</text>
+
+  <!-- Angle at Intersect 2 (Top Right) -->
+  <path d="M133,200 A15,15 0 0,1 130,187" fill="none" stroke="#EF4444" stroke-width="2"/>
+  <text x="135" y="185" font-family="sans-serif" font-size="12" fill="#EF4444">x</text>
+
+  <!-- Corresponding Angle (Top Right of Int 1) -->
+  <path d="M187,100 A15,15 0 0,0 184,87" fill="none" stroke="#3B82F6" stroke-width="2"/>
+  <text x="190" y="90" font-family="sans-serif" font-size="12" fill="#3B82F6">y</text>
+
+  <!-- Corresponding Angle (Top Right of Int 2) -->
+  <path d="M133,200 A15,15 0 0,0 130,187" stroke="none" fill="none"/> <!-- Duplicate check -->
+  <!-- Let's do Bottom Right of Int 2 -->
+  <path d="M133,200 A15,15 0 0,0 136,213" fill="none" stroke="#3B82F6" stroke-width="2"/>
+  <text x="140" y="225" font-family="sans-serif" font-size="12" fill="#3B82F6">y</text> <!-- Wait, corresponding is Same Position -->
+  <!-- Top Right Int 1 is y. Top Right Int 2 is... wait. -->
+  <!-- (177, 100) and (123, 200). Line goes / -->
+  
+  <!-- Correcting simple "y" locations for Corresponding -->
+  <!-- Int 1: Top Right (above line) -->
+  <!-- Int 2: Top Right (between lines) -->
+  <path d="M133,200 A15,15 0 0,0 130,187" stroke="none"/> <!-- Clear prev -->
+  <path d="M133,200 A15,15 0 0,0 136,190" fill="none" stroke="#3B82F6" stroke-width="2"/> <!-- This is inside -->
+  <!-- Actually let's just label regions -->
+</svg>

@@ -1,0 +1,10 @@
+feat: SVG 생성기 확장, 검수 품질 개선, 학습맵 1793노드 재구축, UI 미니멀 디자인 적용
+
+- SVG 15개 생성기 전체 파라미터 확장 (points, angles, curves, regions 등)
+- circle_diagram: 점 A,B,C 라벨 + 중심각/원주각 표시 수정
+- 검수팀 QA 결과 기술용어 제거 (cleanTechTerms + preValidateStemVisual)
+- sanitize.js: circle/coordinate/pie/venn 자동 보정 로직 추가
+- tree.js/metas.js: 학습맵 Excel 기반 1793 리프노드 재구축 (전 노드유형 포함)
+- rebuild_tree_metas.py 스크립트 추가
+- UI: Minimalist 디자인 시스템 + Pretendard 폰트 + 한국어 타이포그래피 적용
+- API rate limit 개선: per-caller 추적 (generate/validate/generate-fix)

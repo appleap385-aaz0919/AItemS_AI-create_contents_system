@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="500" height="350">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="optionAGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="optionBGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <filter id="compShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="500" height="350" fill="#f1f5f9"/>
+
+  <!-- Title -->
+  <text x="250" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1e293b">비교 차트</text>
+
+  <!-- Table Container -->
+  <rect x="30" y="50" width="440" height="280" rx="12" fill="white" filter="url(#compShadow)"/>
+
+  <!-- Header Row -->
+  <rect x="30" y="50" width="440" height="45" rx="12" fill="url(#headerGrad)"/>
+  <rect x="30" y="80" width="440" height="15" fill="url(#headerGrad)"/>
+
+  <!-- Header Text -->
+  <text x="100" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">기준</text>
+  <text x="270" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">옵션 A</text>
+  <text x="400" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">옵션 B</text>
+
+  <!-- Column Dividers -->
+  <line x1="170" y1="50" x2="170" y2="330" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="335" y1="50" x2="335" y2="330" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Row Dividers -->
+  <line x1="30" y1="140" x2="470" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="30" y1="190" x2="470" y2="190" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="30" y1="240" x2="470" y2="240" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="30" y1="290" x2="470" y2="290" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Row 1 -->
+  <text x="100" y="122" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#475569" font-weight="bold">가격</text>
+  <text x="270" y="122" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#10b981" font-weight="bold">저렴함</text>
+  <text x="400" y="122" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#f59e0b" font-weight="bold">비쌈</text>
+
+  <!-- Row 2 -->
+  <rect x="30" y="140" width="440" height="50" fill="#f8fafc"/>
+  <text x="100" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#475569" font-weight="bold">성능</text>
+  <text x="270" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#f59e0b" font-weight="bold">보통</text>
+  <text x="400" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#10b981" font-weight="bold">우수</text>
+
+  <!-- Row 3 -->
+  <text x="100" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#475569" font-weight="bold">편의성</text>
+  <text x="270" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#10b981" font-weight="bold">높음</text>
+  <text x="400" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#10b981" font-weight="bold">높음</text>
+
+  <!-- Row 4 -->
+  <rect x="30" y="240" width="440" height="50" fill="#f8fafc"/>
+  <text x="100" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#475569" font-weight="bold">지원</text>
+  <text x="270" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#f59e0b" font-weight="bold">제한적</text>
+  <text x="400" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#10b981" font-weight="bold">24/7</text>
+
+  <!-- Row 5 (Summary) -->
+  <text x="100" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#475569" font-weight="bold">총점</text>
+
+  <!-- Score badges -->
+  <rect x="230" y="298" width="80" height="28" rx="14" fill="url(#optionAGrad)"/>
+  <text x="270" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">3/4</text>
+
+  <rect x="360" y="298" width="80" height="28" rx="14" fill="url(#optionBGrad)"/>
+  <text x="400" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white" font-weight="bold">4/4</text>
+
+  <!-- Check/X marks -->
+  <!-- Row 1 checks -->
+  <circle cx="230" cy="118" r="10" fill="#dcfce7"/>
+  <text x="230" y="123" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#10b981">✓</text>
+  <circle cx="360" cy="118" r="10" fill="#fef3c7"/>
+  <text x="360" y="123" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#f59e0b">-</text>
+</svg>

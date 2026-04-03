@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="title">
+  <title>보름달 아이콘</title>
+  <circle cx="32" cy="32" r="24" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="3"/>
+  <circle cx="24" cy="26" r="4" fill="#E2E8F0"/>
+  <circle cx="38" cy="22" r="5" fill="#E2E8F0"/>
+  <circle cx="40" cy="38" r="6" fill="#E2E8F0"/>
+</svg>

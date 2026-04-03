@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="envelopeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE68A"/>
+      <stop offset="100%" style="stop-color:#FCD34D"/>
+    </linearGradient>
+  </defs>
+  <!-- Envelope body -->
+  <rect x="4" y="16" width="56" height="36" rx="4" fill="url(#envelopeGrad)" stroke="#F59E0B" stroke-width="2"/>
+  <!-- Envelope flap (open) -->
+  <path d="M4 20 L32 6 L60 20" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+  <!-- Letter inside -->
+  <rect x="12" y="28" width="40" height="28" rx="2" fill="white" stroke="#E5E7EB" stroke-width="1"/>
+  <!-- Letter lines -->
+  <line x1="16" y1="36" x2="44" y2="36" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="42" x2="38" y2="42" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="48" x2="32" y2="48" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+  <!-- Seal/stamp -->
+  <circle cx="48" cy="10" r="6" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+  <text x="48" y="13" font-size="8" fill="white" text-anchor="middle" font-weight="bold">!</text>
+</svg>

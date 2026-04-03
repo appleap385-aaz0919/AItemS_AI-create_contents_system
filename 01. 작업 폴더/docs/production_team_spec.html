@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제작팀 에이전트 상세 설계</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0b0f;--bg2:#111218;--bg3:#181a24;--bg4:#1f2230;--text:#e8e6e1;--text2:#9d9b95;--text3:#6b6965;--text4:#4a4844;--teal:#3dd9a0;--teal-bg:rgba(61,217,160,.06);--teal-bg2:rgba(61,217,160,.12);--purple:#8b7cf6;--purple-bg:rgba(139,124,246,.06);--purple-bg2:rgba(139,124,246,.12);--coral:#f07b5a;--coral-bg:rgba(240,123,90,.06);--coral-bg2:rgba(240,123,90,.12);--blue:#5ba4f5;--blue-bg:rgba(91,164,245,.06);--blue-bg2:rgba(91,164,245,.12);--amber:#f0b95a;--amber-bg:rgba(240,185,90,.06);--amber-bg2:rgba(240,185,90,.12);--green:#7bc95e;--green-bg:rgba(123,201,94,.06);--red:#e85a5a;--red-bg:rgba(232,90,90,.06);--line:rgba(255,255,255,.04);--line2:rgba(255,255,255,.08);--radius:10px;--radius-lg:14px}
+html{font-size:14.5px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+code{font-family:'JetBrains Mono',monospace;font-size:.78em;background:var(--bg4);padding:1px 6px;border-radius:3px;color:var(--amber)}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px 100px}
+.header{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.breadcrumb{font-size:.7rem;color:var(--text3);letter-spacing:.06em;margin-bottom:12px}
+.breadcrumb .active{color:var(--teal)}
+h1{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;line-height:1.2}
+h1 span{color:var(--teal)}
+.header-desc{color:var(--text2);font-size:.88rem;margin-top:8px;font-weight:300;max-width:700px;line-height:1.7}
+.header-stats{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.stat{padding:8px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-size:.72rem}
+.stat strong{color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:.82rem}
+.nav-tabs{display:flex;gap:4px;margin-bottom:36px;background:var(--bg2);padding:4px;border-radius:10px;border:1px solid var(--line);overflow-x:auto}
+.nav-tab{padding:10px 18px;font-size:.76rem;font-weight:500;color:var(--text3);background:transparent;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit}
+.nav-tab:hover{color:var(--text2)}
+.nav-tab.active{background:var(--bg4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.section{display:none;animation:fadeUp .4s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-size:1.15rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.badge{font-size:.6rem;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+.section-desc{color:var(--text2);font-size:.82rem;font-weight:300;margin-bottom:28px;max-width:680px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.card-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+.card-head .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.card-head h3{font-size:.88rem;font-weight:600;flex:1}
+.card-head .tag{font-size:.6rem;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.card-body{padding:20px}
+.table-wrap{overflow-x:auto;margin:-4px;padding:4px}
+table{width:100%;border-collapse:collapse;font-size:.76rem}
+thead th{text-align:left;padding:10px 12px;background:var(--bg3);color:var(--text2);font-weight:500;font-size:.68rem;letter-spacing:.04em;white-space:nowrap;border-bottom:1px solid var(--line2)}
+thead th:first-child{border-radius:8px 0 0 0}
+thead th:last-child{border-radius:0 8px 0 0}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.015)}
+.json-block{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.8;overflow-x:auto;color:var(--text2);position:relative;white-space:pre-wrap;word-break:break-all}
+.json-block .k{color:var(--purple)}
+.json-block .s{color:var(--teal)}
+.json-block .n{color:var(--amber)}
+.json-block .c{color:var(--text4);font-style:italic}
+.json-label{position:absolute;top:8px;right:12px;font-size:.58rem;color:var(--text4);letter-spacing:.05em;font-family:'JetBrains Mono',monospace}
+.info{padding:12px 16px;border-radius:8px;font-size:.74rem;line-height:1.6;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+.info.teal{background:var(--teal-bg);border:1px solid rgba(61,217,160,.1);color:var(--teal)}
+.info.purple{background:var(--purple-bg);border:1px solid rgba(139,124,246,.1);color:var(--purple)}
+.info.blue{background:var(--blue-bg);border:1px solid rgba(91,164,245,.1);color:var(--blue)}
+.info.amber{background:var(--amber-bg);border:1px solid rgba(240,185,90,.1);color:var(--amber)}
+.info.coral{background:var(--coral-bg);border:1px solid rgba(240,123,90,.1);color:var(--coral)}
+.info .ic{flex-shrink:0;margin-top:1px}
+.flow{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;gap:16px;align-items:flex-start}
+.flow-line{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0}
+.flow-dot{width:10px;height:10px;border-radius:50%;border:2px solid;background:var(--bg);position:relative;z-index:1;flex-shrink:0}
+.flow-dot.rule{border-color:var(--blue)}
+.flow-dot.llm{border-color:var(--teal)}
+.flow-dot.merge{border-color:var(--amber);background:var(--amber)}
+.flow-dot.out{border-color:var(--green);background:var(--green)}
+.flow-connector{width:1px;flex:1;min-height:16px;background:repeating-linear-gradient(180deg,var(--text4) 0,var(--text4) 3px,transparent 3px,transparent 8px)}
+.flow-content{flex:1;padding-bottom:20px}
+.flow-content h4{font-size:.82rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.method{font-size:.56rem;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.method-rule{background:var(--blue-bg2);color:var(--blue)}
+.method-llm{background:var(--teal-bg2);color:var(--teal)}
+.method-merge{background:var(--amber-bg2);color:var(--amber)}
+.method-out{background:var(--green-bg);color:var(--green)}
+.flow-content p{font-size:.76rem;color:var(--text2);font-weight:300;line-height:1.6}
+.pc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;margin-top:8px}
+.pc h5{font-size:.76rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.pc p,.pc li{font-size:.72rem;color:var(--text2);line-height:1.7;font-weight:300}
+.pc ul{margin-top:6px;padding-left:16px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mg-item{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.mg-item .lb{font-size:.63rem;color:var(--text3);letter-spacing:.04em;font-weight:500;margin-bottom:4px}
+.mg-item .vl{font-size:.76rem;font-weight:500}
+.type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:16px}
+.type-card{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;transition:border-color .2s}
+.type-card:hover{border-color:var(--line2)}
+.type-card h4{font-size:.8rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.type-card .type-badge{font-size:.55rem;font-weight:600;padding:2px 8px;border-radius:4px}
+.type-card p{font-size:.7rem;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.type-card .tech{font-size:.62rem;color:var(--text3);display:flex;gap:4px;flex-wrap:wrap}
+.type-card .tech span{background:var(--bg3);padding:2px 6px;border-radius:3px}
+.folder-tree{font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:2;color:var(--text2);padding:16px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.folder-tree .dir{color:var(--amber)}
+.folder-tree .file{color:var(--teal)}
+.folder-tree .comment{color:var(--text4);font-style:italic;margin-left:8px}
+.ex-tabs{display:flex;gap:2px;margin-bottom:0}
+.ex-tab{padding:8px 16px;font-size:.7rem;font-weight:500;color:var(--text3);background:var(--bg3);border:none;border-radius:8px 8px 0 0;cursor:pointer;transition:all .2s;font-family:inherit}
+.ex-tab.active{background:var(--bg);color:var(--text)}
+.ex-panel{display:none;background:var(--bg);border:1px solid var(--line);border-radius:0 8px 8px 8px;padding:20px}
+.ex-panel.active{display:block}
+@media(max-width:640px){.wrap{padding:24px 16px 60px}h1{font-size:1.5rem}.mg,.type-grid{grid-template-columns:1fr}.header-stats{flex-direction:column;gap:8px}}
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <div class="breadcrumb">파이프라인 › <span class="active">TEAM 02 제작팀</span> › 상세 설계</div>
+    <h1><span>제작팀</span> 에이전트 상세 설계</h1>
+    <p class="header-desc">기획팀 메타정보(JSON)를 입력받아, LLM이 직접 HTML 문항을 생성하는 에이전트. 문항 1건 = 폴더(index.html + css/ + js/) 단위로 패키징.</p>
+    <div class="header-stats">
+      <div class="stat">문항유형 <strong>10</strong> 종</div>
+      <div class="stat">저작방식 <strong>LLM 직접 생성</strong></div>
+      <div class="stat">패키징 <strong>폴더 단위</strong></div>
+      <div class="stat">멀티미디어 <strong>이미지·수식·좌표</strong></div>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSec('input')">① 입력 스키마</button>
+    <button class="nav-tab" onclick="showSec('types')">② 문항 유형 카탈로그</button>
+    <button class="nav-tab" onclick="showSec('pipeline')">③ 저작 파이프라인</button>
+    <button class="nav-tab" onclick="showSec('output')">④ 산출물 구조</button>
+    <button class="nav-tab" onclick="showSec('prompt')">⑤ LLM 프롬프트 설계</button>
+    <button class="nav-tab" onclick="showSec('example')">⑥ 실행 예시</button>
+    <button class="nav-tab" onclick="showSec('guides')">⑦ 플랫폼 가이드</button>
+  </div>
+
+  <!-- ===== SEC 1: INPUT ===== -->
+  <div class="section active" id="sec-input">
+    <div class="section-title">입력 스키마 <span class="badge" style="background:var(--purple-bg2);color:var(--purple)">FROM 기획팀</span></div>
+    <p class="section-desc">기획팀 에이전트가 출력한 <code>item_meta_{id}.json</code>이 제작팀의 유일한 입력입니다. 이 JSON 하나로 문항의 모든 것을 결정합니다.</p>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="icon" style="background:var(--purple-bg);color:var(--purple)">📥</div>
+        <h3>제작팀이 참조하는 핵심 필드</h3>
+        <span class="tag" style="background:var(--purple-bg);color:var(--purple)">INPUT</span>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>필드</th><th>용도</th><th>제작팀 활용</th></tr></thead>
+            <tbody>
+              <tr><td><code>item_type</code></td><td>문항 대분류</td><td>HTML 템플릿 구조 결정 (어떤 인터랙션 사용할지)</td></tr>
+              <tr><td><code>item_type_detail</code></td><td>문항 세부유형</td><td>구체적 UI 형태 (4지선다 vs 5지선다, 좌표 드래그 등)</td></tr>
+              <tr><td><code>content_area</code></td><td>내용체계 영역</td><td>도형→SVG, 수연산→수식, 자료→그래프 등 미디어 판단</td></tr>
+              <tr><td><code>content_level2</code></td><td>2단계 내용요소[]</td><td>문항 소재·지문 생성의 핵심 컨텍스트</td></tr>
+              <tr><td><code>achievement_desc</code></td><td>성취기준 기술문</td><td>문항이 측정해야 할 능력 → 발문 설계 기준</td></tr>
+              <tr><td><code>difficulty</code></td><td>난이도 (최하~최상)</td><td>보기 난이도, 오답 매력도, 지문 복잡도 조절</td></tr>
+              <tr><td><code>score</code></td><td>배점</td><td>채점 로직의 만점 기준, 부분점수 여부</td></tr>
+              <tr><td><code>time_limit_sec</code></td><td>제한시간</td><td>타이머 설정값, 문항 분량 제어</td></tr>
+              <tr><td><code>blooms_level</code></td><td>Bloom's 인지수준</td><td>발문의 동사 수준 (기억→'~은?', 분석→'~를 설명하시오')</td></tr>
+              <tr><td><code>authoring_guide</code></td><td>출제 가이드</td><td>LLM에게 전달할 구체적 출제 방향·제약조건</td></tr>
+              <tr><td><code>content_element</code></td><td>내용요소 분류</td><td>지식이해→정답 명확, 과정기능→풀이과정, 가치태도→열린답</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info teal">
+          <span class="ic">🔑</span>
+          <span><strong>핵심 원칙:</strong> 제작팀은 메타정보 외의 추가 데이터 소스를 참조하지 않습니다. 기획팀이 넘긴 JSON만으로 문항을 완성해야 하며, 부족한 정보가 있으면 LLM이 메타정보 범위 내에서 자체 판단합니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 2: TYPES ===== -->
+  <div class="section" id="sec-types">
+    <div class="section-title">문항 유형 카탈로그 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">10 TYPES</span></div>
+    <p class="section-desc">제작팀이 생성할 수 있는 전체 문항 유형입니다. 기본형 4종 + 인터랙티브형 3종 + 멀티미디어형 3종으로 구성됩니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">📋</div><h3>기본형 (4종)</h3><span class="tag" style="background:var(--blue-bg);color:var(--blue)">BASIC</span></div>
+      <div class="card-body">
+        <div class="type-grid">
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--blue-bg2);color:var(--blue)">MC</span> multiple_choice</h4>
+            <p>4~5지선다 객관식. 라디오 버튼 기반. 정답 1개. 오답 매력도 조절이 핵심.</p>
+            <div class="tech"><span>radio input</span><span>정답 비교</span><span>오답 피드백</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--blue-bg2);color:var(--blue)">OX</span> ox</h4>
+            <p>O/X 판별형. 진위 판단. 진단·도입 문항에 주로 사용.</p>
+            <div class="tech"><span>2버튼 토글</span><span>즉시 피드백</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--blue-bg2);color:var(--blue)">FB</span> fill_blank</h4>
+            <p>빈칸 채우기. 숫자·단어 직접 입력. 정확 일치 또는 허용 범위 채점.</p>
+            <div class="tech"><span>text input</span><span>정규식 매칭</span><span>복수정답 허용</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--blue-bg2);color:var(--blue)">ES</span> essay</h4>
+            <p>서술형/단답형. textarea 기반. 키워드 매칭 또는 수동 채점.</p>
+            <div class="tech"><span>textarea</span><span>글자수 카운트</span><span>키워드 채점</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">🎮</div><h3>인터랙티브형 (3종)</h3><span class="tag" style="background:var(--teal-bg);color:var(--teal)">INTERACTIVE</span></div>
+      <div class="card-body">
+        <div class="type-grid">
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--teal-bg2);color:var(--teal)">DD</span> drag_and_drop</h4>
+            <p>드래그앤드롭. 요소를 지정 영역으로 이동. 좌표평면 배치, 분류 등.</p>
+            <div class="tech"><span>HTML Drag API</span><span>터치 지원</span><span>드롭존 검증</span><span>SVG 좌표계</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--teal-bg2);color:var(--teal)">OD</span> ordering</h4>
+            <p>순서 배열. 리스트 항목을 올바른 순서로 정렬. 풀이 단계, 과정 정렬.</p>
+            <div class="tech"><span>sortable list</span><span>터치 드래그</span><span>순서 비교</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--teal-bg2);color:var(--teal)">MT</span> matching</h4>
+            <p>매칭/연결. 왼쪽↔오른쪽 요소를 선으로 연결. 1:1 또는 N:1 매핑.</p>
+            <div class="tech"><span>SVG line</span><span>클릭 페어링</span><span>매핑 비교</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--coral-bg);color:var(--coral)">🎨</div><h3>멀티미디어형 (3종)</h3><span class="tag" style="background:var(--coral-bg);color:var(--coral)">MEDIA</span></div>
+      <div class="card-body">
+        <div class="type-grid">
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--coral-bg2);color:var(--coral)">MATH</span> 수식 포함형</h4>
+            <p>MathML 또는 KaTeX로 수식을 렌더링하는 문항. 모든 기본형+인터랙티브형과 결합 가능.</p>
+            <div class="tech"><span>KaTeX CDN</span><span>MathML fallback</span><span>수식 입력 UI</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--coral-bg2);color:var(--coral)">IMG</span> 이미지 포함형</h4>
+            <p>SVG 인라인 이미지를 포함하는 문항. 도형, 그래프, 다이어그램 등. 외부 리소스 없이 자체 내장.</p>
+            <div class="tech"><span>inline SVG</span><span>base64 fallback</span><span>반응형</span></div>
+          </div>
+          <div class="type-card">
+            <h4><span class="type-badge" style="background:var(--coral-bg2);color:var(--coral)">COORD</span> 좌표평면 조작형</h4>
+            <p>SVG 좌표평면에서 점 찍기, 직선 그리기, 그래프 조작 등 인터랙티브 수학 문항.</p>
+            <div class="tech"><span>SVG 좌표계</span><span>클릭 좌표</span><span>그래프 라이브러리</span><span>스냅 그리드</span></div>
+          </div>
+        </div>
+        <div class="info coral" style="margin-top:16px">
+          <span class="ic">📌</span>
+          <span><strong>결합 규칙:</strong> 멀티미디어 3종은 단독 유형이 아니라 기본형·인터랙티브형과 결합됩니다. 예: <code>multiple_choice</code> + <code>MATH</code> = 수식이 포함된 객관식, <code>drag_and_drop</code> + <code>COORD</code> = 좌표평면 드래그 문항.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 3: PIPELINE ===== -->
+  <div class="section" id="sec-pipeline">
+    <div class="section-title">저작 파이프라인 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">LLM DIRECT</span></div>
+    <p class="section-desc">LLM이 메타정보를 읽고 HTML/CSS/JS를 직접 생성합니다. 템플릿 없이 매번 새로 저작하되, 구조·스타일 가이드라인을 프롬프트로 제어합니다.</p>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot rule"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 1. 메타정보 파싱 및 유형 결정 <span class="method method-rule">전처리</span></h4>
+              <p>기획팀 JSON에서 <code>item_type</code>, <code>content_area</code>, <code>authoring_guide</code>를 추출하여, LLM 프롬프트에 주입할 컨텍스트를 구성합니다.</p>
+              <div class="pc">
+                <h5>📋 유형 라우팅</h5>
+                <ul>
+                  <li><code>item_type</code> → 기본 HTML 구조 결정 (라디오, 드래그, textarea 등)</li>
+                  <li><code>content_area</code> = "도형과 측정" → SVG 이미지 생성 플래그 ON</li>
+                  <li><code>content_area</code> = "수와 연산" + 키워드 "함수" → KaTeX 수식 플래그 ON</li>
+                  <li><code>authoring_guide.media_suggestion</code> 존재 시 → 해당 미디어 유형 활성화</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot llm"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 2. LLM 콘텐츠 생성 (1st pass) <span class="method method-llm">LLM</span></h4>
+              <p>메타정보 + 스타일 가이드라인 + 유형별 구조 규칙을 포함한 프롬프트로 LLM을 호출하여 문항 콘텐츠(지문, 발문, 보기, 정답, 해설)를 생성합니다.</p>
+              <div class="pc">
+                <h5>🤖 LLM 생성 범위</h5>
+                <ul>
+                  <li><strong>지문(passage):</strong> 학습 맥락을 제공하는 텍스트 또는 상황 설명</li>
+                  <li><strong>발문(stem):</strong> 학생에게 묻는 질문. Bloom's 수준에 맞는 동사 사용</li>
+                  <li><strong>보기/선택지:</strong> 정답 1개 + 오답 N개. 오답은 전형적 오개념 기반 생성</li>
+                  <li><strong>정답 데이터:</strong> 자동 채점용 정답 값 (문자열, 배열, 좌표 등)</li>
+                  <li><strong>해설:</strong> 정답 근거, 풀이 과정, 오답 분석</li>
+                  <li><strong>미디어:</strong> 필요 시 인라인 SVG (도형, 좌표평면, 그래프)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot llm"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 3. LLM HTML 코드 생성 (2nd pass) <span class="method method-llm">LLM</span></h4>
+              <p>1st pass 콘텐츠를 HTML/CSS/JS로 변환합니다. 유형별 인터랙션 코드, 채점 로직, 타이머, 접근성을 포함한 완전한 코드를 생성합니다.</p>
+              <div class="pc">
+                <h5>📦 생성 파일 3종</h5>
+                <ul>
+                  <li><strong>index.html:</strong> 문항 마크업 + 메타 배지 + 헤더 + 본문 + 푸터</li>
+                  <li><strong>css/style.css:</strong> 문항 유형별 스타일 + 반응형 + 다크모드 미지원(학습용이므로 라이트 고정)</li>
+                  <li><strong>js/item.js:</strong> 인터랙션(클릭, 드래그, 입력) + 채점 로직 + 타이머 + 피드백 표시</li>
+                </ul>
+              </div>
+              <div class="info amber">
+                <span class="ic">⚡</span>
+                <span><strong>2-pass 이유:</strong> 1회 호출로 콘텐츠+코드를 동시에 생성하면 코드 품질이 떨어집니다. 1st pass에서 교육적 콘텐츠 품질에 집중하고, 2nd pass에서 코드 구현에 집중하는 분리가 핵심입니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot merge"></div><div class="flow-connector"></div></div>
+            <div class="flow-content">
+              <h4>STEP 4. 코드 검증 및 보정 <span class="method method-merge">검증</span></h4>
+              <p>생성된 HTML/CSS/JS의 구조적 무결성을 자동 검증합니다.</p>
+              <div class="pc">
+                <h5>✅ 자동 검증 항목</h5>
+                <ul>
+                  <li>HTML 파싱 가능 여부 (태그 닫힘, 중첩 오류)</li>
+                  <li>정답 데이터가 JS에 올바르게 내장되었는지</li>
+                  <li>필수 요소 존재: feedback 영역, 제출 버튼, 타이머</li>
+                  <li>접근성: ARIA 라벨, 키보드 내비게이션, 포커스 관리</li>
+                  <li>CSS 변수 일관성, JS 문법 오류 없음</li>
+                  <li>인터랙티브 유형: 이벤트 핸들러 바인딩 확인</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-dot out"></div></div>
+            <div class="flow-content">
+              <h4>STEP 5. 폴더 패키징 및 출력 <span class="method method-out">출력</span></h4>
+              <p>검증 통과 시 3개 파일을 폴더로 패키징하여 출력합니다. meta.json도 함께 복사하여 4파일 구성.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 4: OUTPUT ===== -->
+  <div class="section" id="sec-output">
+    <div class="section-title">산출물 구조 <span class="badge" style="background:var(--green-bg);color:var(--green)">FOLDER</span></div>
+    <p class="section-desc">문항 1건 = 폴더 1개. 브라우저에서 index.html만 열면 모든 리소스가 로컬에서 동작합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📁</div><h3>폴더 구조</h3></div>
+      <div class="card-body">
+        <div class="folder-tree">
+<span class="dir">Q-{id}/</span>
+├── <span class="file">index.html</span><span class="comment">← 문항 본체 (브라우저에서 열기)</span>
+├── <span class="dir">css/</span>
+│   └── <span class="file">style.css</span><span class="comment">← 문항 스타일 (유형별 상이)</span>
+├── <span class="dir">js/</span>
+│   └── <span class="file">item.js</span><span class="comment">← 인터랙션 + 채점 + 타이머</span>
+└── <span class="file">meta.json</span><span class="comment">← 기획팀 메타정보 원본 복사</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">📄</div><h3>index.html 표준 구조</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">HTML STRUCTURE</span>
+<span class="k">&lt;!DOCTYPE html&gt;</span>
+<span class="k">&lt;html</span> lang="ko"<span class="k">&gt;</span>
+<span class="k">&lt;head&gt;</span>
+  <span class="c">&lt;!-- 메타, 폰트, CSS 링크 --&gt;</span>
+  <span class="k">&lt;link</span> rel="stylesheet" href="css/style.css"<span class="k">/&gt;</span>
+  <span class="c">&lt;!-- 수식 필요 시: KaTeX CDN --&gt;</span>
+<span class="k">&lt;/head&gt;</span>
+<span class="k">&lt;body&gt;</span>
+<span class="k">&lt;div</span> class="item-container"<span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- ① 헤더: 메타 배지 + 경로 + 성취기준 --&gt;</span>
+  <span class="k">&lt;header</span> class="item-header"<span class="k">&gt;</span>
+    <span class="s">[문항유형] [난이도] [배점] [제한시간]</span>
+    <span class="s">[depth_path]</span>
+    <span class="s">[성취기준 코드 + 내용]</span>
+  <span class="k">&lt;/header&gt;</span>
+
+  <span class="c">&lt;!-- ② 본문: 지문 + 발문 + 인터랙션 영역 --&gt;</span>
+  <span class="k">&lt;main</span> class="item-body"<span class="k">&gt;</span>
+    <span class="k">&lt;div</span> class="passage"<span class="k">&gt;</span><span class="s">지문/상황 텍스트 (선택적)</span><span class="k">&lt;/div&gt;</span>
+    <span class="k">&lt;div</span> class="stem"<span class="k">&gt;</span><span class="s">발문 (질문)</span><span class="k">&lt;/div&gt;</span>
+    <span class="k">&lt;div</span> class="interaction" role="group"<span class="k">&gt;</span>
+      <span class="c">&lt;!-- 유형별 인터랙션 UI --&gt;</span>
+    <span class="k">&lt;/div&gt;</span>
+    <span class="k">&lt;div</span> class="feedback" id="feedback"<span class="k">&gt;&lt;/div&gt;</span>
+  <span class="k">&lt;/main&gt;</span>
+
+  <span class="c">&lt;!-- ③ 푸터: 제출/초기화 + 타이머 --&gt;</span>
+  <span class="k">&lt;footer</span> class="item-footer"<span class="k">&gt;</span>
+    <span class="s">[제출] [초기화] [⏱ 타이머]</span>
+  <span class="k">&lt;/footer&gt;</span>
+
+<span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;script</span> src="js/item.js"<span class="k">&gt;&lt;/script&gt;</span>
+<span class="k">&lt;/body&gt;&lt;/html&gt;</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">⚙️</div><h3>item.js 표준 인터페이스</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">JS INTERFACE</span>
+<span class="c">// ── 모든 문항 유형이 구현해야 하는 표준 인터페이스 ──</span>
+
+<span class="k">var</span> ITEM = {
+  <span class="k">answer</span>: <span class="s">"..."</span>,          <span class="c">// 정답 (string|array|object)</span>
+  <span class="k">type</span>: <span class="s">"multiple_choice"</span>,<span class="c">// 문항 유형</span>
+  <span class="k">score</span>: <span class="n">3</span>,               <span class="c">// 배점</span>
+  <span class="k">timeLimit</span>: <span class="n">90</span>,          <span class="c">// 제한시간(초)</span>
+  <span class="k">submitted</span>: <span class="n">false</span>       <span class="c">// 제출 상태</span>
+};
+
+<span class="c">// 필수 함수</span>
+<span class="k">function</span> <span class="s">getResponse</span>()   {}  <span class="c">// 현재 사용자 응답 반환</span>
+<span class="k">function</span> <span class="s">submitAnswer</span>()  {}  <span class="c">// 채점 실행 + 피드백 표시</span>
+<span class="k">function</span> <span class="s">resetItem</span>()     {}  <span class="c">// 초기 상태로 복원</span>
+<span class="k">function</span> <span class="s">getResult</span>()     {}  <span class="c">// 채점 결과 객체 반환</span>
+
+<span class="c">// getResult() 반환 형태 (→ 데이터팀 xAPI 연동용)</span>
+{
+  <span class="k">correct</span>: <span class="n">true</span>,
+  <span class="k">score</span>: <span class="n">3</span>,
+  <span class="k">maxScore</span>: <span class="n">3</span>,
+  <span class="k">response</span>: <span class="s">"2"</span>,      <span class="c">// 사용자 응답 원본</span>
+  <span class="k">duration</span>: <span class="n">45</span>,       <span class="c">// 소요시간(초)</span>
+  <span class="k">timestamp</span>: <span class="s">"..."</span>   <span class="c">// ISO 타임스탬프</span>
+}</div>
+        <div class="info blue">
+          <span class="ic">🔗</span>
+          <span><strong>다음 팀 연결:</strong> <code>getResult()</code>의 반환값이 데이터팀(TEAM 04)의 xAPI statement 생성 입력이 됩니다. 이 인터페이스가 팀 간 계약(contract)입니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 5: PROMPT ===== -->
+  <div class="section" id="sec-prompt">
+    <div class="section-title">LLM 프롬프트 설계 <span class="badge" style="background:var(--teal-bg2);color:var(--teal)">2-PASS</span></div>
+    <p class="section-desc">제작팀 에이전트의 핵심은 프롬프트 엔지니어링입니다. 2-pass 구조로 콘텐츠 품질과 코드 품질을 분리합니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">1️⃣</div><h3>1st Pass — 콘텐츠 생성 프롬프트</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">PASS 1: CONTENT</span>
+<span class="k">system</span>: <span class="s">"너는 2022 개정 교육과정 수학 교과 문항 출제 전문가이다.
+주어진 메타정보를 기반으로 교육적으로 우수한 문항을 설계하라.
+오답은 학생의 전형적 오개념에 기반하여 매력적으로 구성하라."</span>
+
+<span class="k">user</span>: <span class="s">"다음 메타정보를 기반으로 문항 콘텐츠를 JSON으로 생성하라.
+
+[메타정보]
+- 문항유형: {item_type} ({item_type_detail})
+- 내용체계: {content_area} > {content_level1} > {content_level2}
+- 성취기준: {achievement_code} {achievement_desc}
+- 내용요소: {content_element}
+- Bloom's: {blooms_level}
+- 난이도: {difficulty} (score: {difficulty_score})
+- 배점: {score}점 / 제한시간: {time_limit_sec}초
+- 교급/학년: {school_level} {grade}학년 {semester}학기
+
+[출제 가이드]
+{authoring_guide.direction}
+[제약 조건]
+{authoring_guide.constraints}
+[미디어 권장]
+{authoring_guide.media_suggestion}
+
+JSON 응답 형식:
+{
+  passage: string|null,
+  stem: string,
+  options: [{label,text,isCorrect}]|null,
+  answer: string|array|object,
+  explanation: string,
+  media: {type:'svg'|'katex'|null, content:string}|null,
+  accessibility: {ariaLabel:string}
+}"</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--purple-bg);color:var(--purple)">2️⃣</div><h3>2nd Pass — 코드 생성 프롬프트</h3></div>
+      <div class="card-body">
+        <div class="json-block"><span class="json-label">PASS 2: CODE</span>
+<span class="k">system</span>: <span class="s">"너는 교육용 웹 콘텐츠 프론트엔드 개발자이다.
+주어진 문항 콘텐츠를 HTML/CSS/JS 3파일로 변환하라.
+다음 규칙을 반드시 준수하라:
+
+[HTML 규칙]
+- 시맨틱 태그 사용 (header, main, footer, section)
+- ARIA 속성 포함 (role, aria-label, aria-live)
+- 외부 리소스 최소화 (폰트: Google Fonts, 수식: KaTeX CDN만 허용)
+- 인라인 SVG로 이미지 내장 (외부 이미지 파일 금지)
+
+[CSS 규칙]
+- CSS 변수로 색상 관리 (--primary, --success, --danger 등)
+- 모바일 반응형 (max-width: 480px)
+- font-family: 'Noto Sans KR', sans-serif
+- 기본 폰트 크기 16px 기준
+
+[JS 규칙]
+- 표준 인터페이스 구현: ITEM 객체, getResponse, submitAnswer, resetItem, getResult
+- Vanilla JS만 사용 (jQuery 등 라이브러리 금지)
+- 터치 이벤트 지원 (드래그앤드롭 유형)
+- 타이머 구현 (시작/정지/표시)
+- 채점 결과를 window.postMessage로 부모에 전송 가능하게"</span>
+
+<span class="k">user</span>: <span class="s">"다음 문항 콘텐츠를 3개 파일로 코드 생성하라.
+
+[콘텐츠 JSON]
+{1st_pass_result}
+
+[메타정보]
+{원본 메타정보 요약}
+
+3개 파일을 각각 ```html ```, ```css ```, ```js ``` 블록으로 분리하여 출력하라."</span></div>
+        <div class="info purple" style="margin-top:16px">
+          <span class="ic">🔧</span>
+          <span><strong>프롬프트 버전 관리:</strong> 프롬프트는 <code>prompt_v{N}.md</code>로 버전 관리하며, 문항 품질 이슈 발생 시 프롬프트를 수정하고 버전을 올립니다. meta.json의 <code>source.prompt_version</code>에 사용된 프롬프트 버전을 기록합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">📐</div><h3>유형별 프롬프트 부속서</h3></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>유형</th><th>1st Pass 추가 지시</th><th>2nd Pass 추가 지시</th></tr></thead>
+            <tbody>
+              <tr><td><code>drag_and_drop</code></td><td>"드래그 요소와 드롭존을 명확히 분리하여 정의하라. 각 요소의 정확한 드롭 위치를 좌표 또는 ID로 명시하라."</td><td>"HTML Drag API + 터치 폴리필. 드롭 성공 시 시각적 피드백. 요소 위치 정보를 배열로 저장."</td></tr>
+              <tr><td><code>ordering</code></td><td>"올바른 순서를 배열로 정의하라. 초기 배열은 셔플된 상태로."</td><td>"sortable 리스트 구현. 터치 드래그 지원. 순서 비교는 배열 인덱스 매칭."</td></tr>
+              <tr><td><code>matching</code></td><td>"좌측/우측 항목 목록과 정답 매핑을 정의하라. 1:1 매핑 기본."</td><td>"SVG 캔버스 위 선 연결 또는 클릭 페어링 UI. 매핑 결과를 객체로 저장."</td></tr>
+              <tr><td><code>MATH</code></td><td>"수식은 LaTeX 문법으로 작성하라. 인라인 수식과 블록 수식을 구분하라."</td><td>"KaTeX CDN (0.16.x) 사용. auto-render로 문서 내 모든 수식 자동 렌더링."</td></tr>
+              <tr><td><code>COORD</code></td><td>"좌표평면의 범위, 눈금 간격, 정답 좌표를 명시하라."</td><td>"SVG viewBox 좌표계. 클릭→점 생성, 스냅 그리드, 정답 좌표와 유클리드 거리 비교."</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 6: EXAMPLE ===== -->
+  <div class="section" id="sec-example">
+    <div class="section-title">실행 예시 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">DEMO</span></div>
+    <p class="section-desc">기획팀 메타정보 → 1st Pass → 2nd Pass → 산출물까지의 실제 흐름을 보여줍니다.</p>
+
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="showEx('ex1')">객관식 + 수식</button>
+      <button class="ex-tab" onclick="showEx('ex2')">드래그앤드롭 + 좌표</button>
+      <button class="ex-tab" onclick="showEx('ex3')">순서배열</button>
+    </div>
+
+    <div class="ex-panel active" id="ex1">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--purple)">📥 기획팀 메타 (요약)</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">item_type</div><div class="vl" style="color:var(--blue)">multiple_choice</div></div>
+        <div class="mg-item"><div class="lb">content_level2</div><div class="vl" style="color:var(--teal)">세 자리 수의 덧셈의 계산 원리</div></div>
+        <div class="mg-item"><div class="lb">difficulty / blooms</div><div class="vl" style="color:var(--amber)">하 / 적용</div></div>
+        <div class="mg-item"><div class="lb">media_suggestion</div><div class="vl" style="color:var(--coral)">자릿값 표 SVG 포함 권장</div></div>
+      </div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--teal)">🤖 1st Pass 결과</h4>
+      <div class="json-block">
+{
+  <span class="k">"passage"</span>: <span class="n">null</span>,
+  <span class="k">"stem"</span>: <span class="s">"234 + 152의 계산 결과로 알맞은 것은?"</span>,
+  <span class="k">"options"</span>: [
+    {<span class="k">"label"</span>:<span class="s">"①"</span>, <span class="k">"text"</span>:<span class="s">"376"</span>, <span class="k">"isCorrect"</span>:<span class="n">false</span>},
+    {<span class="k">"label"</span>:<span class="s">"②"</span>, <span class="k">"text"</span>:<span class="s">"386"</span>, <span class="k">"isCorrect"</span>:<span class="n">true</span>},
+    {<span class="k">"label"</span>:<span class="s">"③"</span>, <span class="k">"text"</span>:<span class="s">"396"</span>, <span class="k">"isCorrect"</span>:<span class="n">false</span>},
+    {<span class="k">"label"</span>:<span class="s">"④"</span>, <span class="k">"text"</span>:<span class="s">"486"</span>, <span class="k">"isCorrect"</span>:<span class="n">false</span>}
+  ],
+  <span class="k">"answer"</span>: <span class="s">"2"</span>,
+  <span class="k">"explanation"</span>: <span class="s">"일의 자리: 4+2=6, 십의 자리: 3+5=8, 백의 자리: 2+1=3 → 386"</span>,
+  <span class="k">"media"</span>: {<span class="k">"type"</span>:<span class="s">"svg"</span>, <span class="k">"content"</span>:<span class="s">"&lt;svg&gt;자릿값표&lt;/svg&gt;"</span>}
+}</div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--purple)">📦 2nd Pass → 산출물</h4>
+      <div class="folder-tree">
+<span class="dir">Q-342/</span>
+├── <span class="file">index.html</span><span class="comment">← 4지선다 + 인라인 SVG 자릿값표</span>
+├── <span class="dir">css/</span>
+│   └── <span class="file">style.css</span><span class="comment">← mc-option 스타일, SVG 반응형</span>
+├── <span class="dir">js/</span>
+│   └── <span class="file">item.js</span><span class="comment">← 라디오 선택 + 정답비교 + getResult()</span>
+└── <span class="file">meta.json</span>
+      </div>
+    </div>
+
+    <div class="ex-panel" id="ex2">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--purple)">📥 기획팀 메타 (요약)</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">item_type</div><div class="vl" style="color:var(--teal)">drag_and_drop</div></div>
+        <div class="mg-item"><div class="lb">item_type_detail</div><div class="vl" style="color:var(--teal)">좌표평면 위 꼭짓점 드래그 배치</div></div>
+        <div class="mg-item"><div class="lb">difficulty / blooms</div><div class="vl" style="color:var(--amber)">중 / 적용</div></div>
+        <div class="mg-item"><div class="lb">content_level2</div><div class="vl" style="color:var(--coral)">세 자리 수의 덧셈의 계산</div></div>
+      </div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--teal)">🤖 1st Pass 결과</h4>
+      <div class="json-block">
+{
+  <span class="k">"passage"</span>: <span class="s">"좌표평면 위에 세 점 A(1,2), B(4,2), C(4,5)가 있습니다."</span>,
+  <span class="k">"stem"</span>: <span class="s">"직사각형 ABCD를 완성하려면 점 D의 좌표는 어디일까요? 좌표평면에 점 D를 드래그하여 놓으세요."</span>,
+  <span class="k">"answer"</span>: {<span class="k">"x"</span>:<span class="n">1</span>, <span class="k">"y"</span>:<span class="n">5</span>},
+  <span class="k">"explanation"</span>: <span class="s">"직사각형의 네 번째 꼭짓점은 A의 x좌표와 C의 y좌표를 결합하여 D(1,5)입니다."</span>,
+  <span class="k">"media"</span>: {<span class="k">"type"</span>:<span class="s">"svg"</span>, <span class="k">"content"</span>:<span class="s">"좌표평면 SVG (0,0)~(6,6) 그리드 + A,B,C 점 표시"</span>},
+  <span class="k">"interaction"</span>: {
+    <span class="k">"dragItems"</span>: [{<span class="k">"id"</span>:<span class="s">"pointD"</span>, <span class="k">"label"</span>:<span class="s">"D"</span>}],
+    <span class="k">"snapGrid"</span>: <span class="n">1</span>,
+    <span class="k">"tolerance"</span>: <span class="n">0.5</span>
+  }
+}</div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--purple)">📦 2nd Pass → 산출물</h4>
+      <div class="folder-tree">
+<span class="dir">Q-587/</span>
+├── <span class="file">index.html</span><span class="comment">← SVG 좌표평면 + 드래그 가능 점 D</span>
+├── <span class="dir">css/</span>
+│   └── <span class="file">style.css</span><span class="comment">← 좌표계 스타일, 드래그 커서, 스냅 효과</span>
+├── <span class="dir">js/</span>
+│   └── <span class="file">item.js</span><span class="comment">← SVG 드래그 + 스냅그리드 + 좌표비교 채점</span>
+└── <span class="file">meta.json</span>
+      </div>
+    </div>
+
+    <div class="ex-panel" id="ex3">
+      <h4 style="font-size:.8rem;font-weight:600;margin-bottom:12px;color:var(--purple)">📥 기획팀 메타 (요약)</h4>
+      <div class="mg">
+        <div class="mg-item"><div class="lb">item_type</div><div class="vl" style="color:var(--teal)">ordering</div></div>
+        <div class="mg-item"><div class="lb">item_type_detail</div><div class="vl" style="color:var(--teal)">덧셈 풀이 단계를 올바른 순서로 정렬</div></div>
+        <div class="mg-item"><div class="lb">difficulty / blooms</div><div class="vl" style="color:var(--amber)">중 / 분석</div></div>
+        <div class="mg-item"><div class="lb">content_element</div><div class="vl" style="color:var(--coral)">과정기능</div></div>
+      </div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--teal)">🤖 1st Pass 결과</h4>
+      <div class="json-block">
+{
+  <span class="k">"passage"</span>: <span class="s">"받아올림이 있는 덧셈 478 + 356을 계산하려고 합니다."</span>,
+  <span class="k">"stem"</span>: <span class="s">"다음 풀이 단계를 올바른 순서로 배열하세요."</span>,
+  <span class="k">"items"</span>: [
+    <span class="s">"일의 자리: 8+6=14, 4를 쓰고 1을 올림"</span>,
+    <span class="s">"십의 자리: 7+5+1=13, 3을 쓰고 1을 올림"</span>,
+    <span class="s">"백의 자리: 4+3+1=8"</span>,
+    <span class="s">"답: 834"</span>
+  ],
+  <span class="k">"answer"</span>: [<span class="n">0</span>,<span class="n">1</span>,<span class="n">2</span>,<span class="n">3</span>],
+  <span class="k">"shuffled"</span>: [<span class="n">2</span>,<span class="n">0</span>,<span class="n">3</span>,<span class="n">1</span>],
+  <span class="k">"explanation"</span>: <span class="s">"일의 자리부터 차례로 계산하며, 합이 10 이상이면 올림합니다."</span>
+}</div>
+
+      <h4 style="font-size:.8rem;font-weight:600;margin:20px 0 8px;color:var(--purple)">📦 2nd Pass → 산출물</h4>
+      <div class="folder-tree">
+<span class="dir">Q-215/</span>
+├── <span class="file">index.html</span><span class="comment">← sortable 리스트 4개 항목</span>
+├── <span class="dir">css/</span>
+│   └── <span class="file">style.css</span><span class="comment">← 드래그 핸들, 순번 표시, 정렬 애니메이션</span>
+├── <span class="dir">js/</span>
+│   └── <span class="file">item.js</span><span class="comment">← 터치 sortable + 배열 순서 비교 채점</span>
+└── <span class="file">meta.json</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEC 7: PLATFORM GUIDES ===== -->
+  <div class="section" id="sec-guides">
+    <div class="section-title">플랫폼 가이드 반영 <span class="badge" style="background:var(--coral-bg2);color:var(--coral)">4 GUIDES</span></div>
+    <p class="section-desc">제작팀 2nd pass 프롬프트와 산출물에 반영해야 할 동아출판 플랫폼 가이드 4종입니다.</p>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--purple-bg);color:var(--purple)">♿</div><h3>G1. 웹접근성 필수 준수사항 (UDL v0.1)</h3><span class="tag" style="background:var(--purple-bg);color:var(--purple)">2025~2027 단계적</span></div>
+      <div class="card-body">
+        <p style="font-size:.76rem;color:var(--text2);margin-bottom:12px">AI 디지털교과서 개발 가이드라인 기반 웹접근성 규격. 시각·청각·운동·인지 4개 장애유형 대응, 96개 항목 중 2025년 적용 필수 항목을 제작팀 2nd pass 프롬프트에 반영합니다.</p>
+        <div class="pc">
+          <h5>📋 2nd Pass 프롬프트 추가 지시 (접근성)</h5>
+          <ul>
+            <li><strong>V1 대체 텍스트:</strong> 모든 <code>&lt;img&gt;</code>에 적절한 alt 속성 필수. 장식 이미지는 <code>alt=""</code>. SVG 인라인 이미지에 <code>role="img" aria-label="설명"</code></li>
+            <li><strong>V2 명도 대비:</strong> 텍스트/배경 명도대비 4.5:1 이상. CSS 변수로 관리하여 검증 용이하게</li>
+            <li><strong>V4 키보드 접근:</strong> 모든 인터랙션(버튼, 선택, 드래그) Tab/Enter/Space로 조작 가능. <code>outline:none</code> 금지, 초점 시각화 필수</li>
+            <li><strong>V5 표 헤더:</strong> 표 사용 시 <code>&lt;th scope="col"&gt;</code>, <code>&lt;caption&gt;</code> 필수</li>
+            <li><strong>M1 키보드 운용:</strong> 드래그앤드롭 유형에 키보드 대안 제공 (화살표키 이동)</li>
+            <li><strong>5.3.3 명확한 지시사항:</strong> 색·모양·위치만으로 정보 전달 금지. 텍스트 보완 필수</li>
+            <li><strong>7.3.2 레이블:</strong> 모든 input에 <code>&lt;label for=""&gt;</code> 또는 <code>aria-label</code> 매칭</li>
+            <li><strong>6.4.2 제목:</strong> <code>&lt;title&gt;</code>에 문항명 포함, 콘텐츠 블록에 <code>&lt;h1&gt;~&lt;h3&gt;</code> 사용</li>
+            <li><strong>8.1.1 마크업:</strong> 요소 열고닫음 일치, 중첩 금지, id 중복 금지</li>
+          </ul>
+        </div>
+        <div class="info purple" style="margin-top:12px">
+          <span class="ic">📌</span>
+          <span><strong>검수팀 D3 영역 연동:</strong> 이 접근성 규칙이 검수팀 D3 검증 항목의 구체적 기준이 됩니다. 2025년 O 항목은 반드시 충족, 2026/2027 항목은 권고 사항으로 검수합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--teal-bg);color:var(--teal)">📐</div><h3>G2. 수식입력기 MathType 적용 가이드</h3><span class="tag" style="background:var(--teal-bg);color:var(--teal)">KaTeX 대체</span></div>
+      <div class="card-body">
+        <p style="font-size:.76rem;color:var(--text2);margin-bottom:12px">수식 입력이 필요한 문항에서 KaTeX 대신 MathType(common-mathtype.js)을 사용합니다. 컨테이너가 JS를 로딩하며, 콘텐츠는 div 기반 수식 입력 영역만 제공합니다.</p>
+        <div class="pc">
+          <h5>🔧 적용 규칙</h5>
+          <ul>
+            <li><strong>수식 입력 UI:</strong> <code>&lt;input&gt;</code> 대신 <code>&lt;div id="wiris{N}" onclick="showMathType(this.id, this.innerHTML, toolbar)"&gt;</code> 사용</li>
+            <li><strong>교급별 toolbar:</strong> 초등 <code>'elementary'</code> / 고등 <code>'high'</code> / 디폴트 중등. meta.json의 school_level로 자동 결정</li>
+            <li><strong>필기도구:</strong> <code>showHandType(id, val, toolbar)</code>로 필기 입력 모드 오픈 (디폴트)</li>
+            <li><strong>저장/닫기:</strong> <code>confirmMathType()</code>(저장+닫기), <code>closeMathType()</code>(저장 안 하고 닫기)</li>
+            <li><strong>Textarea 모드:</strong> <code>contenteditable="true"</code> div 필수, textarea 태그 사용 불가</li>
+            <li><strong>필수 DOM:</strong> <code>&lt;div id="editorContainer"&gt;&lt;/div&gt;</code> 수식입력기 영역</li>
+            <li><strong>CSS:</strong> #editorContainer 스타일 (position:absolute, z-index:1000, 720x200px)</li>
+          </ul>
+        </div>
+        <div class="info teal" style="margin-top:12px">
+          <span class="ic">⚡</span>
+          <span><strong>v1 변경:</strong> 기존 설계의 "KaTeX CDN" → <strong>MathType(common-mathtype.js)</strong>로 전면 교체. 수식 렌더링이 아니라 수식 입력 UI를 제공하는 것이므로, LLM이 생성하는 코드에서 KaTeX 관련 CDN/auto-render를 제거하고 MathType div 구조로 대체합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--blue-bg);color:var(--blue)">🌐</div><h3>G3. 콘텐츠업체 번역API (파파고)</h3><span class="tag" style="background:var(--blue-bg);color:var(--blue)">setTranslation</span></div>
+      <div class="card-body">
+        <p style="font-size:.76rem;color:var(--text2);margin-bottom:12px">컨테이너에서 <code>setTranslation</code> 인터페이스로 번역 언어코드를 받으면, 파파고 API를 호출하여 문항 콘텐츠를 번역합니다.</p>
+        <div class="pc">
+          <h5>📡 API 명세</h5>
+          <ul>
+            <li><strong>텍스트 번역:</strong> <code>POST /v-api/v1/translate/text</code> — text, source, target 전송</li>
+            <li><strong>웹 번역:</strong> <code>POST /v-api/v1/translate/web</code> — HTML 문자열 전체 번역 (최대 200,000 bytes)</li>
+            <li><strong>인증:</strong> <code>X-API-KEY: donga-naver-papago-GoT9zJh4</code></li>
+            <li><strong>지원 언어:</strong> ko, en, ja, zh-CN, vi (웹 번역은 vi 제외)</li>
+            <li><strong>동일 언어 처리:</strong> 현재 언어와 번역 요청 언어가 같으면 API 미호출</li>
+            <li><strong>도메인:</strong> 개발 dev.d-aidt.com / 검증 www.s-aidt.com / 운영 www.aidt.ai</li>
+          </ul>
+        </div>
+        <div class="info blue" style="margin-top:12px">
+          <span class="ic">📌</span>
+          <span><strong>제작팀 적용:</strong> item.js에 번역 핸들러를 포함하거나, octo-bridge.js에서 <code>setTranslation</code> 메시지를 수신하여 DOM 텍스트를 번역 API로 교체합니다. 수식(MathML)과 SVG 내부 텍스트는 번역 대상에서 제외합니다.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:var(--amber-bg);color:var(--amber)">🎨</div><h3>G4. 표준 reset.css</h3><span class="tag" style="background:var(--amber-bg);color:var(--amber)">필수 포함</span></div>
+      <div class="card-body">
+        <p style="font-size:.76rem;color:var(--text2);margin-bottom:12px">모든 문항 산출물에 동아출판 표준 reset.css를 포함합니다. 폰트·변수·리셋이 통일됩니다.</p>
+        <div class="pc">
+          <h5>📋 reset.css 핵심 내용</h5>
+          <ul>
+            <li><strong>폰트:</strong> Spoqa Han Sans Neo + Noto Sans KR (Google Fonts import)</li>
+            <li><strong>CSS 변수:</strong> <code>--primary-color:#0084ff</code>, <code>--elementary_bg-color:#0084ff</code>, <code>--secondary-color:#e6eef9</code>, <code>--good:#f44e80</code> 등</li>
+            <li><strong>전역 리셋:</strong> margin/padding/border 0, list-style:none, table collapse</li>
+            <li><strong>버튼/입력:</strong> appearance:none, background:none, border:none, cursor:pointer</li>
+            <li><strong>높이:</strong> <code>height: calc(var(--dvh) * 100)</code> — 동적 뷰포트 높이</li>
+          </ul>
+        </div>
+        <div class="info amber" style="margin-top:12px">
+          <span class="ic">📦</span>
+          <span><strong>산출물 구조 변경:</strong> 기존 <code>css/style.css</code>에 추가로 <code>css/reset.css</code>를 포함합니다. index.html에서 reset.css를 style.css보다 먼저 로드합니다. 제작팀 2nd pass에서 생성하는 style.css는 reset.css의 변수를 활용하도록 합니다.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSec(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+function showEx(id){
+  document.querySelectorAll('.ex-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.ex-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
